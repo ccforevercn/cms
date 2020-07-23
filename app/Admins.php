@@ -147,7 +147,7 @@ class Admins extends  JWTModel implements ModelInterface
     public static function message(int $id): array
     {
         // TODO: Implement message() method.
-        return self::id($id)->select(self::$message)->isDel(0)->first()->toArray;
+        return self::id($id)->select(self::$message)->isDel(0)->first()->toArray();
     }
 
     public static function checkId(int $id): bool
