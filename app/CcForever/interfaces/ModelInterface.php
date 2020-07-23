@@ -13,6 +13,8 @@ namespace App\CcForever\interfaces;
  */
 interface ModelInterface
 {
+    public static function setAlias(string $alias): void; // 表别名设置
+
     public static function lst(array $where, int $offset, int $limit) :array; // 列表
 
     public static function count(array $where): int; // 总数

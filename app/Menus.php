@@ -32,6 +32,7 @@ class Menus extends BaseModel implements ModelInterface
      */
     public static function setAlias(string $alias): void
     {
+        // TODO: Implement setAlias() method.
         self::$alias = strlen($alias) ? $alias.'.' : '';
     }
 

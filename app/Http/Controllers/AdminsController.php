@@ -9,6 +9,7 @@ namespace App\Http\Controllers;
 use App\CcForever\controller\BaseController;
 use App\CcForever\extend\JsonExtend;
 use App\CcForever\traits\ControllerTrait;
+use App\Http\Requests\AdminsAddRequest;
 use App\Http\Requests\AdminsListRequest;
 use App\Repositories\AdminsRepository;
 
@@ -36,9 +37,20 @@ class AdminsController extends BaseController
         return JsonExtend::success('菜单列表', compact('list', 'count'));
     }
 
-    public function add(): object
+    public function add(AdminsAddRequest $adminsAddRequest, AdminsRepository $adminsRepository): object
     {
         // TODO: Implement add() method.
+        $admin = $adminsAddRequest->all();
+        $user = auth('login')->user();
+        if(!$user->found){
+            return JsonExtend::error('没有权限创建管理员');
+        }
+        $admin['parent_id'] = $user->id;
+        $bool = $adminsRepository::add($admin);
+        if($bool){
+            return JsonExtend::success($adminsRepository::returnMsg('添加成功'));
+        }
+        return JsonExtend::error($adminsRepository::returnMsg('添加失败'));
     }
 
     public function modify(): object

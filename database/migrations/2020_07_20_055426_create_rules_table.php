@@ -28,8 +28,12 @@ class CreateRulesTable extends Migration
             $table->bigIncrements('id')->comment('管理员规则表');
             $table->string('name', '64')->comment('规则名称');
             $table->text('menu_id')->comment('菜单编号');
+            $table->integer('admin_id')->comment('管理员编号(哪一个管理员创建的规则)');
             $table->integer('add_time')->comment('规则添加时间');
-            $table->unique('id'); // 编号 添加唯一索引
+            $table->tinyInteger('is_del')->comment('是否删除 1 是 0 否');
+            $table->unique('id'); // 编号添加唯一索引
+            $table->index('admin_id'); // 管理员编号普通索引
+            $table->index('is_del'); // 是否删除添加普通索引
         });
     }
 

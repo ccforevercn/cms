@@ -27,7 +27,7 @@ class CreateAdminsTable extends Migration
             $table->collation = 'utf8_general_ci';  // 表默认的排序规则
             $table->increments('id')->comment('管理员表');
             $table->char('username', 16)->comment('管理员账号');
-            $table->char('password', 128)->comment('管理员密码');
+            $table->char('password', 64)->comment('管理员密码');
             $table->string('real_name', 16)->comment('管理员昵称');
             $table->tinyInteger('status')->comment('管理员状态 1 正常 0 锁定')->default(1);
             $table->tinyInteger('found')->comment('创建管理员权限 1 是 0 否')->default(1);

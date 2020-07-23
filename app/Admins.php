@@ -32,16 +32,6 @@ class Admins extends  JWTModel implements ModelInterface
     protected static $message = ['id', 'username', 'real_name', 'status', 'found', 'parent_id', 'rule_id', 'add_time', 'add_ip', 'last_ip', 'last_time', 'login_count'];// 基本信息
 
     /**
-     * 设置表别名
-     * @param string $alias
-     */
-    public static function setAlias(string $alias): void
-    {
-        self::$alias = strlen($alias) ? $alias.'.' : '';
-    }
-
-
-    /**
      * 管理员编号 唯一索引
      * @param $query
      * @param int $id
@@ -99,6 +89,16 @@ class Admins extends  JWTModel implements ModelInterface
     }
 
     /**
+     * 设置表别名
+     * @param string $alias
+     */
+    public static function setAlias(string $alias): void
+    {
+        // TODO: Implement setAlias() method.
+        self::$alias = strlen($alias) ? $alias.'.' : '';
+    }
+
+    /**
      * 管理员列表
      * @param array $where
      * @param int $offset
@@ -125,9 +125,19 @@ class Admins extends  JWTModel implements ModelInterface
         return self::listWhere($where)->isDel(0)->count();
     }
 
+    /**
+     * 管理员添加
+     * @param array $data
+     * @return bool
+     */
     public static function add(array $data): bool
     {
         // TODO: Implement add() method.
+        try{
+            return self::insert($data);
+        }catch (\Exception $exception){
+            return false;
+        }
     }
 
     public static function modify(array $data, int $id): bool
@@ -151,6 +161,11 @@ class Admins extends  JWTModel implements ModelInterface
         return self::id($id)->select(self::$message)->isDel(0)->first()->toArray();
     }
 
+    /**
+     * 验证编号
+     * @param int $id
+     * @return bool
+     */
     public static function checkId(int $id): bool
     {
         // TODO: Implement checkId() method.

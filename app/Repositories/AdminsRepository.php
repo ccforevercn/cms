@@ -9,6 +9,8 @@ namespace App\Repositories;
 use App\Admins;
 use App\CcForever\interfaces\RepositoryInterface;
 use App\CcForever\traits\RepositoryReturnMsgData;
+use App\Rules;
+use Illuminate\Support\Facades\Hash;
 
 /**
  * 管理员
@@ -96,6 +98,31 @@ class AdminsRepository implements RepositoryInterface
     public static function add(array $data): bool
     {
         // TODO: Implement add() method.
+        $admin = [];
+        $admin['username'] = array_key_exists('username', $data) ? $data['username'] : null;
+        $admin['password'] = array_key_exists('password', $data) ? $data['password'] : null;
+        $admin['real_name'] = array_key_exists('real_name', $data) ? $data['real_name'] : null;
+        $admin['parent_id'] = array_key_exists('parent_id', $data) ? (int)$data['parent_id'] : null;
+        $admin['status'] = array_key_exists('status', $data) ? (int)$data['status'] : null;
+        $admin['found'] = array_key_exists('found', $data) ? (int)$data['found'] : null;
+        $admin['rule_id'] = array_key_exists('rule_id', $data) ? (int)$data['rule_id'] : null;
+        if(is_null($admin['username']) || is_null($admin['password']) || is_null($admin['real_name']) || is_null($admin['parent_id']) || is_null($admin['status']) || is_null($admin['found']) || is_null($admin['rule_id'])){
+            return self::setMsg('参数错误', false);
+        }
+        $admin['password'] = Hash::make(create_admin_password($admin['password'])); // 加密管理员密码
+        // 判断规则是否存在
+        $rulesCount = Rules::checkId($admin['rule_id']);
+        if(!$rulesCount){
+            return self::setMsg('规则不存在', false);
+        }
+        $admin['add_time'] = time();
+        $admin['add_ip'] = app('request')->ip();
+        $admin['last_time'] = time();
+        $admin['last_ip'] = app('request')->ip();
+        $admin['login_count'] = 0;
+        $admin['is_del'] = 0;
+        $status = self::$model::add($admin);
+        return self::setMsg($status ? '添加成功' : '添加失败', $status);
     }
 
     public static function modify(array $data, int $id): bool
