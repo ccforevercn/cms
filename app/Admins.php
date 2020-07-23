@@ -111,6 +111,7 @@ class Admins extends  JWTModel implements ModelInterface
         $model = new self;
         $model = $model->listWhere($where);
         $model = $model->isDel(0);
+        $model = $model->select(self::$message);
         $model = $model->offset($offset);
         $model = $model->limit($limit);
         $list = $model->get();

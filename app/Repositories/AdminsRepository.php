@@ -90,7 +90,7 @@ class AdminsRepository implements RepositoryInterface
         $where['parent_id'] = array_key_exists('parent_id', $where) ? $where['parent_id'] : '';// 上级管理员是否存在
         $where['username'] = array_key_exists('username', $where) ? $where['username'] : '';// 管理员账号是否存在
         $count = self::$model::count($where);// 菜单列表
-        return self::setMsg('菜单总数', true, $count);
+        return self::setMsg('菜单总数', true, [$count]);
     }
 
     public static function add(array $data): bool
