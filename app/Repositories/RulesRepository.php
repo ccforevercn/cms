@@ -8,6 +8,7 @@ namespace App\Repositories;
 
 use App\CcForever\interfaces\RepositoryInterface;
 use App\CcForever\traits\RepositoryReturnMsgData;
+use App\Menus;
 use App\Rules;
 
 /**
@@ -55,9 +56,44 @@ class RulesRepository implements RepositoryInterface
         return self::setMsg('规则总数', true, [$count]);
     }
 
+    /**
+     * 规则添加
+     * @param array $data
+     * @return bool
+     */
     public static function add(array $data): bool
     {
         // TODO: Implement add() method.
+        // 验证菜单编号是否存在
+        $menuIds = explode(',', $data['menus_id']);
+        $count = Menus::checkIds($menuIds);
+        if($count !== count($menuIds)){
+            return self::setMsg('菜单不存在', false);
+        }
+        $unique = create_admin_password(create_millisecond(), $data['username'].$data['admin_id']);
+        $time = time();
+        $ruleData = []; // 规则数据
+        $ruleData['name'] = $data['name'];
+        $ruleData['unique'] = $unique;
+        $ruleData['admin_id'] = $data['admin_id'];
+        $ruleData['add_time'] = $time;
+        $ruleData['is_del'] = 0;
+        $ruleMenuData = []; // 规则菜单数据
+        $ruleMenuDataCount = 0;
+        foreach ($menuIds as $menuId){
+            $ruleMenuData[$ruleMenuDataCount]['unique'] = $unique;
+            $ruleMenuData[$ruleMenuDataCount]['menu_id'] = (int)$menuId;
+            $ruleMenuData[$ruleMenuDataCount]['add_time'] = $time;
+            $ruleMenuData[$ruleMenuDataCount]['clear_time'] = $time;
+            $ruleMenuData[$ruleMenuDataCount]['is_del'] = 0;
+            $ruleMenuDataCount++;
+        }
+        self::$model::beginTransaction(); // 开启事务
+        $ruleAddBool = self::$model::add($ruleData); // 添加规则
+        $ruleMenusAddBool = self::$model::addMenus($ruleMenuData); // 添加规规则菜单
+        $bool = $ruleAddBool && $ruleMenusAddBool;
+        self::$model::checkTransaction($bool); // 事务提交
+        return self::setMsg($bool ? '添加成功' : '添加失败', $bool);
     }
 
     public static function modify(array $data, int $id): bool

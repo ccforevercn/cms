@@ -26,11 +26,15 @@ class CreateRulesMenusTable extends Migration
             $table->charset = 'utf8';  //表默认字符集
             $table->collation = 'utf8_general_ci';  // 表默认的排序规则
             $table->bigIncrements('id')->comment('规则菜单表');
-            $table->integer('rule_id')->comment('规则编号');
+            $table->char('unique', 32)->comment('规则唯一值');
             $table->integer('menu_id')->comment('菜单编号');
+            $table->integer('add_time')->comment('菜单编号添加时间');
+            $table->integer('clear_time')->comment('菜单编号清除时间');
+            $table->tinyInteger('is_del')->comment('菜单是否删除 是 1 否 0')->default(0);
             $table->unique('id'); // 编号添加唯一索引
-            $table->index('rule_id'); // 规则编号普通索引
+            $table->index('unique'); // 规则唯一值添加唯一索引
             $table->index('menu_id'); // 菜单编号普通索引
+            $table->index('is_del'); // 菜单是否删除普通索引
         });
     }
 

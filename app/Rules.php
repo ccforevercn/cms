@@ -8,7 +8,6 @@ namespace App;
 
 use App\CcForever\interfaces\ModelInterface;
 use App\CcForever\model\BaseModel;
-use Illuminate\Support\Facades\DB;
 
 /**
  * 规则Model
@@ -83,6 +82,13 @@ class Rules extends BaseModel implements ModelInterface
         self::$alias = strlen($alias) ? $alias.'.' : '';
     }
 
+    /**
+     * 规则列表
+     * @param array $where
+     * @param int $offset
+     * @param int $limit
+     * @return array
+     */
     public static function lst(array $where, int $offset, int $limit): array
     {
         // TODO: Implement lst() method.
@@ -108,15 +114,45 @@ class Rules extends BaseModel implements ModelInterface
         return $list;
     }
 
+    /**
+     * 规则总数
+     * @param array $where
+     * @return int
+     */
     public static function count(array $where): int
     {
         // TODO: Implement count() method.
         return self::listWhere($where)->isDel(0)->count();
     }
 
+    /**
+     * 规则添加
+     * @param array $data
+     * @return bool
+     */
     public static function add(array $data): bool
     {
         // TODO: Implement add() method.
+        try{
+            return self::insert($data);
+        }catch (\Exception $exception){
+            return false;
+        }
+    }
+
+    /**
+     * 规则按钮添加
+     * @param array $menus
+     * @return bool
+     */
+    public static function addMenus(array $menus): bool
+    {
+        try{
+            return self::table('rules_menus')->insert($menus);
+        }catch (\Exception $exception){
+            dd($exception);
+            return false;
+        }
     }
 
     public static function modify(array $data, int $id): bool

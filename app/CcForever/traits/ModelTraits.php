@@ -6,7 +6,17 @@
 
 namespace App\CcForever\traits;
 
+use Illuminate\Support\Facades\DB;
+
 trait ModelTraits
 {
-
+    /**
+     * 链接表
+     * @param string $table
+     * @return object
+     */
+    public static function table(string $table): object
+    {
+        return DB::table($table);
+    }
 }

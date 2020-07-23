@@ -77,3 +77,16 @@ if(!function_exists('reduce_status')){
         return $final;
     }
 }
+
+if(!function_exists('create_millisecond')){
+    /**
+     * 毫秒
+     * @return int
+     */
+    function create_millisecond(): int
+    {
+        list($milli, $second) = explode(' ', microtime());// 获取毫秒(单位是秒)$milli 秒$second
+        $millisecond = (int)sprintf('%.0f', (floatval($milli) + floatval($second)) * 1000); // 获取格式化后的毫秒
+        return $millisecond;
+    }
+}

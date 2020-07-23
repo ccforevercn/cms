@@ -37,7 +37,7 @@ class Menus extends BaseModel implements ModelInterface
     }
 
     /**
-     *  编号查询 唯一索引
+     * 编号查询 唯一索引
      * @param $query
      * @param int $id
      * @return mixed
@@ -45,6 +45,17 @@ class Menus extends BaseModel implements ModelInterface
     public static function scopeId($query, int $id)
     {
         return $query->where(self::$alias.'id', $id);
+    }
+
+    /**
+     * 编号批量查询 唯一索引
+     * @param $query
+     * @param array $ids
+     * @return mixed
+     */
+    public static function scopeIds($query, array $ids)
+    {
+        return $query->whereIn(self::$alias.'id', $ids);
     }
 
     /**
@@ -200,8 +211,14 @@ class Menus extends BaseModel implements ModelInterface
     public static function checkId(int $id): bool
     {
         // TODO: Implement checkId() method.
-        $count = self::id($id)->isDel(0)->count();
+        $count = self::id($id)->select(self::$message)->isDel(0)->count();
         return (bool)$count;
+    }
+
+    public static function checkIds(array $ids): int
+    {
+        $count = self::ids($ids)->select(self::$message)->isDel(0)->count();
+        return $count;
     }
 
     /**
