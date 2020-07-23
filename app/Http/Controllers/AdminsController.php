@@ -11,6 +11,7 @@ use App\CcForever\extend\JsonExtend;
 use App\CcForever\traits\ControllerTrait;
 use App\Http\Requests\AdminsAddRequest;
 use App\Http\Requests\AdminsListRequest;
+use App\Http\Requests\AdminsModifyRequest;
 use App\Repositories\AdminsRepository;
 
 /**
@@ -40,22 +41,34 @@ class AdminsController extends BaseController
     public function add(AdminsAddRequest $adminsAddRequest, AdminsRepository $adminsRepository): object
     {
         // TODO: Implement add() method.
-        $admin = $adminsAddRequest->all();
+        $data = $adminsAddRequest->all();
         $user = auth('login')->user();
         if(!$user->found){
             return JsonExtend::error('没有权限创建管理员');
         }
-        $admin['parent_id'] = $user->id;
-        $bool = $adminsRepository::add($admin);
+        $data['parent_id'] = $user->id;
+        $bool = $adminsRepository::add($data);
         if($bool){
             return JsonExtend::success($adminsRepository::returnMsg('添加成功'));
         }
         return JsonExtend::error($adminsRepository::returnMsg('添加失败'));
     }
 
-    public function modify(): object
+    public function modify(AdminsModifyRequest $adminsModifyRequest, AdminsRepository $adminsRepository): object
     {
         // TODO: Implement modify() method.
+        $data = $adminsModifyRequest->all();
+        $id = (int)$data['id'];
+        $user = auth('login')->user();
+        if(!$user->found){
+            return JsonExtend::error('没有权限修改管理员');
+        }
+        $admin['parent_id'] = $user->id;
+        $bool = $adminsRepository::modify($data, $id);
+        if($bool){
+            return JsonExtend::success($adminsRepository::returnMsg('修改成功'));
+        }
+        return JsonExtend::error($adminsRepository::returnMsg('修改失败'));
     }
 
     public function recycle(): object

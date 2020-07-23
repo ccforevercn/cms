@@ -5,6 +5,11 @@
  */
 namespace App\Http\Requests;
 
+/**
+ * 管理员列表验证
+ * Class AdminsListRequest
+ * @package App\Http\Requests
+ */
 class AdminsListRequest extends Request
 {
     /**

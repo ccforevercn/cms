@@ -129,6 +129,13 @@ class AdminsRepository implements RepositoryInterface
     public static function modify(array $data, int $id): bool
     {
         // TODO: Implement modify() method.
+        $check = self::$model::checkId($id);
+        if(!$check){
+            return self::setMsg('参数错误', false);
+        }
+        // 获取当前管理员是否是当前管理员或者添加当前管理员的上级+
+
+        dd($data, $id);
     }
 
     public static function recycle(int $id): bool
