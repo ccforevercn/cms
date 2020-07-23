@@ -23,7 +23,6 @@ class RulesTableSeeder extends Seeder
         DB::table('rules')->insert([
             'id' => 1,
             'name' => '超级管理员',
-            'menu_id' => '',
             'admin_id' => 1,
             'add_time' => time(),
             'is_del' => 0

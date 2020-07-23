@@ -49,6 +49,8 @@ class RulesRepository implements RepositoryInterface
     public static function count(array $where): bool
     {
         // TODO: Implement count() method.
+        $where['admin_id'] = array_key_exists('admin_id', $where) ? $where['admin_id'] : null;// 创建管理员
+        if(!$where['admin_id']) $where['admin_id'] = null;
         $count = self::$model::count($where); // 规则列表
         return self::setMsg('规则总数', true, [$count]);
     }

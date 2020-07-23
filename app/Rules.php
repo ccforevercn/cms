@@ -86,17 +86,16 @@ class Rules extends BaseModel implements ModelInterface
     public static function lst(array $where, int $offset, int $limit): array
     {
         // TODO: Implement lst() method.
-        $prefix = env('DB_PREFIX', 'cc_');
         $alias = 'r'; // 当前表别名
         $admins = 'a';// 管理员表别名
-        $menus = 'm';// 菜单表别名
-//        $jsonMenusSql = DB::raw($prefix.$menus.'.id in ('.$prefix.$alias.'.menu_id)');
-        $jsonMenusSql = DB::raw('find_in_set('.$prefix.$menus.'.id,'.$prefix.$alias.'.menu_id)');
-        $select = [$alias.'.add_time', $alias.'.admin_id', $alias.'.id', $alias.'.menu_id', $alias.'.name', $admins.'.real_name as admin_name', DB::raw('group_concat('.$prefix.$menus.'.name order by '.$prefix.$menus.'.id SEPARATOR \'、\') as menu_name')];
-        self::setAlias($alias);
+//        $jsonMenusSql = DB::raw('find_in_set('.$prefix.$menus.'.id,'.$prefix.$alias.'.menu_id)');
+//        $select = [$alias.'.add_time', $alias.'.admin_id', $alias.'.id', $alias.'.menu_id', $alias.'.name', $admins.'.real_name as admin_name', DB::raw('group_concat('.$prefix.$menus.'.name order by '.$prefix.$menus.'.id SEPARATOR \'、\') as menu_name')];
+        // 查询的字段
+        $select = [$alias.'.add_time', $alias.'.admin_id', $alias.'.id', $alias.'.name', $admins.'.real_name as admin_name'];
+        self::setAlias($alias); // 设置表别名
         $model = new self;
         $model = $model->from('rules as '.$alias);
-        $model = $model->leftJoin('menus as '.$menus, function ($join) use($jsonMenusSql){ $join->whereRaw($jsonMenusSql); });
+//        $model = $model->leftJoin('menus as '.$menus, function ($join) use($jsonMenusSql){ $join->whereRaw($jsonMenusSql); });
         $model = $model->leftJoin('admins as '.$admins, $alias.'.admin_id', '=', $admins.'.id');
         $model = $model->listWhere($where);
         $model = $model->isDel(0);
@@ -104,8 +103,8 @@ class Rules extends BaseModel implements ModelInterface
         $model = $model->offset($offset);
         $model = $model->limit($limit);
         $list = $model->get();
-        self::setAlias('');
-        $list = is_null($list) ? [] : $list->toArray();
+        self::setAlias(''); // 清空表别名
+        $list = is_null($list) ? [] : $list->toArray(); // 转为数组
         return $list;
     }
 
