@@ -22,6 +22,7 @@ class AdminsTableSeeder extends Seeder
     public function run()
     {
         DB::table('admins')->insert([
+            'id' => 1,
             'username' => 'ccforever',
             'password' => Hash::make(create_admin_password('68888886')),
             'real_name' => '管理员昵称',
@@ -29,6 +30,7 @@ class AdminsTableSeeder extends Seeder
             'found' => 1,
             'parent_id' => 0,
             'rule_id' => 1,
+            'email' => '1253705861@qq.com',
             'add_time' => time(),
             'add_ip' => app('request')->ip(),
             'last_time' => time(),

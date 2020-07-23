@@ -106,7 +106,8 @@ class AdminsRepository implements RepositoryInterface
         $admin['status'] = array_key_exists('status', $data) ? (int)$data['status'] : null;
         $admin['found'] = array_key_exists('found', $data) ? (int)$data['found'] : null;
         $admin['rule_id'] = array_key_exists('rule_id', $data) ? (int)$data['rule_id'] : null;
-        if(is_null($admin['username']) || is_null($admin['password']) || is_null($admin['real_name']) || is_null($admin['parent_id']) || is_null($admin['status']) || is_null($admin['found']) || is_null($admin['rule_id'])){
+        $admin['email'] = array_key_exists('email', $data) ? (int)$data['email'] : null;
+        if(is_null($admin['username']) || is_null($admin['password']) || is_null($admin['real_name']) || is_null($admin['parent_id']) || is_null($admin['status']) || is_null($admin['found']) || is_null($admin['rule_id']) || is_null($admin['email'])){
             return self::setMsg('参数错误', false);
         }
         $admin['password'] = Hash::make(create_admin_password($admin['password'])); // 加密管理员密码

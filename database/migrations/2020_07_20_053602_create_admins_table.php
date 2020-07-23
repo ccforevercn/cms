@@ -33,6 +33,7 @@ class CreateAdminsTable extends Migration
             $table->tinyInteger('found')->comment('创建管理员权限 1 是 0 否')->default(1);
             $table->integer('parent_id')->comment('父级管理员编号')->default(0);
             $table->tinyInteger('rule_id')->comment('规则编号')->default(0);
+            $table->string('email')->comment('管理员邮箱');
             $table->integer('add_time')->comment('管理员添加时间');
             $table->char('add_ip', 15)->comment('管理员添加ip');
             $table->integer('last_time')->comment('管理员最后一次登录时间');

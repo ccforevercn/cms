@@ -12,8 +12,9 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call([
-            // 管理员默认数据
-            AdminsTableSeeder::class
+            AdminsTableSeeder::class, // 管理员默认数据
+            MenusTableSeeder::class, // 菜单默认数据
+            RulesTableSeeder::class,  // 规则默认数据
         ]);
     }
 }
