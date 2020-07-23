@@ -25,5 +25,10 @@ Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
         Route::post('/menus/modify', 'MenusController@modify')->name('menusmodify'.$admin);// 菜单修改
         Route::post('/menus/recycle', 'MenusController@recycle')->name('menusrecycle'.$admin);// 菜单删除(假删除)
         Route::get('/menus/message', 'MenusController@message')->name('menusmessage'.$admin);// 菜单信息
+        Route::get('/rules/list', 'RulesController@lst')->name('ruleslist'.$admin);// 规则列表
+        Route::post('/rules/add', 'RulesController@add')->name('rulesadd'.$admin);// 规则添加
+        Route::post('/rules/modify', 'RulesController@modify')->name('rulesmodify'.$admin);// 规则修改
+        Route::post('/rules/recycle', 'RulesController@recycle')->name('rulesrecycle'.$admin);// 规则删除(假删除)
+        Route::get('/rules/message', 'RulesController@message')->name('rulesmessage'.$admin);// 规则信息
     });
 });

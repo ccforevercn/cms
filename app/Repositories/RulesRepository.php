@@ -24,14 +24,33 @@ class RulesRepository implements RepositoryInterface
         self::$model = $model;
     }
 
+    /**
+     * 规则列表
+     * @param array $where
+     * @param int $page
+     * @param int $limit
+     * @return bool
+     */
     public static function lst(array $where, int $page, int $limit): bool
     {
         // TODO: Implement lst() method.
+        $where['admin_id'] = array_key_exists('admin_id', $where) ? $where['admin_id'] : null;// 创建管理员
+        if(!$where['admin_id']) $where['admin_id'] = null;
+        $offset = page_to_offset($page, $limit); // 获取起始值
+        $list = self::$model::lst($where, $offset, $limit); // 规则列表
+        return self::setMsg('规则列表', true, $list);
     }
 
+    /**
+     * 规则总数
+     * @param array $where
+     * @return bool
+     */
     public static function count(array $where): bool
     {
         // TODO: Implement count() method.
+        $count = self::$model::count($where); // 规则列表
+        return self::setMsg('规则总数', true, [$count]);
     }
 
     public static function add(array $data): bool

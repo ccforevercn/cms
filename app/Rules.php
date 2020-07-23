@@ -8,6 +8,7 @@ namespace App;
 
 use App\CcForever\interfaces\ModelInterface;
 use App\CcForever\model\BaseModel;
+use Illuminate\Support\Facades\DB;
 
 /**
  * 规则Model
@@ -33,7 +34,8 @@ class Rules extends BaseModel implements ModelInterface
      * @param int $id
      * @return mixed
      */
-    public static function scopeId($query, int $id){
+    public static function scopeId($query, int $id)
+    {
         return $query->where('id', $id);
     }
 
@@ -43,7 +45,8 @@ class Rules extends BaseModel implements ModelInterface
      * @param int $adminId
      * @return mixed
      */
-    public static function scopeAdminId($query, int $adminId){
+    public static function scopeAdminId($query, int $adminId)
+    {
         return $query->where('admin_id', $adminId);
     }
 
@@ -59,6 +62,18 @@ class Rules extends BaseModel implements ModelInterface
     }
 
     /**
+     * 查询条件
+     * @param $query
+     * @param array $where
+     * @return mixed
+     */
+    public static function scopeListWhere($query, array $where)
+    {
+        $query = is_null($where['admin_id']) ? $query : self::adminId((int)$where['admin_id']);
+        return $query;
+    }
+
+    /**
      * 设置表别名
      * @param string $alias
      */
@@ -71,11 +86,33 @@ class Rules extends BaseModel implements ModelInterface
     public static function lst(array $where, int $offset, int $limit): array
     {
         // TODO: Implement lst() method.
+        $prefix = env('DB_PREFIX', 'cc_');
+        $alias = 'r'; // 当前表别名
+        $admins = 'a';// 管理员表别名
+        $menus = 'm';// 菜单表别名
+//        $jsonMenusSql = DB::raw($prefix.$menus.'.id in ('.$prefix.$alias.'.menu_id)');
+        $jsonMenusSql = DB::raw('find_in_set('.$prefix.$menus.'.id,'.$prefix.$alias.'.menu_id)');
+        $select = [$alias.'.add_time', $alias.'.admin_id', $alias.'.id', $alias.'.menu_id', $alias.'.name', $admins.'.real_name as admin_name', DB::raw('group_concat('.$prefix.$menus.'.name order by '.$prefix.$menus.'.id SEPARATOR \'、\') as menu_name')];
+        self::setAlias($alias);
+        $model = new self;
+        $model = $model->from('rules as '.$alias);
+        $model = $model->leftJoin('menus as '.$menus, function ($join) use($jsonMenusSql){ $join->whereRaw($jsonMenusSql); });
+        $model = $model->leftJoin('admins as '.$admins, $alias.'.admin_id', '=', $admins.'.id');
+        $model = $model->listWhere($where);
+        $model = $model->isDel(0);
+        $model = $model->select($select);
+        $model = $model->offset($offset);
+        $model = $model->limit($limit);
+        $list = $model->get();
+        self::setAlias('');
+        $list = is_null($list) ? [] : $list->toArray();
+        return $list;
     }
 
     public static function count(array $where): int
     {
         // TODO: Implement count() method.
+        return self::listWhere($where)->isDel(0)->count();
     }
 
     public static function add(array $data): bool

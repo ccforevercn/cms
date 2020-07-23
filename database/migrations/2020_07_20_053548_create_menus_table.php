@@ -36,6 +36,7 @@ class CreateMenusTable extends Migration
             $table->integer('sort')->default(1)->comment('按钮排序');
             $table->unique('id'); // 编号添加唯一索引
             $table->unique('routes'); // 路由地址添加唯一索引
+            $table->unique('name'); // 按钮名称添加唯一索引
             $table->index('parent_id'); // 父级按钮编号添加普通索引
             $table->index('menu'); // 菜单状态添加普通索引
             $table->index('is_del'); // 删除状态添加普通索引
