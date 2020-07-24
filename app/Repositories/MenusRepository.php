@@ -75,15 +75,24 @@ class MenusRepository implements RepositoryInterface
      * @param array $data
      * @return bool
      */
-    public static function add(array $data): bool
+    public static function insert(array $data): bool
     {
-        // TODO: Implement add() method.
-        $data['icon'] = array_key_exists('icon', $data) ? $data['icon'] : '';// icon是否存在
-        $data['sort'] = array_key_exists('sort', $data) ? (int)$data['sort'] : 1;// 排序是否存在
-        $data['menu'] = array_key_exists('menu', $data) ? (int)$data['menu'] : 1;// 状态是否存在
-        $data['is_del'] = 0;
-        $data['add_time'] = time();
-        $status = self::$model::add($data);
+        // TODO: Implement insert() method.
+        $menu = [];
+        $menu['name'] = array_key_exists('name', $data) ? $data['name'] : null;// 菜单名称
+        $menu['parent_id'] = array_key_exists('parent_id', $data) ? $data['parent_id'] : null;// 菜单父级
+        $menu['routes'] = array_key_exists('routes', $data) ? $data['routes'] : null;// 菜单路由
+        $menu['page'] = array_key_exists('page', $data) ? $data['page'] : '';// 菜单页面
+        $menu['icon'] = array_key_exists('icon', $data) ? $data['icon'] : '';// icon是否存在
+        $menu['sort'] = array_key_exists('sort', $data) ? (int)$data['sort'] : 1;// 排序是否存在
+        $menu['menu'] = array_key_exists('menu', $data) ? (int)$data['menu'] : 1;// 状态是否存在
+        if(is_null($menu['name']) || is_null($menu['parent_id']) || is_null($menu['routes'])){
+            // 菜单名称 || 菜单父级 || 菜单路由 不存在
+            return self::setMsg('参数错误', false);
+        }
+        $menu['is_del'] = 0;
+        $menu['add_time'] = time();
+        $status = self::$model::base_bool('insert', $menu, 0);
         return self::setMsg($status ? '添加成功' : '添加失败', $status);
     }
 
@@ -93,9 +102,13 @@ class MenusRepository implements RepositoryInterface
      * @param int $id
      * @return bool
      */
-    public static function modify(array $data, int $id): bool
+    public static function update(array $data, int $id): bool
     {
-        // TODO: Implement modify() method.
+        // TODO: Implement update() method.
+        $check = self::$model::base_bool('check', [], $id); // 判断菜单是否存在
+        if(!$check){ // 编号不存在
+            return self::setMsg('菜单不存在', true);
+        }
         $routesListIds = self::$model::checkRoutes($data['routes']); // 获取相同路由地址数组
         $routesListIdsCount = count($routesListIds);// 获取相同路由地址条数
         switch ($routesListIdsCount){
@@ -117,23 +130,32 @@ class MenusRepository implements RepositoryInterface
         $menu['icon'] = array_key_exists('icon', $data) ? $data['icon'] : '';
         $menu['sort'] = array_key_exists('sort', $data) ? (int)$data['sort'] : 1;
         $menu['menu'] = array_key_exists('menu', $data) ? (int)$data['menu'] : 0;
-        $status = self::$model::modify($menu, $id);
+        if(is_null($menu['name']) || is_null($menu['parent_id']) || is_null($menu['routes'])){
+            // 菜单名称 || 菜单父级 || 菜单路由 不存在
+            return self::setMsg('参数错误', false);
+        }
+        $select = array_keys($menu); // 修改的字段
+        $message = self::$model::base_array('message', [], $id, $select);
+        if($message === $menu){ // 数据库的数据和修改的数据一致
+            return self::setMsg('修改成功', true);
+        }
+        $status = self::$model::base_bool('update', $menu, $id); // 修改数据
         return self::setMsg($status ? '修改成功' : '修改失败', $status);
     }
 
     /**
-     * 菜单删除(假删除)
+     * 菜单删除
      * @param int $id
      * @return bool
      */
-    public static function recycle(int $id): bool
+    public static function delete(int $id): bool
     {
-        // TODO: Implement recycle() method.
-        $check = self::$model::checkId($id);
+        // TODO: Implement delete() method.
+        $check = self::$model::base_bool('check', [], $id);
         if(!$check){// 编号不存在
             return self::setMsg('删除成功', true);
         }
-        $status = self::$model::recycle($id);
+        $status = self::$model::base_bool('delete', [], $id);
         return self::setMsg($status ? '删除成功' : '删除失败', $status);
     }
 
@@ -145,13 +167,11 @@ class MenusRepository implements RepositoryInterface
     public static function message(int $id): bool
     {
         // TODO: Implement message() method.
-        $check = self::$model::checkId($id);
+        $check = self::$model::base_bool('check', [], $id);
         if(!$check){// 编号不存在
             return self::setMsg('数据不存在', false);
         }
-        $message = self::$model::message($id);
+        $message = self::$model::base_array('message', [], $id, self::$model::$select);
         return self::setMsg('菜单信息', true, $message);
     }
-
-
 }

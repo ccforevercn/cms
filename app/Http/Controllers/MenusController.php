@@ -39,36 +39,36 @@ class MenusController extends BaseController
         return JsonExtend::success('菜单列表', compact('list', 'count'));
     }
 
-    public function add(MenusAddRequest $menusAddRequest, MenusRepository $menusRepository): object
+    public function insert(MenusAddRequest $menusAddRequest, MenusRepository $menusRepository): object
     {
-        // TODO: Implement add() method.
+        // TODO: Implement insert() method.
         $menu = $menusAddRequest->all();
-        $bool = $menusRepository::add($menu);
+        $bool = $menusRepository::insert($menu);
         if($bool){
             return JsonExtend::success($menusRepository::returnMsg('添加成功'));
         }
         return JsonExtend::error($menusRepository::returnMsg('添加失败'));
     }
 
-    public function modify(MenusModifyRequest $menusModifyRequest, MenusRepository $menusRepository): object
+    public function update(MenusModifyRequest $menusModifyRequest, MenusRepository $menusRepository): object
     {
-        // TODO: Implement modify() method.
+        // TODO: Implement update() method.
         $menu = $menusModifyRequest->all();
         $id = (int)$menu['id'];
         if(!$id){ return JsonExtend::error($menusRepository::returnMsg('参数错误')); }
-        $bool = $menusRepository::modify($menu, $id);
+        $bool = $menusRepository::update($menu, $id);
         if($bool){
             return JsonExtend::success($menusRepository::returnMsg('修改成功'));
         }
         return JsonExtend::error($menusRepository::returnMsg('修改失败'));
     }
 
-    public function recycle(MenusRequest $menusRequest, MenusRepository $menusRepository): object
+    public function delete(MenusRequest $menusRequest, MenusRepository $menusRepository): object
     {
-        // TODO: Implement recycle() method.
+        // TODO: Implement delete() method.
         $id = (int)$menusRequest->input('id');
         if(!$id){ return JsonExtend::error($menusRepository::returnMsg('参数错误')); }
-        $bool = $menusRepository::recycle($id);
+        $bool = $menusRepository::delete($id);
         if($bool){
             return JsonExtend::success($menusRepository::returnMsg('删除成功'));
         }

@@ -37,7 +37,7 @@ class AdminsModifyRequest extends Request
             'status' => 'bail|required|integer|min:0|max:1', // 管理员状态
             'found' => 'bail|required|integer|min:0|max:1', // 创建管理员权限
             'rule_id' =>  'bail|required|integer|min:2', // 规则编号
-            'email' =>  ['bail', 'required', new EmailRule(), 'unique:admins'], // 管理员邮箱
+            'email' =>  ['bail', 'required', new EmailRule()], // 管理员邮箱
         ];
     }
 
@@ -67,7 +67,6 @@ class AdminsModifyRequest extends Request
             'rule_id.integer' => '规则编号格式错误',
             'rule_id.min' => '规则编号错误',
             'email.required' => '请填写邮箱',
-            'email.unique' => '邮箱已存在',
         ];
     }
 }

@@ -38,25 +38,25 @@ class AdminsController extends BaseController
         return JsonExtend::success('菜单列表', compact('list', 'count'));
     }
 
-    public function add(AdminsAddRequest $adminsAddRequest, AdminsRepository $adminsRepository): object
+    public function insert(AdminsAddRequest $adminsAddRequest, AdminsRepository $adminsRepository): object
     {
-        // TODO: Implement add() method.
+        // TODO: Implement insert() method.
         $data = $adminsAddRequest->all();
         $user = auth('login')->user();
         if(!$user->found){
             return JsonExtend::error('没有权限创建管理员');
         }
         $data['parent_id'] = $user->id;
-        $bool = $adminsRepository::add($data);
+        $bool = $adminsRepository::insert($data);
         if($bool){
             return JsonExtend::success($adminsRepository::returnMsg('添加成功'));
         }
         return JsonExtend::error($adminsRepository::returnMsg('添加失败'));
     }
 
-    public function modify(AdminsModifyRequest $adminsModifyRequest, AdminsRepository $adminsRepository): object
+    public function update(AdminsModifyRequest $adminsModifyRequest, AdminsRepository $adminsRepository): object
     {
-        // TODO: Implement modify() method.
+        // TODO: Implement update() method.
         $data = $adminsModifyRequest->all();
         $id = (int)$data['id'];
         $user = auth('login')->user();
@@ -64,16 +64,16 @@ class AdminsController extends BaseController
             return JsonExtend::error('没有权限修改管理员');
         }
         $admin['parent_id'] = $user->id;
-        $bool = $adminsRepository::modify($data, $id);
+        $bool = $adminsRepository::update($data, $id);
         if($bool){
             return JsonExtend::success($adminsRepository::returnMsg('修改成功'));
         }
         return JsonExtend::error($adminsRepository::returnMsg('修改失败'));
     }
 
-    public function recycle(): object
+    public function delete(): object
     {
-        // TODO: Implement recycle() method.
+        // TODO: Implement delete() method.
     }
 
     public function message(): object

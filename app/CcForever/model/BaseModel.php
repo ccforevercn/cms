@@ -7,7 +7,6 @@ namespace App\CcForever\model;
 
 
 use App\CcForever\traits\AffairTrait;
-use App\CcForever\traits\ModelTraits;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -17,12 +16,13 @@ use Illuminate\Database\Eloquent\Model;
  */
  class BaseModel extends Model
 {
-    use AffairTrait,ModelTraits;
+    use AffairTrait;
 
      protected $primaryKey; // 表主键
 
      protected $table;// 模型对应的表名
 
      public $timestamps = false; // 不自动更新 created_at 和 updated_at
+
 
  }

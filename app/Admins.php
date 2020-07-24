@@ -6,7 +6,6 @@
 
 namespace App;
 
-use App\CcForever\interfaces\ModelInterface;
 use App\CcForever\model\JWTModel;
 use App\CcForever\traits\ModelTraits;
 
@@ -15,7 +14,7 @@ use App\CcForever\traits\ModelTraits;
  * Class Admins
  * @package App
  */
-class Admins extends  JWTModel implements ModelInterface
+class Admins extends  JWTModel
 {
     use ModelTraits;
 
@@ -23,13 +22,17 @@ class Admins extends  JWTModel implements ModelInterface
 
     protected $table = 'admins'; // 表名称
 
-    public $timestamps = false; // 不自动更新 created_at 和 updated_at
+    public static $modelTable = 'admins';// 表名称 ModelTraits 使用
 
-    protected static $alias; // 表别名
+    public static $modelTableJoin = 'admins.';// 表名称 + .
+
+    public $timestamps = false; // 不自动更新 created_at 和 updated_at
 
     protected static $select = ['id', 'username', 'password', 'real_name', 'status', 'found', 'parent_id', 'rule_id', 'add_time', 'add_ip', 'last_ip', 'last_time', 'login_count', 'is_del']; // 表所有字段
 
     protected static $message = ['id', 'username', 'real_name', 'status', 'found', 'parent_id', 'rule_id', 'add_time', 'add_ip', 'last_ip', 'last_time', 'login_count'];// 基本信息
+
+    public static $adminParentId; // 当前管理员的上级+
 
     /**
      * 管理员编号 唯一索引
@@ -39,7 +42,7 @@ class Admins extends  JWTModel implements ModelInterface
      */
     public static function scopeId($query, int $id)
     {
-        return $query->where(self::$alias.'id', $id);
+        return $query->where(self::$modelTableJoin.'id', $id);
     }
 
     /**
@@ -50,7 +53,7 @@ class Admins extends  JWTModel implements ModelInterface
      */
     public static function scopeUsername($query, string $username)
     {
-        return $query->where(self::$alias.'username', $username);
+        return $query->where(self::$modelTableJoin.'username', $username);
     }
 
     /**
@@ -61,7 +64,7 @@ class Admins extends  JWTModel implements ModelInterface
      */
     public static function scopeParentId($query, int $parentId)
     {
-        return $query->where(self::$alias.'parentId', $parentId);
+        return $query->where(self::$modelTableJoin.'parentId', $parentId);
     }
 
     /**
@@ -72,7 +75,7 @@ class Admins extends  JWTModel implements ModelInterface
      */
     public static function scopeIsDel($query, int $isDel)
     {
-        return $query->where(self::$alias.'is_del', $isDel);
+        return $query->where(self::$modelTableJoin.'is_del', $isDel);
     }
 
     /**
@@ -86,16 +89,6 @@ class Admins extends  JWTModel implements ModelInterface
         $query = strlen($where['parent_id']) ? self::parentId((int)$where['parent_id']) : $query;
         $query = strlen($where['username']) ? self::username($where['username']) : $query;
         return $query;
-    }
-
-    /**
-     * 设置表别名
-     * @param string $alias
-     */
-    public static function setAlias(string $alias): void
-    {
-        // TODO: Implement setAlias() method.
-        self::$alias = strlen($alias) ? $alias.'.' : '';
     }
 
     /**
@@ -125,58 +118,6 @@ class Admins extends  JWTModel implements ModelInterface
         return self::listWhere($where)->isDel(0)->count();
     }
 
-    /**
-     * 管理员添加
-     * @param array $data
-     * @return bool
-     */
-    public static function add(array $data): bool
-    {
-        // TODO: Implement add() method.
-        try{
-            return self::insert($data);
-        }catch (\Exception $exception){
-            return false;
-        }
-    }
-
-    public static function modify(array $data, int $id): bool
-    {
-        // TODO: Implement modify() method.
-    }
-
-    public static function recycle(int $id): bool
-    {
-        // TODO: Implement recycle() method.
-    }
-
-    /**
-     * 管理员信息
-     * @param int $id
-     * @return array
-     */
-    public static function message(int $id): array
-    {
-        // TODO: Implement message() method.
-        return self::id($id)->select(self::$message)->isDel(0)->first()->toArray();
-    }
-
-    /**
-     * 验证编号
-     * @param int $id
-     * @return bool
-     */
-    public static function checkId(int $id): bool
-    {
-        // TODO: Implement checkId() method.
-        $count = self::id($id)->isDel(0)->count();
-        return (bool)$count;
-    }
-
-    public static function select(int $id, string $select): string
-    {
-        // TODO: Implement select() method.
-    }
 
     /**
      * 登陆
@@ -192,5 +133,14 @@ class Admins extends  JWTModel implements ModelInterface
             'last_ip' => app('request')->ip()
         ]);
         return $result === 1;
+    }
+
+    /**
+     * 获取所有管理员
+     */
+    public static function adminIdAndParentIdTotal(): void
+    {
+        $list = self::isDel(0)->select('id', 'parent_id')->get();
+        self::$adminParentId = is_null($list) ? [] : $list->toArray();
     }
 }

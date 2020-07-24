@@ -8,6 +8,7 @@ namespace App;
 
 use App\CcForever\interfaces\ModelInterface;
 use App\CcForever\model\BaseModel;
+use App\CcForever\traits\ModelTraits;
 
 /**
  * 菜单Model
@@ -16,25 +17,16 @@ use App\CcForever\model\BaseModel;
  */
 class Menus extends BaseModel implements ModelInterface
 {
+    use ModelTraits;
     protected $primaryKey = 'id'; // 表主键
 
     protected $table = 'menus'; // 表名称
 
-    protected static $alias; // 表别名
+    public static $modelTable = 'menus';// 表名称 ModelTraits 使用
 
-    protected static $select = ['id', 'name', 'parent_id', 'routes', 'page', 'icon', 'menu', 'add_time', 'sort', 'is_del']; // 表所有字段
+    public static $modelTableJoin = 'menus.';// 表名称 + .
 
-    protected static $message = ['id', 'name', 'parent_id', 'routes', 'page', 'icon', 'menu', 'add_time', 'sort'];// 基本信息
-
-    /**
-     * 设置表别名
-     * @param string $alias
-     */
-    public static function setAlias(string $alias): void
-    {
-        // TODO: Implement setAlias() method.
-        self::$alias = strlen($alias) ? $alias.'.' : '';
-    }
+    public static $select = ['id', 'name', 'parent_id', 'routes', 'page', 'icon', 'menu', 'add_time', 'sort', 'is_del']; // 表所有字段
 
     /**
      * 编号查询 唯一索引
@@ -44,7 +36,7 @@ class Menus extends BaseModel implements ModelInterface
      */
     public static function scopeId($query, int $id)
     {
-        return $query->where(self::$alias.'id', $id);
+        return $query->where(self::$modelTableJoin.'id', $id);
     }
 
     /**
@@ -55,7 +47,7 @@ class Menus extends BaseModel implements ModelInterface
      */
     public static function scopeIds($query, array $ids)
     {
-        return $query->whereIn(self::$alias.'id', $ids);
+        return $query->whereIn(self::$modelTableJoin.'id', $ids);
     }
 
     /**
@@ -66,7 +58,7 @@ class Menus extends BaseModel implements ModelInterface
      */
     public static function scopeRoutes($query, string $routes)
     {
-        return $query->where(self::$alias.'routes', $routes);
+        return $query->where(self::$modelTableJoin.'routes', $routes);
     }
 
     /**
@@ -77,7 +69,7 @@ class Menus extends BaseModel implements ModelInterface
      */
     public static function scopeParentId($query, int $parentId)
     {
-        return $query->where(self::$alias.'parent_id', $parentId);
+        return $query->where(self::$modelTableJoin.'parent_id', $parentId);
     }
 
     /**
@@ -88,7 +80,7 @@ class Menus extends BaseModel implements ModelInterface
      */
     public static function scopeMenu($query, int $menu)
     {
-        return $query->where(self::$alias.'menu', $menu);
+        return $query->where(self::$modelTableJoin.'menu', $menu);
     }
 
     /**
@@ -99,7 +91,7 @@ class Menus extends BaseModel implements ModelInterface
      */
     public static function scopeIsDel($query, int $isDel)
     {
-        return $query->where(self::$alias.'is_del', $isDel);
+        return $query->where(self::$modelTableJoin.'is_del', $isDel);
     }
 
     /**
@@ -147,94 +139,14 @@ class Menus extends BaseModel implements ModelInterface
     }
 
     /**
-     * 添加
-     * @param array $data
-     * @return bool
+     * 批量验证菜单编号
+     * @param array $ids
+     * @return int
      */
-    public static function add(array $data): bool
-    {
-        // TODO: Implement add() method.
-        try{
-            return self::insert($data);
-        }catch (\Exception $exception){
-            return false;
-        }
-    }
-
-    /**
-     * 修改
-     * @param array $data
-     * @param int $id
-     * @return bool
-     */
-    public static function modify(array $data, int $id): bool
-    {
-        // TODO: Implement modify() method.
-        try{
-            $count = self::id($id)->where($data)->count();
-            if($count){ return true; }
-            $update = self::id($id)->update($data);
-            return (bool)$update;
-        }catch (\Exception $exception){
-            return false;
-        }
-    }
-
-    /**
-     * 假删除
-     * @param int $id
-     * @return bool
-     */
-    public static function recycle(int $id): bool
-    {
-        // TODO: Implement recycle() method.
-        $update = self::id($id)->update(['is_del' => 1]);
-        return (bool)$update;
-    }
-
-    /**
-     * 查询
-     * @param int $id
-     * @return array
-     */
-    public static function message(int $id): array
-    {
-        // TODO: Implement message() method.
-        return self::id($id)->isDel(0)->select(self::$message)->first()->toArray();
-    }
-
-    /**
-     * 验证编号
-     * @param int $id
-     * @return bool
-     */
-    public static function checkId(int $id): bool
-    {
-        // TODO: Implement checkId() method.
-        $count = self::id($id)->select(self::$message)->isDel(0)->count();
-        return (bool)$count;
-    }
-
     public static function checkIds(array $ids): int
     {
-        $count = self::ids($ids)->select(self::$message)->isDel(0)->count();
+        $count = self::ids($ids)->select('id')->isDel(0)->count();
         return $count;
-    }
-
-    /**
-     * 查询字段值
-     * @param int $id
-     * @param string $select
-     * @return string
-     */
-    public static function select(int $id, string $select): string
-    {
-        // TODO: Implement select() method.
-        if(!in_array($select, self::$select)){
-            // 字段不存在
-            return false;
-        };
-        return self::id($id)->isDel(0)->value($select);
     }
 
     /**

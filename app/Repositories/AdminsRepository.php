@@ -95,7 +95,12 @@ class AdminsRepository implements RepositoryInterface
         return self::setMsg('菜单总数', true, [$count]);
     }
 
-    public static function add(array $data): bool
+    /**
+     * 管理员添加
+     * @param array $data
+     * @return bool
+     */
+    public static function insert(array $data): bool
     {
         // TODO: Implement add() method.
         $admin = [];
@@ -106,13 +111,13 @@ class AdminsRepository implements RepositoryInterface
         $admin['status'] = array_key_exists('status', $data) ? (int)$data['status'] : null;
         $admin['found'] = array_key_exists('found', $data) ? (int)$data['found'] : null;
         $admin['rule_id'] = array_key_exists('rule_id', $data) ? (int)$data['rule_id'] : null;
-        $admin['email'] = array_key_exists('email', $data) ? (int)$data['email'] : null;
+        $admin['email'] = array_key_exists('email', $data) ? $data['email'] : null;
         if(is_null($admin['username']) || is_null($admin['password']) || is_null($admin['real_name']) || is_null($admin['parent_id']) || is_null($admin['status']) || is_null($admin['found']) || is_null($admin['rule_id']) || is_null($admin['email'])){
             return self::setMsg('参数错误', false);
         }
         $admin['password'] = Hash::make(create_admin_password($admin['password'])); // 加密管理员密码
         // 判断规则是否存在
-        $rulesCount = Rules::checkId($admin['rule_id']);
+        $rulesCount = Rules::base_bool('check', [] , $admin['rule_id']);
         if(!$rulesCount){
             return self::setMsg('规则不存在', false);
         }
@@ -122,25 +127,62 @@ class AdminsRepository implements RepositoryInterface
         $admin['last_ip'] = app('request')->ip();
         $admin['login_count'] = 0;
         $admin['is_del'] = 0;
-        $status = self::$model::add($admin);
+        $status = self::$model::base_bool('insert', $admin, 0); // 添加管理员
         return self::setMsg($status ? '添加成功' : '添加失败', $status);
     }
 
-    public static function modify(array $data, int $id): bool
+    public static function update(array $data, int $id): bool
     {
-        // TODO: Implement modify() method.
-        $check = self::$model::checkId($id);
+        // TODO: Implement update() method.
+        $check = self::$model::base_bool('check', [], $id); // 验证编号
         if(!$check){
             return self::setMsg('参数错误', false);
         }
-        // 获取当前管理员是否是当前管理员或者添加当前管理员的上级+
+        $admin = [];
+        $admin['password'] = array_key_exists('password', $data) ? $data['password'] : '';
+        $admin['real_name'] = array_key_exists('real_name', $data) ? $data['real_name'] : null;
+        $admin['status'] = array_key_exists('status', $data) ? (int)$data['status'] : null;
+        $admin['found'] = array_key_exists('found', $data) ? (int)$data['found'] : null;
+        $admin['rule_id'] = array_key_exists('rule_id', $data) ? (int)$data['rule_id'] : null;
+        $admin['email'] = array_key_exists('email', $data) ? $data['email'] : null;
+        if(is_null($admin['real_name']) || is_null($admin['status']) || is_null($admin['found']) || is_null($admin['rule_id']) || is_null($admin['email'])){
+            return self::setMsg('参数错误', false);
+        }
+        $admin['password'] = strlen($admin['password']) ? Hash::make(create_admin_password($admin['password'])) : ''; // 加密管理员密码
+        if(!strlen($admin['password'])){ // 密码不存在时
+            unset($admin['password']);
+        }
+        // 当前数据库的信息和用户提交的信息是否一致
+        $select = array_keys($admin); // 修改的字段
+        $message = self::$model::base_array('message', [], $id, $select);
+        dd($message, $admin, $message === $admin);
+        if($message === $admin){ // 数据库的数据和修改的数据一致
+            return self::setMsg('修改成功', true);
+        }
 
-        dd($data, $id);
+
+        // 判断当前管理员是否有修改管理员的权限
+
+        self::$model::adminIdAndParentIdTotal();
+        dd(self::$model::$adminParentId, $id, $admin);
+
+
+
+
+//        $select = array_keys($menu); // 修改的字段
+//        $message = self::$model::base_array('message', [], $id, $select);
+//        if($message === $menu){ // 数据库的数据和修改的数据一致
+//            return self::setMsg('修改成功', true);
+//        }
+
+
+//        $parentId = self::$model::select($id, 'parent_id');
+//        dd($parentId, $data, $id);
     }
 
-    public static function recycle(int $id): bool
+    public static function delete(int $id): bool
     {
-        // TODO: Implement recycle() method.
+        // TODO: Implement delete() method.
     }
 
     public static function message(int $id): bool

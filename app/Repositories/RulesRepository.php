@@ -61,9 +61,9 @@ class RulesRepository implements RepositoryInterface
      * @param array $data
      * @return bool
      */
-    public static function add(array $data): bool
+    public static function insert(array $data): bool
     {
-        // TODO: Implement add() method.
+        // TODO: Implement insert() method.
         // 验证菜单编号是否存在
         $menuIds = explode(',', $data['menus_id']);
         $count = Menus::checkIds($menuIds);
@@ -89,21 +89,23 @@ class RulesRepository implements RepositoryInterface
             $ruleMenuDataCount++;
         }
         self::$model::beginTransaction(); // 开启事务
-        $ruleAddBool = self::$model::add($ruleData); // 添加规则
-        $ruleMenusAddBool = self::$model::addMenus($ruleMenuData); // 添加规规则菜单
-        $bool = $ruleAddBool && $ruleMenusAddBool;
+        $ruleStatus = self::$model::base_bool('insert', $ruleData, 0); // 添加规则
+        self::$model::$modelTable = 'rules_menus';
+        $ruleMenusStatus = self::$model::base_bool('insert', $ruleMenuData, 0); // 添加规规则菜单
+        self::$model::$modelTable = 'rules';
+        $bool = $ruleStatus && $ruleMenusStatus;
         self::$model::checkTransaction($bool); // 事务提交
         return self::setMsg($bool ? '添加成功' : '添加失败', $bool);
     }
 
-    public static function modify(array $data, int $id): bool
+    public static function update(array $data, int $id): bool
     {
-        // TODO: Implement modify() method.
+        // TODO: Implement update() method.
     }
 
-    public static function recycle(int $id): bool
+    public static function delete(int $id): bool
     {
-        // TODO: Implement recycle() method.
+        // TODO: Implement delete() method.
     }
 
     public static function message(int $id): bool

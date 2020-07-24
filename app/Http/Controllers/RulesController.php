@@ -49,28 +49,28 @@ class RulesController extends BaseController
      * @param RulesRepository $rulesRepository
      * @return object
      */
-    public function  add(RulesAddRequest $rulesAddRequest, RulesRepository $rulesRepository): object
+    public function  insert(RulesAddRequest $rulesAddRequest, RulesRepository $rulesRepository): object
     {
-        // TODO: Implement add() method.
+        // TODO: Implement insert() method.
         $data = $rulesAddRequest->all();
         $admin = auth('login')->user();
         $data['admin_id'] = $admin->id;
         $data['username'] = $admin->username;
-        $bool = $rulesRepository::add($data);
+        $bool = $rulesRepository::insert($data);
         if($bool){
             return JsonExtend::success($rulesRepository::returnMsg('添加成功'));
         }
         return JsonExtend::error($rulesRepository::returnMsg('添加失败'));
     }
 
-    public function modify(): object
+    public function update(): object
     {
-        // TODO: Implement modify() method.
+        // TODO: Implement update() method.
     }
 
-    public function recycle(): object
+    public function delete(): object
     {
-        // TODO: Implement recycle() method.
+        // TODO: Implement delete() method.
     }
 
     public function message(): object
