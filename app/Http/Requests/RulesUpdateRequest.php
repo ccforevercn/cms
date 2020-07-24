@@ -7,10 +7,10 @@ namespace App\Http\Requests;
 
 /**
  * 规则修改验证
- * Class RulesModifyRequest
+ * Class RulesUpdateRequest
  * @package App\Http\Requests
  */
-class RulesModifyRequest extends Request
+class RulesUpdateRequest extends Request
 {
     /**
      * Determine if the user is authorized to make this request.

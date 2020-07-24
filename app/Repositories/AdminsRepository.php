@@ -131,6 +131,12 @@ class AdminsRepository implements RepositoryInterface
         return self::setMsg($status ? '添加成功' : '添加失败', $status);
     }
 
+    /**
+     * 管理员修改
+     * @param array $data
+     * @param int $id
+     * @return bool
+     */
     public static function update(array $data, int $id): bool
     {
         // TODO: Implement update() method.
@@ -159,21 +165,46 @@ class AdminsRepository implements RepositoryInterface
             }
         }
         // 判断当前管理员是否有修改管理员的权限
-//        self::$model::adminIdAndParentIdTotal();
-//        $data['parent_id']; // 上级管理员
-//        dd(self::$model::$adminParentId);
+//        self::$model::adminIdAndParentIdTotal(); // 获取所有管理员  在swoole中执行
+//        if(!in_array($id, self::$model::$adminParentId)){
+//            return self::setMsg('没有权限修改'.$admin['real_name'].'管理员', true);
+//        }
         $status = self::$model::base_bool('update', $admin, $id); // 修改数据
         return self::setMsg($status ? '修改成功' : '修改失败', $status);
     }
 
+    /**
+     * 管理员删除
+     * @param int $id
+     * @return bool
+     */
     public static function delete(int $id): bool
     {
         // TODO: Implement delete() method.
+        $check = self::$model::base_bool('check', [], $id); // 验证编号
+        if(!$check){
+            return self::setMsg('已删除', true);
+        }
+        // 判断当前管理员是否有删除管理员的权限
+//        self::$model::adminIdAndParentIdTotal(); // 获取所有管理员  在swoole中执行
+//        if(!in_array($id, self::$model::$adminParentId)){
+//            return self::setMsg('没有权限修改'.$admin['real_name'].'管理员', true);
+//        }
+        $status = self::$model::base_bool('delete', [], $id); // 删除数据
+        return self::setMsg($status ? '删除成功' : '删除失败', $status);
     }
 
     public static function message(int $id): bool
     {
         // TODO: Implement message() method.
+        $check = self::$model::base_bool('check', [], $id); // 验证编号
+        if(!$check){
+            return self::setMsg('管理员不存在', false);
+        }
+        $select = self::$model::$message;
+        $message = self::$model::base_array('message', [], $id, $select); // 查询管理员信息
+        $status = count($message);
+        return self::setMsg($status ? '管理员信息' : '获取失败', $status, $message);
     }
 
 

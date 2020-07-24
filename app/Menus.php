@@ -26,7 +26,9 @@ class Menus extends BaseModel implements ModelInterface
 
     public static $modelTableJoin = 'menus.';// 表名称 + .
 
-    public static $select = ['id', 'name', 'parent_id', 'routes', 'page', 'icon', 'menu', 'add_time', 'sort', 'is_del']; // 表所有字段
+    protected static $select = ['id', 'name', 'parent_id', 'routes', 'page', 'icon', 'menu', 'add_time', 'sort', 'is_del']; // 表所有字段
+
+    public static $message = ['id', 'name', 'parent_id', 'routes', 'page', 'icon', 'menu', 'add_time', 'sort']; // 基本信息
 
     /**
      * 编号查询 唯一索引

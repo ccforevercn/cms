@@ -9,9 +9,9 @@ namespace App\Http\Controllers;
 use App\CcForever\controller\BaseController;
 use App\CcForever\extend\JsonExtend;
 use App\CcForever\traits\ControllerTrait;
-use App\Http\Requests\MenusAddRequest;
+use App\Http\Requests\MenusInsertRequest;
 use App\Http\Requests\MenusListRequest;
-use App\Http\Requests\MenusModifyRequest;
+use App\Http\Requests\MenusUpdateRequest;
 use App\Http\Requests\MenusRequest;
 use App\Repositories\MenusRepository;
 
@@ -39,7 +39,7 @@ class MenusController extends BaseController
         return JsonExtend::success('菜单列表', compact('list', 'count'));
     }
 
-    public function insert(MenusAddRequest $menusAddRequest, MenusRepository $menusRepository): object
+    public function insert(MenusInsertRequest $menusAddRequest, MenusRepository $menusRepository): object
     {
         // TODO: Implement insert() method.
         $menu = $menusAddRequest->all();
@@ -50,7 +50,7 @@ class MenusController extends BaseController
         return JsonExtend::error($menusRepository::returnMsg('添加失败'));
     }
 
-    public function update(MenusModifyRequest $menusModifyRequest, MenusRepository $menusRepository): object
+    public function update(MenusUpdateRequest $menusModifyRequest, MenusRepository $menusRepository): object
     {
         // TODO: Implement update() method.
         $menu = $menusModifyRequest->all();

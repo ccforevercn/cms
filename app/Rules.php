@@ -29,7 +29,7 @@ class Rules extends BaseModel implements ModelInterface
 
     protected static $select = ['id', 'name', 'menu_id', 'admin_id', 'add_time', 'is_del']; // 表所有字段
 
-    protected static $message = ['id', 'name', 'menu_id', 'admin_id', 'add_time', 'sort'];// 基本信息
+    public static $message = ['id', 'name', 'menu_id', 'admin_id', 'add_time', 'sort'];// 基本信息
 
     /**
      * 规则编号查询 唯一索引

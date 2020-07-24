@@ -8,10 +8,10 @@ use App\Rules\EmailRule;
 
 /**
  * 管理员修改验证
- * Class AdminsModifyRequest
+ * Class AdminsUpdateRequest
  * @package App\Http\Requests
  */
-class AdminsModifyRequest extends Request
+class AdminsUpdateRequest extends Request
 {
     /**
      * Determine if the user is authorized to make this request.

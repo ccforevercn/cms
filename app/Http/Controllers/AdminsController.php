@@ -9,9 +9,10 @@ namespace App\Http\Controllers;
 use App\CcForever\controller\BaseController;
 use App\CcForever\extend\JsonExtend;
 use App\CcForever\traits\ControllerTrait;
-use App\Http\Requests\AdminsAddRequest;
+use App\Http\Requests\AdminsInsertRequest;
 use App\Http\Requests\AdminsListRequest;
-use App\Http\Requests\AdminsModifyRequest;
+use App\Http\Requests\AdminsRequest;
+use App\Http\Requests\AdminsUpdateRequest;
 use App\Repositories\AdminsRepository;
 
 /**
@@ -23,6 +24,12 @@ class AdminsController extends BaseController
 {
     use ControllerTrait;
 
+    /**
+     * 管理员列表
+     * @param AdminsListRequest $adminsListRequest
+     * @param AdminsRepository $adminsRepository
+     * @return object
+     */
     public function lst(AdminsListRequest $adminsListRequest, AdminsRepository $adminsRepository): object
     {
         // TODO: Implement lst() method.
@@ -38,7 +45,13 @@ class AdminsController extends BaseController
         return JsonExtend::success('菜单列表', compact('list', 'count'));
     }
 
-    public function insert(AdminsAddRequest $adminsAddRequest, AdminsRepository $adminsRepository): object
+    /**
+     * 管理员添加
+     * @param AdminsInsertRequest $adminsAddRequest
+     * @param AdminsRepository $adminsRepository
+     * @return object
+     */
+    public function insert(AdminsInsertRequest $adminsAddRequest, AdminsRepository $adminsRepository): object
     {
         // TODO: Implement insert() method.
         $data = $adminsAddRequest->all();
@@ -54,7 +67,13 @@ class AdminsController extends BaseController
         return JsonExtend::error($adminsRepository::returnMsg('添加失败'));
     }
 
-    public function update(AdminsModifyRequest $adminsModifyRequest, AdminsRepository $adminsRepository): object
+    /**
+     * 管理员修改
+     * @param AdminsUpdateRequest $adminsModifyRequest
+     * @param AdminsRepository $adminsRepository
+     * @return object
+     */
+    public function update(AdminsUpdateRequest $adminsModifyRequest, AdminsRepository $adminsRepository): object
     {
         // TODO: Implement update() method.
         $data = $adminsModifyRequest->all();
@@ -71,13 +90,37 @@ class AdminsController extends BaseController
         return JsonExtend::error($adminsRepository::returnMsg('修改失败'));
     }
 
-    public function delete(): object
+    /**
+     * 管理员删除
+     * @param AdminsRequest $adminsRequest
+     * @param AdminsRepository $adminsRepository
+     * @return object
+     */
+    public function delete(AdminsRequest $adminsRequest, AdminsRepository $adminsRepository): object
     {
         // TODO: Implement delete() method.
+        $id = (int)$adminsRequest->input('id', 0);
+        if(!$id){
+            return JsonExtend::error('参数错误');
+        }
+        $bool = $adminsRepository::delete($id);
+        if($bool){
+            return JsonExtend::success($adminsRepository::returnMsg('删除成功'));
+        }
+        return JsonExtend::error($adminsRepository::returnMsg('删除失败'));
     }
 
-    public function message(): object
+    public function message(AdminsRequest $adminsRequest, AdminsRepository $adminsRepository): object
     {
         // TODO: Implement message() method.
+        $id = (int)$adminsRequest->input('id', 0);
+        if(!$id){
+            return JsonExtend::error('参数错误');
+        }
+        $bool = $adminsRepository::message($id);
+        if($bool){
+            return JsonExtend::success($adminsRepository::returnMsg('管理员信息'), $adminsRepository::returnData([]));
+        }
+        return JsonExtend::error($adminsRepository::returnMsg('删除失败'));
     }
 }

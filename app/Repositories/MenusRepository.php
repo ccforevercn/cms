@@ -171,7 +171,7 @@ class MenusRepository implements RepositoryInterface
         if(!$check){// 编号不存在
             return self::setMsg('数据不存在', false);
         }
-        $message = self::$model::base_array('message', [], $id, self::$model::$select);
+        $message = self::$model::base_array('message', [], $id, self::$model::$message);
         return self::setMsg('菜单信息', true, $message);
     }
 }

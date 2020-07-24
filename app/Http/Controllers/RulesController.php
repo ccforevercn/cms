@@ -9,7 +9,7 @@ namespace App\Http\Controllers;
 use App\CcForever\controller\BaseController;
 use App\CcForever\extend\JsonExtend;
 use App\CcForever\traits\ControllerTrait;
-use App\Http\Requests\RulesAddRequest;
+use App\Http\Requests\RulesInsertRequest;
 use App\Http\Requests\RulesListRequest;
 use App\Repositories\RulesRepository;
 
@@ -45,11 +45,11 @@ class RulesController extends BaseController
 
     /**
      * 规则添加
-     * @param RulesAddRequest $rulesAddRequest
+     * @param RulesInsertRequest $rulesAddRequest
      * @param RulesRepository $rulesRepository
      * @return object
      */
-    public function  insert(RulesAddRequest $rulesAddRequest, RulesRepository $rulesRepository): object
+    public function  insert(RulesInsertRequest $rulesAddRequest, RulesRepository $rulesRepository): object
     {
         // TODO: Implement insert() method.
         $data = $rulesAddRequest->all();

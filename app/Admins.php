@@ -30,7 +30,7 @@ class Admins extends  JWTModel
 
     protected static $select = ['id', 'username', 'password', 'real_name', 'status', 'found', 'parent_id', 'rule_id', 'add_time', 'add_ip', 'last_ip', 'last_time', 'login_count', 'is_del']; // 表所有字段
 
-    protected static $message = ['id', 'username', 'real_name', 'status', 'found', 'parent_id', 'rule_id', 'add_time', 'add_ip', 'last_ip', 'last_time', 'login_count'];// 基本信息
+    public static $message = ['id', 'username', 'real_name', 'status', 'found', 'parent_id', 'rule_id', 'add_time', 'add_ip', 'last_ip', 'last_time', 'login_count'];// 基本信息
 
     public static $adminParentId; // 当前管理员的上级+
 
