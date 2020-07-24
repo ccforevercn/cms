@@ -11,6 +11,7 @@ use App\CcForever\extend\JsonExtend;
 use App\CcForever\traits\ControllerTrait;
 use App\Http\Requests\RulesInsertRequest;
 use App\Http\Requests\RulesListRequest;
+use App\Http\Requests\RulesUpdateRequest;
 use App\Repositories\RulesRepository;
 
 /**
@@ -63,9 +64,23 @@ class RulesController extends BaseController
         return JsonExtend::error($rulesRepository::returnMsg('添加失败'));
     }
 
-    public function update(): object
+    /**
+     * 规则修改
+     * @param RulesUpdateRequest $rulesUpdateRequest
+     * @param RulesRepository $rulesRepository
+     * @return object
+     */
+    public function update(RulesUpdateRequest $rulesUpdateRequest, RulesRepository $rulesRepository): object
     {
         // TODO: Implement update() method.
+        $data = $rulesUpdateRequest->all();
+        $id = (int)$data['id'];
+        $data['admin_id'] = auth('login')->id();
+        $bool = $rulesRepository::update($data, $id);
+        if($bool){
+            return JsonExtend::success($rulesRepository::returnMsg('修改成功'));
+        }
+        return JsonExtend::error($rulesRepository::returnMsg('修改失败'));
     }
 
     public function delete(): object

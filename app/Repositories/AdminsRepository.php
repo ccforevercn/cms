@@ -167,7 +167,7 @@ class AdminsRepository implements RepositoryInterface
         // 判断当前管理员是否有修改管理员的权限
 //        self::$model::adminIdAndParentIdTotal(); // 获取所有管理员  在swoole中执行
 //        if(!in_array($id, self::$model::$adminParentId)){
-//            return self::setMsg('没有权限修改'.$admin['real_name'].'管理员', true);
+//            return self::setMsg('没有权限修改'.$admin['real_name'].'管理员', false);
 //        }
         $status = self::$model::base_bool('update', $admin, $id); // 修改数据
         return self::setMsg($status ? '修改成功' : '修改失败', $status);
@@ -188,7 +188,7 @@ class AdminsRepository implements RepositoryInterface
         // 判断当前管理员是否有删除管理员的权限
 //        self::$model::adminIdAndParentIdTotal(); // 获取所有管理员  在swoole中执行
 //        if(!in_array($id, self::$model::$adminParentId)){
-//            return self::setMsg('没有权限修改'.$admin['real_name'].'管理员', true);
+//            return self::setMsg('没有权限修改'.$admin['real_name'].'管理员', false);
 //        }
         $status = self::$model::base_bool('delete', [], $id); // 删除数据
         return self::setMsg($status ? '删除成功' : '删除失败', $status);

@@ -6,6 +6,7 @@
 
 namespace App\Repositories;
 
+use App\Admins;
 use App\CcForever\interfaces\RepositoryInterface;
 use App\CcForever\traits\RepositoryReturnMsgData;
 use App\Menus;
@@ -65,33 +66,37 @@ class RulesRepository implements RepositoryInterface
     {
         // TODO: Implement insert() method.
         // 验证菜单编号是否存在
-        $menuIds = explode(',', $data['menus_id']);
+        $menuIdsStr = array_key_exists('menus_id', $data) ? $data['menus_id'] : null;
+        if(is_null($menuIdsStr)){
+            return self::setMsg('菜单不存在', false);
+        }
+        $menuIds = explode(',', $menuIdsStr);
         $count = Menus::checkIds($menuIds);
         if($count !== count($menuIds)){
             return self::setMsg('菜单不存在', false);
         }
         $unique = create_admin_password(create_millisecond(), $data['username'].$data['admin_id']);
         $time = time();
-        $ruleData = []; // 规则数据
-        $ruleData['name'] = $data['name'];
-        $ruleData['unique'] = $unique;
-        $ruleData['admin_id'] = $data['admin_id'];
-        $ruleData['add_time'] = $time;
-        $ruleData['is_del'] = 0;
-        $ruleMenuData = []; // 规则菜单数据
-        $ruleMenuDataCount = 0;
+        $rule = []; // 规则数据
+        $rule['name'] = array_key_exists('name', $data) ? $data['name'] : null;
+        $rule['unique'] = $unique;
+        $rule['admin_id'] = array_key_exists('admin_id', $data) ? $data['admin_id'] : null;
+        $rule['add_time'] = $time;
+        $rule['is_del'] = 0;
+        $ruleMenu = []; // 规则菜单数据
+        $ruleMenuCount = 0;
         foreach ($menuIds as $menuId){
-            $ruleMenuData[$ruleMenuDataCount]['unique'] = $unique;
-            $ruleMenuData[$ruleMenuDataCount]['menu_id'] = (int)$menuId;
-            $ruleMenuData[$ruleMenuDataCount]['add_time'] = $time;
-            $ruleMenuData[$ruleMenuDataCount]['clear_time'] = $time;
-            $ruleMenuData[$ruleMenuDataCount]['is_del'] = 0;
-            $ruleMenuDataCount++;
+            $ruleMenu[$ruleMenuCount]['unique'] = $unique;
+            $ruleMenu[$ruleMenuCount]['menu_id'] = (int)$menuId;
+            $ruleMenu[$ruleMenuCount]['add_time'] = $time;
+            $ruleMenu[$ruleMenuCount]['clear_time'] = $time;
+            $ruleMenu[$ruleMenuCount]['is_del'] = 0;
+            $ruleMenuCount++;
         }
         self::$model::beginTransaction(); // 开启事务
-        $ruleStatus = self::$model::base_bool('insert', $ruleData, 0); // 添加规则
+        $ruleStatus = self::$model::base_bool('insert', $rule, 0); // 添加规则
         self::$model::$modelTable = 'rules_menus';
-        $ruleMenusStatus = self::$model::base_bool('insert', $ruleMenuData, 0); // 添加规规则菜单
+        $ruleMenusStatus = self::$model::base_bool('insert', $ruleMenu, 0); // 添加规规则菜单
         self::$model::$modelTable = 'rules';
         $bool = $ruleStatus && $ruleMenusStatus;
         self::$model::checkTransaction($bool); // 事务提交
@@ -101,6 +106,34 @@ class RulesRepository implements RepositoryInterface
     public static function update(array $data, int $id): bool
     {
         // TODO: Implement update() method.
+        // 验证编号是否存在
+        $check = self::$model::base_bool('check', [], $id);
+        if(!$check){
+            return self::setMsg('参数错误', false);
+        }
+        // 验证菜单编号是否存在
+        $menuIdsStr = array_key_exists('menus_id', $data) ? $data['menus_id'] : null;
+        if(is_null($menuIdsStr)){
+            return self::setMsg('菜单不存在', false);
+        }
+        $menuIds = explode(',', $menuIdsStr);
+        $count = Menus::checkIds($menuIds);
+        if($count !== count($menuIds)){
+            return self::setMsg('菜单不存在', false);
+        }
+        $rule = []; // 规则修改信息
+        $rule['name'] = array_key_exists('name', $data) ? $data['name'] : null;
+        $rule['name'] = array_key_exists('name', $data) ? $data['name'] : null;
+        $adminId = array_key_exists('admin_id', $data) ? $data['admin_id'] : null;
+        // 规则修改信息不完整
+        if(is_null($rule['name']) || is_null($adminId)){
+            return self::setMsg('参数错误', false);
+        }
+        // 验证当前管理员是否有修改权限
+//        if(!in_array($adminId, Admins::$adminParentId)){
+//            return self::setMsg('没有权限修改'.$rule['name'].'规则', false);
+//        }
+        dd($rule, $id, $menuIds);
     }
 
     public static function delete(int $id): bool
