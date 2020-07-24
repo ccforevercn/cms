@@ -151,33 +151,19 @@ class AdminsRepository implements RepositoryInterface
         $admin['password'] = strlen($admin['password']) ? Hash::make(create_admin_password($admin['password'])) : ''; // 加密管理员密码
         if(!strlen($admin['password'])){ // 密码不存在时
             unset($admin['password']);
+            // 当前数据库的信息和用户提交的信息是否一致
+            $select = array_keys($admin); // 修改的字段
+            $message = self::$model::base_array('message', [], $id, $select);
+            if($message === $admin){ // 数据库的数据和修改的数据一致
+                return self::setMsg('修改成功', true);
+            }
         }
-        // 当前数据库的信息和用户提交的信息是否一致
-        $select = array_keys($admin); // 修改的字段
-        $message = self::$model::base_array('message', [], $id, $select);
-        dd($message, $admin, $message === $admin);
-        if($message === $admin){ // 数据库的数据和修改的数据一致
-            return self::setMsg('修改成功', true);
-        }
-
-
         // 判断当前管理员是否有修改管理员的权限
-
-        self::$model::adminIdAndParentIdTotal();
-        dd(self::$model::$adminParentId, $id, $admin);
-
-
-
-
-//        $select = array_keys($menu); // 修改的字段
-//        $message = self::$model::base_array('message', [], $id, $select);
-//        if($message === $menu){ // 数据库的数据和修改的数据一致
-//            return self::setMsg('修改成功', true);
-//        }
-
-
-//        $parentId = self::$model::select($id, 'parent_id');
-//        dd($parentId, $data, $id);
+//        self::$model::adminIdAndParentIdTotal();
+//        $data['parent_id']; // 上级管理员
+//        dd(self::$model::$adminParentId);
+        $status = self::$model::base_bool('update', $admin, $id); // 修改数据
+        return self::setMsg($status ? '修改成功' : '修改失败', $status);
     }
 
     public static function delete(int $id): bool
