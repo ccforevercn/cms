@@ -15,6 +15,22 @@ class AdminTokens extends BaseModel
 
     protected $table = 'admin_tokens';
 
+    public static function scopeId($query, int $id)
+    {
+        return $query->where('id', $id);
+    }
+
+
+    public static function scopeToken($query, string $token)
+    {
+        return $query->where('token', $token);
+    }
+
+    public static function scopeAdminId($query, int $adminId)
+    {
+        return $query->where('admin_id', $adminId);
+    }
+
     /**
      * 添加登陆记录
      * @param string $username
@@ -31,6 +47,24 @@ class AdminTokens extends BaseModel
        }catch (\Exception $exception){
            return false;
        }
+    }
+
+    /**
+     * 管理员编号
+     * @param string $token
+     * @return int
+     */
+    public static function tokenSelectAdminId(string $token):int
+    {
+        $count = self::token($token)->count();
+        if(!$count){// 未登录
+            return 0;
+        }
+        $message = self::token($token)->first()->toArray();
+        if($message['stop_time'] <= time()){ // 登录过期
+            return 0;
+        }
+        return $message['admin_id']; // 返回管理员编号
     }
 
 

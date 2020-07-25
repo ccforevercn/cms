@@ -31,6 +31,7 @@ class CreateAdminTokensTable extends Migration
             $table->integer('start_time')->comment('管理员登陆token添加时间');
             $table->integer('stop_time')->comment('管理员登陆token过期时间');
             $table->unique('id'); // 编号 添加唯一索引
+            $table->unique('token'); // 管理员登陆token添加唯一索引
             $table->index('admin_id'); //  管理员编号 添加普通索引
         });
     }

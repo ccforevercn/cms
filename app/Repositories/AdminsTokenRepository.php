@@ -18,8 +18,18 @@ class AdminsTokenRepository
 {
     use RepositoryReturnMsgData;
 
-    public function __construct(AdminTokens $model) {
-        self::$model = $model;
+    public function __construct(AdminTokens $model = null)
+    {
+        if(is_null($model)){
+            self::loading();
+        }else{
+            self::$model = $model;
+        }
+    }
+
+    public static function loading(): void
+    {
+        self::$model = new AdminTokens();
     }
 
     public static function login(array $data): bool
@@ -34,5 +44,16 @@ class AdminsTokenRepository
         }
         $status = self::$model::login($username, $token, $admin_id, $start_time, $stop_time);
         return self::setMsg("登陆成功", $status);
+    }
+
+    /**
+     * 验证Token并返回管理员编号
+     * @param string $token
+     * @return int
+     */
+    public static function checkToken(string $token):int
+    {
+        $adminId = self::$model::tokenSelectAdminId($token);
+        return (int)$adminId;
     }
 }

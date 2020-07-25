@@ -21,8 +21,20 @@ class AdminsRepository implements RepositoryInterface
 {
     use RepositoryReturnMsgData;
 
-    public function __construct(Admins $model) {
-        self::$model = $model;
+    public function __construct(Admins $model = null) {
+        if(is_null($model)){
+            self::loading();
+        }else{
+            self::$model = $model;
+        }
+    }
+
+    /**
+     * 手动加载Model
+     */
+    public static function loading(): void
+    {
+        self::$model = new Admins();
     }
 
     /**
@@ -49,11 +61,11 @@ class AdminsRepository implements RepositoryInterface
         if(is_null($id)){ // 管理员不存在
             return self::setMsg('用户不存在', false);
         }
-        $check = self::$model::checkId($id);
+        $check = self::$model::base_bool('check', [], $id); // 判断管理员是否存在
         if(!$check){ // 管理员已删除
             return self::setMsg('用户不存在', false);
         }
-        $userInfo = self::$model::message($id); // 管理员登陆信息
+        $userInfo = self::$model::base_array('message', [], $id, self::$model::$message); // 管理员登陆信息
         if(!$userInfo['status']){// 管理员账号已锁定
             return self::setMsg('账号已锁定', false);
         }
@@ -186,7 +198,6 @@ class AdminsRepository implements RepositoryInterface
             return self::setMsg('已删除', true);
         }
         // 判断当前管理员是否有删除管理员的权限
-//        self::$model::adminIdAndParentIdTotal(); // 获取所有管理员  在swoole中执行
 //        if(!in_array($id, self::$model::$adminParentId)){
 //            return self::setMsg('没有权限修改'.$admin['real_name'].'管理员', false);
 //        }
@@ -207,5 +218,11 @@ class AdminsRepository implements RepositoryInterface
         return self::setMsg($status ? '管理员信息' : '获取失败', $status, $message);
     }
 
+    public static function adminTotalIds(int  $adminId)
+    {
+        self::$model::adminIdAndParentIdTotal(); // 获取所有管理员
+        $adminTotalIds = self::$model::$adminParentId;
+        dump($adminTotalIds);
+    }
 
 }
