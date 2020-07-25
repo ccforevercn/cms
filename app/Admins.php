@@ -32,7 +32,11 @@ class Admins extends  JWTModel
 
     public static $message = ['id', 'username', 'real_name', 'status', 'found', 'parent_id', 'rule_id', 'add_time', 'add_ip', 'last_ip', 'last_time', 'login_count'];// 基本信息
 
-    public static $adminParentId; // 当前管理员的上级+
+    /**
+     * 当前管理员的上级+
+     * @var array
+     */
+    public static $adminParentIds = [];
 
     /**
      * 管理员编号 唯一索引
@@ -140,7 +144,6 @@ class Admins extends  JWTModel
      */
     public static function adminIdAndParentIdTotal(): void
     {
-        $list = self::isDel(0)->select('id', 'parent_id')->get();
-        self::$adminParentId = is_null($list) ? [] : $list->toArray();
+        self::$adminParentIds = self::isDel(0)->pluck('parent_id', 'id');
     }
 }

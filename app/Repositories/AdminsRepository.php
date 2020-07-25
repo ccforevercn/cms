@@ -218,11 +218,42 @@ class AdminsRepository implements RepositoryInterface
         return self::setMsg($status ? '管理员信息' : '获取失败', $status, $message);
     }
 
-    public static function adminTotalIds(int  $adminId)
+    /**
+     * 获取当前管理员和上级管理员+
+     * @param int $adminId
+     */
+    public static function handleAdminTotalIds(int  $adminId): void
     {
-        self::$model::adminIdAndParentIdTotal(); // 获取所有管理员
-        $adminTotalIds = self::$model::$adminParentId;
-        dump($adminTotalIds);
+//        $parentIds = [];
+//        $parentIds = self::adminTotalIds($adminId, $parentIds);
+//        self::$model::$adminParentIds = $parentIds;
+        self::$model::$adminParentIds = [3,1];
+    }
+
+    /**
+     * 重置当前管理员和上级管理员+
+     * @param int $adminId
+     * @param array $parentIds
+     * @return array
+     */
+    public static function adminTotalIds(int  $adminId, array $parentIds): array
+    {
+        $newAdminId = $adminId;
+        $adminTotalIds = self::$model::$adminParentIds;
+        if(!count($adminTotalIds)){ // 所有管理员为空时
+            self::$model::adminIdAndParentIdTotal(); // 获取所有管理员
+            $adminTotalIds = self::$model::$adminParentIds;
+        }
+        foreach ($adminTotalIds as $id=>$parentId){
+            if($adminId == $id){
+                $parentIds[] = $adminId;
+                $newAdminId = $parentId;
+            }
+        }
+        if($newAdminId != $adminId && $newAdminId){
+            return self::adminTotalIds($newAdminId, $parentIds);
+        }
+        return $parentIds;
     }
 
 }
