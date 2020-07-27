@@ -198,7 +198,8 @@ class AdminsRepository implements RepositoryInterface
             return self::setMsg('已删除', true);
         }
         // 判断当前管理员是否有删除管理员的权限
-//        if(!in_array($id, self::$model::$adminParentId)){
+        dd(self::$model::$adminParentIds);
+//        if(!in_array($id, self::$model::$adminParentIds)){
 //            return self::setMsg('没有权限修改'.$admin['real_name'].'管理员', false);
 //        }
         $status = self::$model::base_bool('delete', [], $id); // 删除数据
@@ -228,6 +229,7 @@ class AdminsRepository implements RepositoryInterface
 //        $parentIds = self::adminTotalIds($adminId, $parentIds);
 //        self::$model::$adminParentIds = $parentIds;
         self::$model::$adminParentIds = [3,1];
+        var_dump(self::$model::$adminParentIds);
     }
 
     /**

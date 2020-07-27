@@ -84,7 +84,7 @@ class ManagesExtend
      *
      *
      * var ws = new WebSocket('ws://192.168.99.100:2222')
-     * ws.send('{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC93d3cuY21zLm5ldFwvYXBpXC9ocmtqXC9sb2dpbiIsImlhdCI6MTU5NTY0NzgwNCwiZXhwIjoxNTk1NjgzODA0LCJuYmYiOjE1OTU2NDc4MDQsImp0aSI6IktDdEZTdnpIZWRTemx5cmYiLCJzdWIiOjEsInBydiI6ImQ1NzEwZGZiZjQ3YmRmMDFiMWQ3YmFlOTMxNDA4ZDUxZjc3YTA5MjkifQ.uwHFryBbfeUlWwUsOWXVsNIohs9wyQY38naRQs1xth0","type":"admintotalids"}')
+     * ws.send('{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC93d3cuY21zLm5ldFwvYXBpXC9ocmtqXC9sb2dpbiIsImlhdCI6MTU5NTgzODE0OCwiZXhwIjoxNTk1ODc0MTQ4LCJuYmYiOjE1OTU4MzgxNDgsImp0aSI6IklxQ1BqOFpiZjNubVRsRkwiLCJzdWIiOjEsInBydiI6ImQ1NzEwZGZiZjQ3YmRmMDFiMWQ3YmFlOTMxNDA4ZDUxZjc3YTA5MjkifQ.2a1CoTHSNydrbmtHdJWBf6rV7zva2yTGRWeCio7hwFI","type":"admintotalids"}')
      *
      *
      *
