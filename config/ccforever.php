@@ -5,5 +5,5 @@
  */
 
 return [
-    'secret' => env('ADMIN_PREFIX', 'ccforever'),
+    'admin_prefix' => env('ADMIN_PREFIX', 'ccforever'),
 ];
