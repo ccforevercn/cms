@@ -7,6 +7,7 @@
 namespace App\Repositories;
 
 use App\Admins;
+use App\CcForever\extend\PRedisExtend;
 use App\CcForever\interfaces\RepositoryInterface;
 use App\CcForever\traits\RepositoryReturnMsgData;
 use App\Rules;
@@ -198,7 +199,14 @@ class AdminsRepository implements RepositoryInterface
             return self::setMsg('已删除', true);
         }
         // 判断当前管理员是否有删除管理员的权限
-        dd(self::$model::$adminParentIds);
+        try{
+            $pRedis = new PRedisExtend();
+            $adminParentIds = $pRedis::redis()->hget(self::$model::$redisHashName, self::$model::$redisHashKeyParentIdsSelect);
+            dd($adminParentIds);
+        }catch (\Exception $exception){
+            $adminParentIds = [];
+        }
+        dd($adminParentIds);
 //        if(!in_array($id, self::$model::$adminParentIds)){
 //            return self::setMsg('没有权限修改'.$admin['real_name'].'管理员', false);
 //        }
@@ -222,14 +230,26 @@ class AdminsRepository implements RepositoryInterface
     /**
      * 获取当前管理员和上级管理员+
      * @param int $adminId
+     * @return bool
      */
-    public static function handleAdminTotalIds(int  $adminId): void
+    public static function handleAdminTotalIds(int  $adminId): bool
     {
-//        $parentIds = [];
+        try{
+        $parentIds = [];
 //        $parentIds = self::adminTotalIds($adminId, $parentIds);
 //        self::$model::$adminParentIds = $parentIds;
-        self::$model::$adminParentIds = [3,1];
-        var_dump(self::$model::$adminParentIds);
+            $parentIds = [1,3];
+            $pRedis = new PRedisExtend();
+            $result = $pRedis::redis()->hset(self::$model::$redisHashName.$adminId, self::$model::$redisHashKeyParentIdsSelect, json_encode($parentIds, JSON_UNESCAPED_SLASHES));
+            if($result){
+                return self::setMsg("管理员上级编号缓存成功", true);
+            }else{
+                return self::setMsg("管理员上级编号缓存失败", false);
+            }
+        }catch (\Exception $exception){
+            // 缓存失败
+            return self::setMsg($exception->getMessage(), false);
+        }
     }
 
     /**

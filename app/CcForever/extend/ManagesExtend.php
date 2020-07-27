@@ -68,10 +68,15 @@ class ManagesExtend
                 switch ($messageArr['type']){
                     case 'admintotalids': // 获取管理员的编号和上级+编号
                         $adminsRepository = new AdminsRepository();
-                        $adminsRepository::handleAdminTotalIds($adminId);
+                        $status = $adminsRepository::handleAdminTotalIds($adminId);
+                        $msg = $adminsRepository::returnMsg();
+                        if($status){
+                            $connection->send(json_encode(JsonExtend::success($msg)->original, JSON_UNESCAPED_UNICODE));
+                        }else{
+                            $connection->send(json_encode(JsonExtend::error($msg)->original, JSON_UNESCAPED_UNICODE));
+                        }
                         break;
                 }
-                $connection->send(json_encode(JsonExtend::success("验证中...")->original, JSON_UNESCAPED_UNICODE));
             }else{
                 $connection->send(json_encode(JsonExtend::error("请选择执行方式")->original, JSON_UNESCAPED_UNICODE));
             }

@@ -39,6 +39,20 @@ class Admins extends  JWTModel
     public static $adminParentIds = [];
 
     /**
+     * admin表中的数组在redis数据库 hash表中的name
+     *
+     * @var string
+     */
+    public static $redisHashName = 'admins_number_';
+
+    /**
+     * 当前管理员的上级+
+     *
+     * @var string
+     */
+    public static $redisHashKeyParentIdsSelect = 'parent_ids_select';
+
+    /**
      * 管理员编号 唯一索引
      * @param $query
      * @param int $id
