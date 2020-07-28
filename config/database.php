@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Support\Str;
-
 return [
 
     /*
@@ -126,12 +124,23 @@ return [
             'prefix' => env('REDIS_PREFIX', 'cc_forever_redis_database_'),
         ],
 
-        'default' => [
+        // redis连接类型
+        'type' => explode('|', env('REDIS_TYPE', 'write|read|cache')),
+
+        'write' => [ // 写入redis缓存配置
             'url' => env('REDIS_URL'),
             'host' => env('REDIS_HOST', '127.0.0.1'),
-            'password' => env('REDIS_PASSWORD', null),
+            'password' => env('REDIS_PASSWORD', 'ccforever.cn'),
             'port' => env('REDIS_PORT', '6379'),
             'database' => env('REDIS_DB', '0'),
+        ],
+
+        'read' => [ // 读取redis缓存配置
+            'url' => env('REDIS_URL'),
+            'host' => env('REDIS_HOST_READ', '127.0.0.1'),
+            'password' => env('REDIS_PASSWORD_READ', 'ccforever.cn'),
+            'port' => env('REDIS_PORT_READ', '6379'),
+            'database' => env('REDIS_DB_READ', '0'),
         ],
 
         'cache' => [

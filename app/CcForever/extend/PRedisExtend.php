@@ -6,17 +6,27 @@
 
 namespace App\CcForever\extend;
 
+use Illuminate\Support\Facades\Redis;
 
 class PRedisExtend
 {
-    protected  static $redis;
+    /**
+     * redis 实例
+     * @var \Illuminate\Redis\Connections\Connection|null
+     */
+    protected  static $redis = null;
 
-    public function __construct()
+    public function __construct(string $connection = 'write')
     {
-        try{
-            self::$redis = app('redis.connection');
-        }catch (\Exception $e){
-            throw new \Exception("Redis连接失败");
+        $type = config('database.redis.type');
+        if(in_array($connection, $type)){
+            try{
+                self::$redis = Redis::connection($connection);
+            }catch (\Exception $e){
+                throw new \Exception("Redis连接失败");
+            }
+        }else{
+            throw new \Exception("Redis连接类型不存在");
         }
     }
 

@@ -39,7 +39,8 @@
             "App\\": "app/"
         },
         "files": [
-            "app/CcForever/functions/rule.php"
+            "app/CcForever/functions/rule.php",
+            "app/CcForever/functions/encode.php"
         ],
         "classmap": [
             "database/seeds",

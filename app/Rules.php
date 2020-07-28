@@ -9,6 +9,7 @@ namespace App;
 use App\CcForever\interfaces\ModelInterface;
 use App\CcForever\model\BaseModel;
 use App\CcForever\traits\ModelTraits;
+use Illuminate\Support\Facades\DB;
 
 /**
  * 规则Model
@@ -27,9 +28,9 @@ class Rules extends BaseModel implements ModelInterface
 
     public static $modelTableJoin = 'rules.';// 表名称 + .
 
-    protected static $select = ['id', 'name', 'menu_id', 'admin_id', 'add_time', 'is_del']; // 表所有字段
+    protected static $select = ['id', 'name', 'unique', 'admin_id', 'add_time', 'is_del']; // 表所有字段
 
-    public static $message = ['id', 'name', 'menu_id', 'admin_id', 'add_time', 'sort'];// 基本信息
+    public static $message = ['id', 'name', 'unique', 'admin_id', 'add_time'];// 基本信息
 
     /**
      * 规则编号查询 唯一索引
@@ -108,5 +109,17 @@ class Rules extends BaseModel implements ModelInterface
     {
         // TODO: Implement count() method.
         return self::listWhere($where)->isDel(0)->count();
+    }
+
+
+    /**
+     * 规则菜单
+     * @param string $unique
+     * @return array
+     */
+    public static function menus(string $unique): array
+    {
+        $menus = DB::table('rules_menus')->where('unique', $unique)->leftJoin('menus', 'rules_menus.menu_id', '=', 'menus.id')->select('menus.id as mid', 'menus.name as mname')->orderBy('menus.add_time', 'DESC')->get();
+        return is_null($menus) ? [] : $menus->toArray();
     }
 }

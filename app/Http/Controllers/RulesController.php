@@ -11,6 +11,7 @@ use App\CcForever\extend\JsonExtend;
 use App\CcForever\traits\ControllerTrait;
 use App\Http\Requests\RulesInsertRequest;
 use App\Http\Requests\RulesListRequest;
+use App\Http\Requests\RulesRequest;
 use App\Http\Requests\RulesUpdateRequest;
 use App\Repositories\RulesRepository;
 
@@ -75,7 +76,9 @@ class RulesController extends BaseController
         // TODO: Implement update() method.
         $data = $rulesUpdateRequest->all();
         $id = (int)$data['id'];
-        $data['admin_id'] = auth('login')->id();
+        $admin = auth('login')->user();
+        $data['admin_id'] = $admin->id;
+        $data['username'] = $admin->username;
         $bool = $rulesRepository::update($data, $id);
         if($bool){
             return JsonExtend::success($rulesRepository::returnMsg('修改成功'));
@@ -83,13 +86,53 @@ class RulesController extends BaseController
         return JsonExtend::error($rulesRepository::returnMsg('修改失败'));
     }
 
-    public function delete(): object
+    /**
+     * 规则删除
+     * @param RulesRequest $rulesRequest
+     * @param RulesRepository $rulesRepository
+     * @return object
+     */
+    public function delete(RulesRequest $rulesRequest, RulesRepository $rulesRepository): object
     {
         // TODO: Implement delete() method.
+        $id = (int)$rulesRequest->input('id');
+        $bool = $rulesRepository::delete($id);
+        if($bool){
+            return JsonExtend::success($rulesRepository::returnMsg('修改成功'));
+        }
+        return JsonExtend::error($rulesRepository::returnMsg('修改失败'));
     }
 
-    public function message(): object
+    /**
+     * 规则基本信息
+     * @param RulesRequest $rulesRequest
+     * @param RulesRepository $rulesRepository
+     * @return object
+     */
+    public function message(RulesRequest $rulesRequest, RulesRepository $rulesRepository): object
     {
         // TODO: Implement message() method.
+        $id = (int)$rulesRequest->input('id');
+        $bool = $rulesRepository::message($id);
+        if($bool){
+            return JsonExtend::success($rulesRepository::returnMsg('规则信息'), $rulesRepository::returnData([]));
+        }
+        return JsonExtend::error($rulesRepository::returnMsg('规则不存在'));
+    }
+
+    /**
+     * 规则菜单
+     * @param RulesRequest $rulesRequest
+     * @param RulesRepository $rulesRepository
+     * @return object
+     */
+    public function menus(RulesRequest $rulesRequest, RulesRepository $rulesRepository): object
+    {
+        $id = (int)$rulesRequest->input('id');
+        $bool = $rulesRepository::menus($id);
+        if($bool){
+            return JsonExtend::success($rulesRepository::returnMsg('规则菜单不存在'), $rulesRepository::returnData([]));
+        }
+        return JsonExtend::error($rulesRepository::returnMsg('规则菜单不存在'));
     }
 }

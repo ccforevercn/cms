@@ -30,5 +30,6 @@ Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
         Route::post('/rules/update', 'RulesController@update')->name('rulesupdate'.$admin);// 规则修改
         Route::post('/rules/delete', 'RulesController@delete')->name('rulesdelete'.$admin);// 规则删除
         Route::get('/rules/message', 'RulesController@message')->name('rulesmessage'.$admin);// 规则信息
+        Route::get('/rules/menus', 'RulesController@menus')->name('rulesmenus'.$admin);// 规则菜单
     });
 });

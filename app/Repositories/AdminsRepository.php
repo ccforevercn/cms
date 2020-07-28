@@ -11,6 +11,7 @@ use App\CcForever\extend\PRedisExtend;
 use App\CcForever\interfaces\RepositoryInterface;
 use App\CcForever\traits\RepositoryReturnMsgData;
 use App\Rules;
+use function GuzzleHttp\Psr7\str;
 use Illuminate\Support\Facades\Hash;
 
 /**
@@ -178,10 +179,10 @@ class AdminsRepository implements RepositoryInterface
             }
         }
         // 判断当前管理员是否有修改管理员的权限
-//        self::$model::adminIdAndParentIdTotal(); // 获取所有管理员  在swoole中执行
-//        if(!in_array($id, self::$model::$adminParentId)){
-//            return self::setMsg('没有权限修改'.$admin['real_name'].'管理员', false);
-//        }
+        $checkAdminHandleStatus = self::checkAdminHandle($id, auth('login')->id());
+        if(!$checkAdminHandleStatus){
+            return self::setMsg('没有权限修改', false);
+        }
         $status = self::$model::base_bool('update', $admin, $id); // 修改数据
         return self::setMsg($status ? '修改成功' : '修改失败', $status);
     }
@@ -199,21 +200,19 @@ class AdminsRepository implements RepositoryInterface
             return self::setMsg('已删除', true);
         }
         // 判断当前管理员是否有删除管理员的权限
-        try{
-            $pRedis = new PRedisExtend();
-            $adminParentIds = $pRedis::redis()->hget(self::$model::$redisHashName, self::$model::$redisHashKeyParentIdsSelect);
-            dd($adminParentIds);
-        }catch (\Exception $exception){
-            $adminParentIds = [];
+        $checkAdminHandleStatus = self::checkAdminHandle($id, auth('login')->id());
+        if(!$checkAdminHandleStatus){
+            return self::setMsg('没有权限删除', false);
         }
-        dd($adminParentIds);
-//        if(!in_array($id, self::$model::$adminParentIds)){
-//            return self::setMsg('没有权限修改'.$admin['real_name'].'管理员', false);
-//        }
         $status = self::$model::base_bool('delete', [], $id); // 删除数据
         return self::setMsg($status ? '删除成功' : '删除失败', $status);
     }
 
+    /**
+     * 管理员信息
+     * @param int $id
+     * @return bool
+     */
     public static function message(int $id): bool
     {
         // TODO: Implement message() method.
@@ -229,23 +228,38 @@ class AdminsRepository implements RepositoryInterface
 
     /**
      * 获取当前管理员和上级管理员+
-     * @param int $adminId
+     * @param array $messageArr
      * @return bool
      */
-    public static function handleAdminTotalIds(int  $adminId): bool
+    public static function handleAdminTotalIds(array $messageArr): bool
     {
+        $adminIds = array_key_exists('admintotalids', $messageArr) ? $messageArr['admintotalids'] : '';
+        if(strlen($adminIds)){ $adminIds = explode(',', $adminIds); }
+        else{ return self::setMsg("管理员上级编号缓存失败", false); }
         try{
-        $parentIds = [];
-//        $parentIds = self::adminTotalIds($adminId, $parentIds);
-//        self::$model::$adminParentIds = $parentIds;
-            $parentIds = [1,3];
-            $pRedis = new PRedisExtend();
-            $result = $pRedis::redis()->hset(self::$model::$redisHashName.$adminId, self::$model::$redisHashKeyParentIdsSelect, json_encode($parentIds, JSON_UNESCAPED_SLASHES));
+            $cacheAdminIds = [];
+            $pRedis = new PRedisExtend('write');
+            foreach ($adminIds as &$value){
+                $redisValue = $pRedis::redis()->hget(self::$model::$redisHashName.$value, self::$model::$redisHashKeyParentIdsSelect);
+                if(is_null($redisValue)){
+                    $cacheAdminIds[] = $value;
+                }
+            }
+            $result = true;
+            if(count($cacheAdminIds)){
+                foreach ($cacheAdminIds as &$adminId){
+                    $parentIds = [];
+                    $parentIds = self::adminTotalIds($adminId, $parentIds);
+                    if(count($parentIds)){
+                        $pRedis = new PRedisExtend('write');
+                        $result = $pRedis::redis()->hset(self::$model::$redisHashName.$adminId, self::$model::$redisHashKeyParentIdsSelect, json_encode($parentIds)) && $result;
+                    }
+                }
+            }
             if($result){
                 return self::setMsg("管理员上级编号缓存成功", true);
-            }else{
-                return self::setMsg("管理员上级编号缓存失败", false);
             }
+            return self::setMsg("管理员上级编号缓存失败", false);
         }catch (\Exception $exception){
             // 缓存失败
             return self::setMsg($exception->getMessage(), false);
@@ -278,4 +292,22 @@ class AdminsRepository implements RepositoryInterface
         return $parentIds;
     }
 
+    /**
+     * 判断管理员是否有操作的权限
+     * @param int $id         被修改的管理员编号
+     * @param int $adminId   当前登陆的管理员编号
+     * @return bool
+     */
+    public static function checkAdminHandle(int $id, int $adminId): bool
+    {
+        try{
+            $pRedis = new PRedisExtend('read');  // 连接redis
+            $adminParentIds = $pRedis::redis()->hget(Admins::$redisHashName.$id, Admins::$redisHashKeyParentIdsSelect); // 获取缓存
+            $adminParentIds = json_decode($adminParentIds, true); // 格式化缓存 可以操作的管理员编号
+        }catch (\Exception $exception){
+            $adminParentIds = []; // 可以操作的管理员编号
+        }
+        if(!in_array($adminId, $adminParentIds)){ return false; }
+        return true;
+    }
 }

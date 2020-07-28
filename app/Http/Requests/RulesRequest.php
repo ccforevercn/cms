@@ -30,7 +30,19 @@ class RulesRequest extends Request
     public function rules()
     {
         return [
-            //
+            'id' => 'bail|required|min:1', // 编号
+        ];
+    }
+
+    /**
+     * 重写参数描述
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'id.required' => '参数错误',
+            'id.min' => '参数错误',
         ];
     }
 }
