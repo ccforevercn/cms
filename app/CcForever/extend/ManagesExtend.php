@@ -66,9 +66,9 @@ class ManagesExtend
             $adminId = 1;
             if(array_key_exists('type', $messageArr)){
                 switch ($messageArr['type']){
-                    case 'admintotalids': // 缓存管理员的编号和上级+编号
+                    case 'adminparentids': // 缓存管理员的编号和上级+编号
                         $adminsRepository = new AdminsRepository();
-                        $status = $adminsRepository::handleAdminTotalIds($messageArr);
+                        $status = $adminsRepository::adminParentIdsCache($messageArr);
                         $msg = $adminsRepository::returnMsg();
                         if($status){
                             $connection->send(json_encode(JsonExtend::success($msg)->original, JSON_UNESCAPED_UNICODE));
@@ -78,7 +78,7 @@ class ManagesExtend
                         break;
                     case 'adminmenusroutes': // 缓存管理员菜单路由
                         $adminsRepository = new AdminsRepository();
-                        $status = $adminsRepository::ruleMenusRoutesCache($adminId);
+                        $status = $adminsRepository::adminRuleMenusRoutesCache($adminId);
                         $msg = $adminsRepository::returnMsg();
                         if($status){
                             $connection->send(json_encode(JsonExtend::success($msg)->original, JSON_UNESCAPED_UNICODE));
@@ -109,7 +109,7 @@ class ManagesExtend
      *
      *
      * var ws = new WebSocket('ws://192.168.99.100:2222')
-     * ws.send('{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC93d3cuY21zLm5ldFwvYXBpXC9ocmtqXC9sb2dpbiIsImlhdCI6MTU5NTgzODE0OCwiZXhwIjoxNTk1ODc0MTQ4LCJuYmYiOjE1OTU4MzgxNDgsImp0aSI6IklxQ1BqOFpiZjNubVRsRkwiLCJzdWIiOjEsInBydiI6ImQ1NzEwZGZiZjQ3YmRmMDFiMWQ3YmFlOTMxNDA4ZDUxZjc3YTA5MjkifQ.2a1CoTHSNydrbmtHdJWBf6rV7zva2yTGRWeCio7hwFI","type":"admintotalids","admintotalids":"1,2,3,4,5,6"}')
+     * ws.send('{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC93d3cuY21zLm5ldFwvYXBpXC9ocmtqXC9sb2dpbiIsImlhdCI6MTU5NTgzODE0OCwiZXhwIjoxNTk1ODc0MTQ4LCJuYmYiOjE1OTU4MzgxNDgsImp0aSI6IklxQ1BqOFpiZjNubVRsRkwiLCJzdWIiOjEsInBydiI6ImQ1NzEwZGZiZjQ3YmRmMDFiMWQ3YmFlOTMxNDA4ZDUxZjc3YTA5MjkifQ.2a1CoTHSNydrbmtHdJWBf6rV7zva2yTGRWeCio7hwFI","type":"adminparentids","admintotalids":"1,2,3,4,5,6"}')
      *
      * ws.send('{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC93d3cuY21zLm5ldFwvYXBpXC9ocmtqXC9sb2dpbiIsImlhdCI6MTU5NTgzODE0OCwiZXhwIjoxNTk1ODc0MTQ4LCJuYmYiOjE1OTU4MzgxNDgsImp0aSI6IklxQ1BqOFpiZjNubVRsRkwiLCJzdWIiOjEsInBydiI6ImQ1NzEwZGZiZjQ3YmRmMDFiMWQ3YmFlOTMxNDA4ZDUxZjc3YTA5MjkifQ.2a1CoTHSNydrbmtHdJWBf6rV7zva2yTGRWeCio7hwFI","type":"adminmenusroutes"}')
      *
