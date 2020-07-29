@@ -11,7 +11,6 @@ use App\CcForever\extend\PRedisExtend;
 use App\CcForever\interfaces\RepositoryInterface;
 use App\CcForever\traits\RepositoryReturnMsgData;
 use App\Rules;
-use function GuzzleHttp\Psr7\str;
 use Illuminate\Support\Facades\Hash;
 
 /**

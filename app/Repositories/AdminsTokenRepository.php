@@ -32,6 +32,11 @@ class AdminsTokenRepository
         self::$model = new AdminTokens();
     }
 
+    /**
+     * 管理员登陆
+     * @param array $data
+     * @return bool
+     */
     public static function login(array $data): bool
     {
         $admin_id  = array_key_exists('id', $data) ? (int)$data['id'] : false;

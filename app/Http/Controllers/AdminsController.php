@@ -110,6 +110,12 @@ class AdminsController extends BaseController
         return JsonExtend::error($adminsRepository::returnMsg('删除失败'));
     }
 
+    /**
+     * 管理员信息
+     * @param AdminsRequest $adminsRequest
+     * @param AdminsRepository $adminsRepository
+     * @return object
+     */
     public function message(AdminsRequest $adminsRequest, AdminsRepository $adminsRepository): object
     {
         // TODO: Implement message() method.
