@@ -4,6 +4,10 @@
  * @day: 2020/7/20
  */
 
+
+/**
+ * 规则处理函数
+ */
 if(!function_exists('create_admin_password')){
     /**
      * 管理员密码加密方式

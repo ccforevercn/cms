@@ -61,16 +61,15 @@ trait ModelTraits
 
     /**
      * 修改
-     * @param array
-     * $data
-     * @param int $id
+     * @param array $data
+     * @param int $value
      * @param string $field
      * @return bool
      */
-    private static function model_handle_update(array $data, int $id, string $field): bool
+    private static function model_handle_update(array $data, int $value, string $field): bool
     {
         try{
-            $update = DB::table(self::$modelTable)->where($field, $id)->update($data);
+            $update = DB::table(self::$modelTable)->where($field, $value)->update($data);
             return (bool)$update;
         }catch (\Exception $exception){
             return false;
@@ -79,25 +78,25 @@ trait ModelTraits
 
     /**
      * 删除
-     * @param string $id
+     * @param string $value
      * @param string $field
      * @return bool
      */
-    private static function model_handle_delete(string $id, string $field): bool
+    private static function model_handle_delete(string $value, string $field): bool
     {
-        $update = DB::table(self::$modelTable)->where($field, $id)->update(['is_del' => 1]);
+        $update = DB::table(self::$modelTable)->where($field, $value)->update(['is_del' => 1]);
         return (bool)$update;
     }
 
     /**
      * 验证编号是否存在 false 不存在  true 存在
-     * @param int $id
+     * @param int $value
      * @param string $field
      * @return bool
      */
-    private static function model_handle_check(int $id, string $field): bool
+    private static function model_handle_check(int $value, string $field): bool
     {
-        $count = DB::table(self::$modelTable)->where($field, $id)->where('is_del', 0)->count();
+        $count = DB::table(self::$modelTable)->where($field, $value)->where('is_del', 0)->count();
         return (bool)$count;
     }
 
@@ -125,13 +124,13 @@ trait ModelTraits
 
     /**
      * 查询字段值
-     * @param int $id
+     * @param int $value
      * @param string $select
      * @return string
      */
-    private static function model_handle_select(int $id, string $select): string
+    private static function model_handle_select(int $value, string $select): string
     {
-        $value = DB::table(self::$modelTable)->where('id', $id)->where('is_del', 0)->value($select);
+        $value = DB::table(self::$modelTable)->where('id', $value)->where('is_del', 0)->value($select);
         return is_null($value) ? '' : $value;
     }
 
@@ -145,19 +144,17 @@ trait ModelTraits
     {
         $array = [];
         try{
-            list($data, $id, $select) = $parameter;
+            list($data, $where, $select) = $parameter;
             switch ($function){
                 case 'message': // 信息
-                    $array = self::model_handle_message($id, $select);
+                    $array = self::model_handle_message($where, $select);
                     break;
                 case 'pluck': // 批量获取一列值
-                    if(!is_array($id)) $id = [$id]; // 格式化编号
-                    if(!is_string($select) && is_array($select)) $select = $select[0];
-                    if(is_string($select)){
-                        $array = self::model_handle_pluck($id, $select);
-                    }
+                    $array = self::model_handle_pluck($where, $select);
                     break;
-
+                case 'equal':// 获取where相同的值
+                    $array = self::model_handle_equal($where, $select);
+                    break;
                 // ...
                 default:;
             }
@@ -167,26 +164,50 @@ trait ModelTraits
 
     /**
      * 信息
-     * @param int $id
+     * @param int $value
      * @param array $select
      * @return array
      */
-    public static function model_handle_message(int $id, array $select): array
+    public static function model_handle_message(int $value, array $select): array
     {
         // TODO: Implement message() method.
-        $message = DB::table(self::$modelTable)->where('id', $id)->select($select)->where('is_del', 0)->first();
+        $message = DB::table(self::$modelTable)->where('id', $value)->select($select)->where('is_del', 0)->first();
         return (array)$message;
     }
 
     /**
      * 列值
-     * @param array $ids
-     * @param string $select
+     * @param array $values
+     * @param array $select
      * @return array
      */
-    public static function model_handle_pluck(array $ids, string $select): array
+    public static function model_handle_pluck(array $values, array $select): array
     {
-        $message = DB::table(self::$modelTable)->whereIn('id', $ids)->where('is_del', 0)->pluck($select)->toArray();
+        if(count($select) === 1){
+            $message = DB::table(self::$modelTable)->whereIn('id', $values)->where('is_del', 0)->pluck($select[0])->toArray();
+        }else{
+            $message = DB::table(self::$modelTable)->whereIn('id', $values)->where('is_del', 0)->select($select)->get();
+            $message = is_null($message) ? [] : $message->toArray();
+            foreach ($message as $key=>$value){
+                $message[$key] = (array)$value;
+            }
+        }
+        return $message;
+    }
+
+    /**
+     * 相同值
+     * @param array $where
+     * @param array $select
+     * @return array
+     */
+    public static function model_handle_equal(array $where, array $select):array
+    {
+        $message = DB::table(self::$modelTable)->where($where)->where('is_del', 0)->select($select)->get();
+        $message = is_null($message) ? [] : $message->toArray();
+        foreach ($message as $key=>$value){
+            $message[$key] = (array)$value;
+        }
         return $message;
     }
 }

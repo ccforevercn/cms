@@ -36,6 +36,17 @@ class MenusRepository implements RepositoryInterface
     }
 
     /**
+     * 外部调用Model
+     *
+     * @return object
+     */
+    public static function GetModel(): object
+    {
+        // TODO: Implement GetModel() method.
+        return self::$model;
+    }
+
+    /**
      * 菜单列表
      * @param array $where
      * @param int $page
@@ -146,8 +157,7 @@ class MenusRepository implements RepositoryInterface
             // 菜单名称 || 菜单父级 || 菜单路由 不存在
             return self::setMsg('参数错误', false);
         }
-        $select = array_keys($menu); // 修改的字段
-        $message = self::$model::base_array('message', [], $id, $select);
+        $message = self::$model::base_array('message', [], $id, array_keys($menu));
         if($message === $menu){ // 数据库的数据和修改的数据一致
             return self::setMsg('修改成功', true);
         }
@@ -203,10 +213,72 @@ class MenusRepository implements RepositoryInterface
      * 菜单按钮(后台左侧菜单)
      *
      * @param int $adminId
+     * @return bool
+     */
+    public static function button(int $adminId): bool
+    {
+        // 实例化AdminsRepository类
+        $adminsRepository = new AdminsRepository();
+        // 获取管理员规则编号
+        $ruleId = $adminsRepository::GetModel()::base_string('select', [], $adminId, 'rule_id');
+        // 规则编号不存在
+        if(!strlen($ruleId)){ return self::setMsg('菜单不存在', false); }
+        // 格式化规则变化
+        $ruleId = (int)$ruleId;
+        // 实例化RulesRepository类
+        $rulesRepository = new RulesRepository();
+        // 获取规则唯一值
+        $unique = $rulesRepository::GetModel()::base_string('select', [], $ruleId, 'unique');
+        // 规则唯一值不存在
+        if(!strlen($unique)){ return self::setMsg('菜单不存在', false); }
+        // 设置table为rules_menus表
+        $rulesRepository::GetModel()::$modelTable = 'rules_menus';
+        // 获取规则菜单编号
+        $menusIds = $rulesRepository::GetModel()::base_array('equal', [], ['unique' => $unique], ['menu_id']);
+        // 二维数组转为一维数组
+        $menusIds = array_column($menusIds, 'menu_id');
+        // 获取菜单列表信息
+        $menusMessageList = self::$model::base_array('pluck', [], $menusIds, self::$model::$message);
+        // 格式化菜单按钮
+        $bottomList = self::formatMenus($menusMessageList, 0);
+        // 格式化菜单按钮总数
+        $status = count($bottomList);
+        return self::setMsg($status ? '按钮列表' : '获取失败', $status, $bottomList);
+    }
+
+    /**
+     * 格式化菜单按钮
+     *
+     * @param array $menusMessageList
+     * @param int $parentId
      * @return array
      */
-    public static function button(int $adminId): array
+    private static function formatMenus(array $menusMessageList, int $parentId): array
     {
-
+        /**
+         *
+         * $menusMessageList array  格式
+         * [
+         *   [ "id" => 1, name" => "系统管理", parent_id" => 0, "page" => "/system", "icon" => "nested", "menu" => 1]
+         *   [ "id" => 2, name" => "管理员列表", parent_id" => 1, "page" => "/admins", "icon" => "", "menu" => 1]
+         * ]
+         */
+        $menusFormatList = [];
+        foreach($menusMessageList as &$item){
+            $data = [];
+            if($item['parent_id'] == $parentId){
+                $data['top'] = $item['parent_id'] === 0 ?? false;
+                $data['page'] = $item['page'];
+                $data['name'] = substr($item['page'], 1, strlen($item['page']));
+                $data['meta']['title'] = $item['name'];
+                $data['meta']['icon'] = $item['icon'];
+                $data['children'] = self::formatMenus($menusMessageList,$item['id']);
+                if($data['children'] == null){
+                    $data['children'] = [];
+                }
+                $menusFormatList[] = $data;
+            }
+        }
+        return $menusFormatList;
     }
 }

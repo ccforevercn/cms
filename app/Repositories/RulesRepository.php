@@ -37,6 +37,17 @@ class RulesRepository implements RepositoryInterface
     }
 
     /**
+     * 外部调用Model
+     *
+     * @return object
+     */
+    public static function GetModel(): object
+    {
+        // TODO: Implement GetModel() method.
+        return self::$model;
+    }
+
+    /**
      * 规则列表
      * @param array $where
      * @param int $page
@@ -142,12 +153,12 @@ class RulesRepository implements RepositoryInterface
         $rule['name'] = array_key_exists('name', $data) ? $data['name'] : null;
         // 规则修改信息不完整
         if(is_null($rule['name'])){ return self::setMsg('参数错误', false); }
-        // 获取规则信息  规则创建者
-        $ruleMessage = self::$model::base_array('message', [] , $id, ['admin_id']);
+        // 获取规则创建者编号
+        $adminId = self::$model::base_string('select', [], $id, 'admin_id');
         // 实例化AdminsRepository类
         $adminsRepository = new AdminsRepository();
         // 判断当前管理员是否有修改规则的权限
-        $checkAdminHandleStatus = $adminsRepository::checkAdminHandle($ruleMessage['admin_id'], auth('login')->id());
+        $checkAdminHandleStatus = $adminsRepository::checkAdminHandle($adminId, auth('login')->id());
         // 没有权限修改
         if(!$checkAdminHandleStatus){ return self::setMsg('没有权限修改', false); }
         // 重置唯一值
@@ -234,8 +245,8 @@ class RulesRepository implements RepositoryInterface
         if(!$check){
             return self::setMsg('规则不存在', false);
         }
-        $message = self::$model::base_array('message', [], $id, ['unique']); // 查询规则信息
-        $menus = self::$model::menus($message['unique']);
+        $unique = self::$model::base_string('select', [], $id, 'unique');  // 查询规则信息
+        $menus = self::$model::menus($unique);
         $status = count($menus);
         return self::setMsg($status ? '规则菜单列表' : '获取失败', $status, $menus);
     }

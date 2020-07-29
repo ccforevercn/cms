@@ -4,6 +4,10 @@
  * @day: 2020/7/28
  */
 
+
+/**
+ * 编码处理函数
+ */
 if(!function_exists('encode_change')){
 
     /**

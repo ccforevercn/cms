@@ -39,6 +39,7 @@
             "App\\": "app/"
         },
         "files": [
+            "app/CcForever/functions/array.php",
             "app/CcForever/functions/rule.php",
             "app/CcForever/functions/encode.php"
         ],

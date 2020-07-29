@@ -13,6 +13,8 @@ namespace App\CcForever\interfaces;
  */
 interface RepositoryInterface
 {
+    public static function GetModel(): object;// 外部调用Model
+
     public static function lst(array $where, int $page, int $limit) :bool; // 列表
 
     public static function count(array $where): bool; // 总数

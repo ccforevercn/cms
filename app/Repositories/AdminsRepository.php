@@ -39,6 +39,17 @@ class AdminsRepository implements RepositoryInterface
     }
 
     /**
+     * 外部调用Model
+     *
+     * @return object
+     */
+    public static function GetModel(): object
+    {
+        // TODO: Implement GetModel() method.
+        return self::$model;
+    }
+
+    /**
      * 管理员登陆信息
      * @param string $username
      * @param string $password
@@ -171,8 +182,7 @@ class AdminsRepository implements RepositoryInterface
         if(!strlen($admin['password'])){ // 密码不存在时
             unset($admin['password']);
             // 当前数据库的信息和用户提交的信息是否一致
-            $select = array_keys($admin); // 修改的字段
-            $message = self::$model::base_array('message', [], $id, $select);
+            $message = self::$model::base_array('message', [], $id, array_keys($admin));
             if($message === $admin){ // 数据库的数据和修改的数据一致
                 return self::setMsg('修改成功', true);
             }
@@ -376,10 +386,10 @@ class AdminsRepository implements RepositoryInterface
      */
     public static function adminRuleMenusRoutes(int $id): array
     {
-        $message = self::$model::base_array('message', [], $id, ['rule_id']); // 查询管理员信息
-        if(count($message)){ // 管理员信息存在
-            $ruleId = $message['rule_id'];// 获取管理员规则编号
+        $ruleId = self::$model::base_string('select', [], $id, 'rule_id'); // 获取管理员规则编号
+        if(strlen($ruleId)){ // 管理员信息存在
             $rulesRepository = new RulesRepository();// 实例化RulesRepository类
+            $ruleId = (int)$ruleId;
             $rulesMenusStatus = $rulesRepository::menus($ruleId); // 获取规则菜单
             if($rulesMenusStatus){// 规则菜单存在
                 $menus = $rulesRepository::returnData([]); // 规则菜单
