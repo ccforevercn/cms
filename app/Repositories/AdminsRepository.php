@@ -283,10 +283,10 @@ class AdminsRepository implements RepositoryInterface
     public static function adminTotalIds(int  $adminId, array $parentIds): array
     {
         $newAdminId = $adminId;
-        $adminTotalIds = self::$model::$adminParentIds;
+        $adminTotalIds = self::$model::adminParentIds();
         if(!count($adminTotalIds)){ // 所有管理员为空时
-            self::$model::adminIdAndParentIdTotal(); // 获取所有管理员
-            $adminTotalIds = self::$model::$adminParentIds;
+            self::$model::SetAdminParentIds(self::$model::base_array('all', [], [], ['id', 'parent_id'])); // 获取所有管理员
+            $adminTotalIds = self::$model::adminParentIds();
         }
         foreach ($adminTotalIds as $id=>$parentId){
             if($adminId == $id){
@@ -308,14 +308,14 @@ class AdminsRepository implements RepositoryInterface
      */
     public static function checkAdminHandle(int $id, int $adminId): bool
     {
-        try{
-            $pRedis = new PRedisExtend('read');  // 连接redis
-            $adminParentIds = $pRedis::redis()->hget(self::$model::redisHashName().$id, self::$model::redisHashKeyParentIdsSelect()); // 获取缓存
-            if(is_null($adminParentIds)){ return self::setMsg("没有权限", false); } // 缓存不存在时
-            $adminParentIds = json_decode($adminParentIds, true); // 格式化缓存
-        }catch (\Exception $exception){// 未开启redis时
+//        try{
+//            $pRedis = new PRedisExtend('read');  // 连接redis
+//            $adminParentIds = $pRedis::redis()->hget(self::$model::redisHashName().$id, self::$model::redisHashKeyParentIdsSelect()); // 获取缓存
+//            if(is_null($adminParentIds)){ return self::setMsg("没有权限", false); } // 缓存不存在时
+//            $adminParentIds = json_decode($adminParentIds, true); // 格式化缓存
+//        }catch (\Exception $exception){// 未开启redis时
             $adminParentIds = self::adminTotalIds($id, []);  // 可以操作的管理员编号
-        }
+//        }
         if(!in_array($adminId, $adminParentIds)){ return false; }
         return true;
     }

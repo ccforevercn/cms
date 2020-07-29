@@ -75,10 +75,10 @@ class Admins extends  JWTModel
     public static $message = ['id', 'username', 'real_name', 'status', 'found', 'parent_id', 'rule_id', 'add_time', 'add_ip', 'last_ip', 'last_time', 'login_count'];
 
     /**
-     * 当前管理员的上级+
+     * 所有管理员编号
      * @var array
      */
-    public static $adminParentIds = [];
+    private static $adminParentIds = [];
 
     /**
      * admin表中的数组在redis数据库 hash表中的name
@@ -235,11 +235,13 @@ class Admins extends  JWTModel
     }
 
     /**
-     * 获取所有管理员
+     * 所有管理员赋值
+     *
+     * @param array $adminParentIds
      */
-    public static function adminIdAndParentIdTotal(): void
+    public static function SetAdminParentIds(array $adminParentIds): void
     {
-        self::$adminParentIds = self::isDel(0)->pluck('parent_id', 'id');
+        self::$adminParentIds = two_key_and_value_one($adminParentIds, 'id', 'parent_id');
     }
 
     /**
@@ -320,5 +322,16 @@ class Admins extends  JWTModel
     public static function redisHashKeyRuleMenusPages(): string
     {
         return self::$redisHashKeyRuleMenusPages;
+    }
+
+
+    /**
+     * 所有管理员编号
+     *
+     * @return array
+     */
+    public static function adminParentIds(): array
+    {
+        return self::$adminParentIds;
     }
 }
