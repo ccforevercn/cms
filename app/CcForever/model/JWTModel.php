@@ -14,6 +14,13 @@ class JWTModel  extends BaseModel implements JWTSubject
 {
     use Notifiable;
 
+    /**
+     * 登陆规则
+     *
+     * @var string
+     */
+    public $role = '';
+
     public function getJWTIdentifier()
     {
         // TODO: Implement getJWTIdentifier() method.
@@ -23,6 +30,6 @@ class JWTModel  extends BaseModel implements JWTSubject
     public function getJWTCustomClaims()
     {
         // TODO: Implement getJWTCustomClaims() method.
-        return [];
+        return ['role' => $this->role];
     }
 }

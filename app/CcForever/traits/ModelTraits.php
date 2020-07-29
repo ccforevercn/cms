@@ -150,6 +150,14 @@ trait ModelTraits
                 case 'message': // 信息
                     $array = self::model_handle_message($id, $select);
                     break;
+                case 'pluck': // 批量获取一列值
+                    if(!is_array($id)) $id = [$id]; // 格式化编号
+                    if(!is_string($select) && is_array($select)) $select = $select[0];
+                    if(is_string($select)){
+                        $array = self::model_handle_pluck($id, $select);
+                    }
+                    break;
+
                 // ...
                 default:;
             }
@@ -168,5 +176,17 @@ trait ModelTraits
         // TODO: Implement message() method.
         $message = DB::table(self::$modelTable)->where('id', $id)->select($select)->where('is_del', 0)->first();
         return (array)$message;
+    }
+
+    /**
+     * 列值
+     * @param array $ids
+     * @param string $select
+     * @return array
+     */
+    public static function model_handle_pluck(array $ids, string $select): array
+    {
+        $message = DB::table(self::$modelTable)->whereIn('id', $ids)->where('is_del', 0)->pluck($select)->toArray();
+        return $message;
     }
 }

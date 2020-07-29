@@ -19,8 +19,20 @@ class MenusRepository implements RepositoryInterface
 {
     use RepositoryReturnMsgData;
 
-    public function __construct(Menus $model) {
-        self::$model = $model;
+    public function __construct(Menus $model = null) {
+        if(is_null($model)){
+            self::loading();
+        }else{
+            self::$model = $model;
+        }
+    }
+
+    /**
+     * 手动加载Model
+     */
+    public static function loading(): void
+    {
+        self::$model = new Menus();
     }
 
     /**
@@ -173,5 +185,28 @@ class MenusRepository implements RepositoryInterface
         }
         $message = self::$model::base_array('message', [], $id, self::$model::$message);
         return self::setMsg('菜单信息', true, $message);
+    }
+
+    /**
+     * 批量获取菜单路由
+     * @param array $ids
+     * @return array
+     */
+    public static function menusIdsRoutes(array $ids):array
+    {
+        // 获取菜单路由
+        $menusIdsRoutes = self::$model::base_array('pluck', [], $ids, ['routes']);
+        return $menusIdsRoutes;
+    }
+
+    /**
+     * 菜单按钮(后台左侧菜单)
+     *
+     * @param int $adminId
+     * @return array
+     */
+    public static function button(int $adminId): array
+    {
+
     }
 }

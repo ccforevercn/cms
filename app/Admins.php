@@ -18,19 +18,61 @@ class Admins extends  JWTModel
 {
     use ModelTraits;
 
-    protected $primaryKey = 'id'; // 表主键
+    /**
+     * 表主键
+     *
+     * @var string
+     */
+    protected $primaryKey = 'id';
 
-    protected $table = 'admins'; // 表名称
+    /**
+     * 表名称
+     *
+     * @var string
+     */
+    protected $table = 'admins';
 
-    public static $modelTable = 'admins';// 表名称 ModelTraits 使用
+    /**
+     * 表名称 ModelTraits 使用
+     *
+     * @var string
+     */
+    public static $modelTable = 'admins';
 
-    public static $modelTableJoin = 'admins.';// 表名称 + .
+    /**
+     * 表名称 + .
+     *
+     * @var string
+     */
+    public static $modelTableJoin = 'admins.';
 
-    public $timestamps = false; // 不自动更新 created_at 和 updated_at
+    /**
+     * 不自动更新 created_at 和 updated_at
+     *
+     * @var bool
+     */
+    public $timestamps = false;
 
-    protected static $select = ['id', 'username', 'password', 'real_name', 'status', 'found', 'parent_id', 'rule_id', 'add_time', 'add_ip', 'last_ip', 'last_time', 'login_count', 'is_del']; // 表所有字段
+    /**
+     * 登陆规则
+     *
+     * @var string
+     */
+    public $role = 'admin';
 
-    public static $message = ['id', 'username', 'real_name', 'status', 'found', 'parent_id', 'rule_id', 'add_time', 'add_ip', 'last_ip', 'last_time', 'login_count'];// 基本信息
+    /**
+     * 表所有字段
+     *
+     * @var array
+     */
+    protected static $select = ['id', 'username', 'password', 'real_name', 'status', 'found', 'parent_id', 'rule_id', 'add_time', 'add_ip', 'last_ip', 'last_time', 'login_count', 'is_del'];
+
+    /**
+     * 基本信息
+     *
+     * @var array
+     */
+    public static $message = ['id', 'username', 'real_name', 'status', 'found', 'parent_id', 'rule_id', 'add_time', 'add_ip', 'last_ip', 'last_time', 'login_count'];
 
     /**
      * 当前管理员的上级+
@@ -51,6 +93,27 @@ class Admins extends  JWTModel
      * @var string
      */
     public static $redisHashKeyParentIdsSelect = 'parent_ids_select';
+
+    /**
+     * 当管理员可以访问的路由
+     *
+     * @var string
+     */
+    public static $redisHashKeyRuleMenusRoutes = 'rule_menus_routes';
+
+    /**
+     * 超级管理员编号 所有接口都可以访问
+     *
+     * @var array
+     */
+    private static $superAdministratorIds = [1];
+
+    /**
+     * 不需要验证的路由
+     *
+     * @var array
+     */
+    private static $noMenusRoute = ['/menus/button'];
 
     /**
      * 管理员编号 唯一索引
@@ -159,5 +222,35 @@ class Admins extends  JWTModel
     public static function adminIdAndParentIdTotal(): void
     {
         self::$adminParentIds = self::isDel(0)->pluck('parent_id', 'id');
+    }
+
+    /**
+     * 获取登陆规则
+     *
+     * @return string
+     */
+    public function loginRole(): string
+    {
+        return $this->role;
+    }
+
+    /**
+     * 超级管理员编号
+     *
+     * @return array
+     */
+    public static function superAdministratorIds(): array
+    {
+        return self::$superAdministratorIds;
+    }
+
+    /**
+     * 不需要验证的路由
+     *
+     * @return array
+     */
+    public static function noMenusRoute(): array
+    {
+        return self::$noMenusRoute;
     }
 }

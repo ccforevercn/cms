@@ -25,6 +25,7 @@ Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
         Route::post('/menus/update', 'MenusController@update')->name('menusupdate'.$admin);// 菜单修改
         Route::post('/menus/delete', 'MenusController@delete')->name('menusdelete'.$admin);// 菜单删除
         Route::get('/menus/message', 'MenusController@message')->name('menusmessage'.$admin);// 菜单信息
+        Route::get('/menus/button', 'MenusController@button')->name('menusbutton'.$admin);// 后台菜单按钮(后台左侧菜单)
         Route::get('/rules/list', 'RulesController@lst')->name('ruleslist'.$admin);// 规则列表
         Route::post('/rules/insert', 'RulesController@insert')->name('rulesinsert'.$admin);// 规则添加
         Route::post('/rules/update', 'RulesController@update')->name('rulesupdate'.$admin);// 规则修改

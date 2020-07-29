@@ -24,6 +24,12 @@ class MenusController extends BaseController
 {
     use  ControllerTrait;
 
+    /**
+     * 菜单列表
+     * @param MenusListRequest $menusListRequest
+     * @param MenusRepository $menusRepository
+     * @return object
+     */
     public function lst(MenusListRequest $menusListRequest, MenusRepository $menusRepository): object
     {
         // TODO: Implement lst() method.
@@ -39,6 +45,12 @@ class MenusController extends BaseController
         return JsonExtend::success('菜单列表', compact('list', 'count'));
     }
 
+    /**
+     * 菜单添加
+     * @param MenusInsertRequest $menusAddRequest
+     * @param MenusRepository $menusRepository
+     * @return object
+     */
     public function insert(MenusInsertRequest $menusAddRequest, MenusRepository $menusRepository): object
     {
         // TODO: Implement insert() method.
@@ -50,6 +62,12 @@ class MenusController extends BaseController
         return JsonExtend::error($menusRepository::returnMsg('添加失败'));
     }
 
+    /**
+     * 菜单修改
+     * @param MenusUpdateRequest $menusModifyRequest
+     * @param MenusRepository $menusRepository
+     * @return object
+     */
     public function update(MenusUpdateRequest $menusModifyRequest, MenusRepository $menusRepository): object
     {
         // TODO: Implement update() method.
@@ -63,6 +81,12 @@ class MenusController extends BaseController
         return JsonExtend::error($menusRepository::returnMsg('修改失败'));
     }
 
+    /**
+     * 菜单删除
+     * @param MenusRequest $menusRequest
+     * @param MenusRepository $menusRepository
+     * @return object
+     */
     public function delete(MenusRequest $menusRequest, MenusRepository $menusRepository): object
     {
         // TODO: Implement delete() method.
@@ -76,6 +100,12 @@ class MenusController extends BaseController
 
     }
 
+    /**
+     * 菜单信息
+     * @param MenusRequest $menusRequest
+     * @param MenusRepository $menusRepository
+     * @return object
+     */
     public function message(MenusRequest $menusRequest, MenusRepository $menusRepository): object
     {
         // TODO: Implement message() method.
@@ -86,6 +116,23 @@ class MenusController extends BaseController
             return JsonExtend::success($menusRepository::returnMsg('菜单信息'), $menusRepository::returnData([]));
         }
         return JsonExtend::error($menusRepository::returnMsg('数据不存在'));
+    }
 
+    /**
+     * 菜单按钮(后台左侧菜单)
+     * @param MenusRequest $menusRequest
+     * @param MenusRepository $menusRepository
+     * @return object
+     */
+    public function button(MenusRequest $menusRequest, MenusRepository $menusRepository): object
+    {
+        $id = (int)$menusRequest->input('id'); // 管理员编号
+        $loginId = auth('login')->id(); // 当前登录的管理员编号
+        if($loginId !== $id){ return JsonExtend::error('权限不足'); } // 两个编号不相同
+        $bool = $menusRepository::button($id);
+        if($bool){
+            return JsonExtend::success($menusRepository::returnMsg('按钮列表'), $menusRepository::returnData([]));
+        }
+        return JsonExtend::error($menusRepository::returnMsg('权限不足'));
     }
 }

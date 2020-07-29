@@ -219,8 +219,7 @@ class AdminsRepository implements RepositoryInterface
         if(!$check){
             return self::setMsg('管理员不存在', false);
         }
-        $select = self::$model::$message;
-        $message = self::$model::base_array('message', [], $id, $select); // 查询管理员信息
+        $message = self::$model::base_array('message', [], $id, self::$model::$message); // 查询管理员信息
         $status = count($message);
         return self::setMsg($status ? '管理员信息' : '获取失败', $status, $message);
     }
@@ -237,7 +236,7 @@ class AdminsRepository implements RepositoryInterface
         else{ return self::setMsg("管理员上级编号缓存失败", false); }
         try{
             $cacheAdminIds = [];
-            $pRedis = new PRedisExtend('write');
+            $pRedis = new PRedisExtend('read');
             foreach ($adminIds as &$value){
                 $redisValue = $pRedis::redis()->hget(self::$model::$redisHashName.$value, self::$model::$redisHashKeyParentIdsSelect);
                 if(is_null($redisValue)){
@@ -246,11 +245,11 @@ class AdminsRepository implements RepositoryInterface
             }
             $result = true;
             if(count($cacheAdminIds)){
+                $pRedis = new PRedisExtend('write');
                 foreach ($cacheAdminIds as &$adminId){
                     $parentIds = [];
                     $parentIds = self::adminTotalIds($adminId, $parentIds);
                     if(count($parentIds)){
-                        $pRedis = new PRedisExtend('write');
                         $result = $pRedis::redis()->hset(self::$model::$redisHashName.$adminId, self::$model::$redisHashKeyParentIdsSelect, json_encode($parentIds)) && $result;
                     }
                 }
@@ -302,11 +301,129 @@ class AdminsRepository implements RepositoryInterface
         try{
             $pRedis = new PRedisExtend('read');  // 连接redis
             $adminParentIds = $pRedis::redis()->hget(Admins::$redisHashName.$id, Admins::$redisHashKeyParentIdsSelect); // 获取缓存
-            $adminParentIds = json_decode($adminParentIds, true); // 格式化缓存 可以操作的管理员编号
-        }catch (\Exception $exception){
-            $adminParentIds = []; // 可以操作的管理员编号
+            if(is_null($adminParentIds)){ return self::setMsg("没有权限", false); } // 缓存不存在时
+            $adminParentIds = json_decode($adminParentIds, true); // 格式化缓存
+        }catch (\Exception $exception){// 未开启redis时
+            $adminParentIds = self::adminTotalIds($id, []);  // 可以操作的管理员编号
         }
         if(!in_array($adminId, $adminParentIds)){ return false; }
         return true;
+    }
+
+    /**
+     * 获取登陆规则
+     *
+     * @return string
+     */
+    public static function loginRole(): string
+    {
+        return self::$model->loginRole();
+    }
+
+    /**
+     * 超级管理员编号
+     *
+     * @return array
+     */
+    public static function superAdministratorIds(): array
+    {
+        return self::$model::superAdministratorIds();
+    }
+
+    /**
+     * 不需要验证的路由
+     *
+     * @return array
+     */
+    public static function noMenusRoute(): array
+    {
+        return self::$model::noMenusRoute();
+    }
+
+    /**
+     * 缓存管理员菜单路由
+     *
+     * @param int $id
+     * @return bool
+     */
+    public static function ruleMenusRoutesCache(int $id): bool
+    {
+        try{
+            $result = true;
+            $pRedis = new PRedisExtend('read');
+            $redisValue = $pRedis::redis()->hget(self::$model::$redisHashName.$id, self::$model::$redisHashKeyRuleMenusRoutes);
+            if(!is_null($redisValue)){ return self::setMsg("管理员菜单路由缓存成功", true); }
+            $pRedis = new PRedisExtend('write');
+            $adminRuleMenusRoutes = self::adminRuleMenusRoutes($id);
+            if(count($adminRuleMenusRoutes)){
+                $result = $pRedis::redis()->hset(self::$model::$redisHashName.$id, self::$model::$redisHashKeyRuleMenusRoutes, json_encode($adminRuleMenusRoutes));
+            }
+            if($result){
+                return self::setMsg("管理员菜单路由缓存成功", true);
+            }
+            return self::setMsg("管理员菜单路由缓存失败", false);
+        }catch (\Exception $exception){
+            // 缓存失败
+            return self::setMsg($exception->getMessage(), false);
+        }
+    }
+
+    /**
+     * 管理员菜单权限
+     *
+     * @param int $id
+     * @return array
+     */
+    public static function adminRuleMenusRoutes(int $id): array
+    {
+        $message = self::$model::base_array('message', [], $id, ['rule_id']); // 查询管理员信息
+        if(count($message)){ // 管理员信息存在
+            $ruleId = $message['rule_id'];// 获取管理员规则编号
+            $rulesRepository = new RulesRepository();// 实例化RulesRepository类
+            $rulesMenusStatus = $rulesRepository::menus($ruleId); // 获取规则菜单
+            if($rulesMenusStatus){// 规则菜单存在
+                $menus = $rulesRepository::returnData([]); // 规则菜单
+                $menusIds = []; // 菜单编号
+                foreach ($menus as $key=>$value){
+                    $menusIds[] = $value['mid']; // 获取菜单编号
+                }
+                // 查询规则菜单对应的路由 routes
+                $menusRepository = new MenusRepository(); // 实例化MenusRepository类
+                $routesList = $menusRepository::menusIdsRoutes($menusIds);// 路由地址列表
+                return $routesList;
+            }
+        }
+        return [];
+    }
+
+    /**
+     * 验证管理员权限
+     *
+     * @param int $id
+     * @param string $routes
+     * @return bool
+     */
+    public static function returnAdminRuleMenusRoutes(int $id, string $routes): bool
+    {
+        try{
+            $pRedis = new PRedisExtend('read');// 获取redis实例
+            // 获取管理员菜单路由缓存
+            $adminRuleMenusRoutes = $pRedis::redis()->hget(self::$model::$redisHashName.$id, self::$model::$redisHashKeyRuleMenusRoutes);
+            // 缓存不存在时
+            if(is_null($adminRuleMenusRoutes)){ return self::setMsg("权限不存在，请联系管理员", false); }
+            // 格式化缓存
+            $adminRuleMenusRoutes = json_decode($adminRuleMenusRoutes, true);
+            // 权限判断
+            if(in_array($routes, $adminRuleMenusRoutes)){ return self::setMsg("可以访问", true); }
+            else { return self::setMsg("权限不足", false); }
+        }catch (\Exception $exception){// redis 没有开
+            $adminRuleMenusRoutes = self::adminRuleMenusRoutes($id); // 获取管理员可以访问的菜单
+            if(count($adminRuleMenusRoutes)){ // 菜单路由判断
+                if(in_array($routes, $adminRuleMenusRoutes)){ return self::setMsg("可以访问", true); }
+                else { return self::setMsg("权限不足", false); }
+            }else{
+                return self::setMsg('权限不足', false);
+            }
+        }
     }
 }
