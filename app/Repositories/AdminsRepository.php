@@ -436,4 +436,33 @@ class AdminsRepository implements RepositoryInterface
             }
         }
     }
+
+    /**
+     * 缓存管理员菜单按钮
+     * @param int $id
+     * @return bool
+     */
+    public static function adminMenusBottomCache(int $id): bool
+    {
+        try{
+            $result = true;
+            $pRedis = new PRedisExtend('read');
+            $menusBottom = $pRedis::redis()->hget(self::$model::$redisHashName.$id, self::$model::$redisHashKeyRuleMenusPages);
+            if(!is_null($menusBottom)){ return self::setMsg("管理员菜单按钮列表缓存成功", true); }
+            $pRedis = new PRedisExtend('write');
+            $menusRepository = new MenusRepository();
+            $status = $menusRepository::menusButton($id);
+            if($status){
+                $menusBottom = $menusRepository::returnData([]);
+                $result = $pRedis::redis()->hset(self::$model::$redisHashName.$id, self::$model::$redisHashKeyRuleMenusPages, json_encode($menusBottom, JSON_UNESCAPED_UNICODE));
+            }
+            if($result){
+                return self::setMsg("管理员菜单按钮列表缓存成功", true);
+            }
+            return self::setMsg("管理员菜单按钮列表缓存失败", false);
+        }catch (\Exception $exception){
+            // 缓存失败
+            return self::setMsg($exception->getMessage(), false);
+        }
+    }
 }

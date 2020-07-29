@@ -102,6 +102,13 @@ class Admins extends  JWTModel
     public static $redisHashKeyRuleMenusRoutes = 'rule_menus_routes';
 
     /**
+     * 当前管理员可以打开的页面
+     *
+     * @var string
+     */
+    public static $redisHashKeyRuleMenusPages = 'rule_menus_pages';
+
+    /**
      * 超级管理员编号 所有接口都可以访问
      *
      * @var array

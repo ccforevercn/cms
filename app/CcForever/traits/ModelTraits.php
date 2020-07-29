@@ -155,6 +155,9 @@ trait ModelTraits
                 case 'equal':// 获取where相同的值
                     $array = self::model_handle_equal($where, $select);
                     break;
+                case 'all': // 批量获取指定字段值
+                    $array = self::model_handle_all($select);
+                    break;
                 // ...
                 default:;
             }
@@ -204,6 +207,21 @@ trait ModelTraits
     public static function model_handle_equal(array $where, array $select):array
     {
         $message = DB::table(self::$modelTable)->where($where)->where('is_del', 0)->select($select)->get();
+        $message = is_null($message) ? [] : $message->toArray();
+        foreach ($message as $key=>$value){
+            $message[$key] = (array)$value;
+        }
+        return $message;
+    }
+
+    /**
+     * 批量获取指定字段值
+     * @param array $select
+     * @return array
+     */
+    public static function model_handle_all(array $select): array
+    {
+        $message = DB::table(self::$modelTable)->where('is_del', 0)->select($select)->get();
         $message = is_null($message) ? [] : $message->toArray();
         foreach ($message as $key=>$value){
             $message[$key] = (array)$value;

@@ -86,6 +86,16 @@ class ManagesExtend
                             $connection->send(json_encode(JsonExtend::error($msg)->original, JSON_UNESCAPED_UNICODE));
                         }
                         break;
+                    case 'adminmenusbottom': // 缓存管理员菜单按钮
+                        $adminsRepository = new AdminsRepository();
+                        $status = $adminsRepository::adminMenusBottomCache($adminId);
+                        $msg = $adminsRepository::returnMsg();
+                        if($status){
+                            $connection->send(json_encode(JsonExtend::success($msg)->original, JSON_UNESCAPED_UNICODE));
+                        }else{
+                            $connection->send(json_encode(JsonExtend::error($msg)->original, JSON_UNESCAPED_UNICODE));
+                        }
+                        break;
                 }
             }else{
                 $connection->send(json_encode(JsonExtend::error("请选择执行方式")->original, JSON_UNESCAPED_UNICODE));
@@ -103,6 +113,7 @@ class ManagesExtend
      *
      * ws.send('{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC93d3cuY21zLm5ldFwvYXBpXC9ocmtqXC9sb2dpbiIsImlhdCI6MTU5NTgzODE0OCwiZXhwIjoxNTk1ODc0MTQ4LCJuYmYiOjE1OTU4MzgxNDgsImp0aSI6IklxQ1BqOFpiZjNubVRsRkwiLCJzdWIiOjEsInBydiI6ImQ1NzEwZGZiZjQ3YmRmMDFiMWQ3YmFlOTMxNDA4ZDUxZjc3YTA5MjkifQ.2a1CoTHSNydrbmtHdJWBf6rV7zva2yTGRWeCio7hwFI","type":"adminmenusroutes"}')
      *
+     * ws.send('{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC93d3cuY21zLm5ldFwvYXBpXC9ocmtqXC9sb2dpbiIsImlhdCI6MTU5NTgzODE0OCwiZXhwIjoxNTk1ODc0MTQ4LCJuYmYiOjE1OTU4MzgxNDgsImp0aSI6IklxQ1BqOFpiZjNubVRsRkwiLCJzdWIiOjEsInBydiI6ImQ1NzEwZGZiZjQ3YmRmMDFiMWQ3YmFlOTMxNDA4ZDUxZjc3YTA5MjkifQ.2a1CoTHSNydrbmtHdJWBf6rV7zva2yTGRWeCio7hwFI","type":"adminmenusbottom"}')
      *
      *
      */

@@ -6,6 +6,7 @@
 
 namespace App\Repositories;
 
+use App\CcForever\extend\PRedisExtend;
 use App\CcForever\interfaces\RepositoryInterface;
 use App\CcForever\traits\RepositoryReturnMsgData;
 use App\Menus;
@@ -210,37 +211,72 @@ class MenusRepository implements RepositoryInterface
     }
 
     /**
-     * 菜单按钮(后台左侧菜单)
-     *
+     * 获取菜单按钮
      * @param int $adminId
      * @return bool
      */
     public static function button(int $adminId): bool
     {
+        try{
+            $pRedis = new PRedisExtend('read');// 获取redis实例
+            // 实例化AdminsRepository类
+            $adminsRepository = new AdminsRepository();
+            // 获取管理员菜单按钮缓存
+            $menusBottom = $pRedis::redis()->hget($adminsRepository::GetModel()::$redisHashName.$adminId, $adminsRepository::GetModel()::$redisHashKeyRuleMenusPages);
+            if(is_null($menusBottom)){ return self::setMsg("权限不存在，请联系管理员", false); } // 缓存不存在时
+            $menusBottom = json_decode($menusBottom, true); // 格式化缓存
+            return self::setMsg("按钮列表", true, $menusBottom);
+        }catch (\Exception $exception){// redis 没有开
+            return self::menusButton($adminId);
+        }
+    }
+
+    /**
+     * 菜单按钮(后台左侧菜单)
+     *
+     * @param int $adminId
+     * @return bool
+     */
+    public static function menusButton(int $adminId): bool
+    {
         // 实例化AdminsRepository类
         $adminsRepository = new AdminsRepository();
-        // 获取管理员规则编号
-        $ruleId = $adminsRepository::GetModel()::base_string('select', [], $adminId, 'rule_id');
-        // 规则编号不存在
-        if(!strlen($ruleId)){ return self::setMsg('菜单不存在', false); }
-        // 格式化规则变化
-        $ruleId = (int)$ruleId;
-        // 实例化RulesRepository类
-        $rulesRepository = new RulesRepository();
-        // 获取规则唯一值
-        $unique = $rulesRepository::GetModel()::base_string('select', [], $ruleId, 'unique');
-        // 规则唯一值不存在
-        if(!strlen($unique)){ return self::setMsg('菜单不存在', false); }
-        // 设置table为rules_menus表
-        $rulesRepository::GetModel()::$modelTable = 'rules_menus';
-        // 获取规则菜单编号
-        $menusIds = $rulesRepository::GetModel()::base_array('equal', [], ['unique' => $unique], ['menu_id']);
-        // 二维数组转为一维数组
-        $menusIds = array_column($menusIds, 'menu_id');
+        // 判断是否是超级管理员
+        if(in_array($adminId, $adminsRepository::superAdministratorIds())){ // 是
+            // 获取菜单列表信息
+            $menusIds = self::$model::base_array('all', [], [], ['id']);
+            // 二维数组转为一维数组
+            $menusIds = array_column($menusIds, 'id');
+        }else{ // 否
+            // 获取管理员规则编号
+            $ruleId = $adminsRepository::GetModel()::base_string('select', [], $adminId, 'rule_id');
+            // 规则编号不存在
+            if(!strlen($ruleId)){ return self::setMsg('菜单不存在', false); }
+            // 格式化规则变化
+            $ruleId = (int)$ruleId;
+            // 实例化RulesRepository类
+            $rulesRepository = new RulesRepository();
+            // 获取规则唯一值
+            $unique = $rulesRepository::GetModel()::base_string('select', [], $ruleId, 'unique');
+            // 规则唯一值不存在
+            if(!strlen($unique)){ return self::setMsg('菜单不存在', false); }
+            // 设置table为rules_menus表
+            $rulesRepository::GetModel()::$modelTable = 'rules_menus';
+            // 获取规则菜单编号
+            $menusIds = $rulesRepository::GetModel()::base_array('equal', [], ['unique' => $unique], ['menu_id']);
+            // 二维数组转为一维数组
+            $menusIds = array_column($menusIds, 'menu_id');
+        }
         // 获取菜单列表信息
         $menusMessageList = self::$model::base_array('pluck', [], $menusIds, self::$model::$message);
+        $menusMessageBottomList = [];  // 菜单按钮列表
+        foreach ($menusMessageList as $key=>$value){
+            if($value['menu']){
+                $menusMessageBottomList[] = $value; // 获取菜单按钮列表
+            }
+        }
         // 格式化菜单按钮
-        $bottomList = self::formatMenus($menusMessageList, 0);
+        $bottomList = self::formatMenus($menusMessageBottomList, 0);
         // 格式化菜单按钮总数
         $status = count($bottomList);
         return self::setMsg($status ? '按钮列表' : '获取失败', $status, $bottomList);
@@ -257,10 +293,10 @@ class MenusRepository implements RepositoryInterface
     {
         /**
          *
-         * $menusMessageList array  格式
+         * $menusMessageList array  格式  二维数组
          * [
-         *   [ "id" => 1, name" => "系统管理", parent_id" => 0, "page" => "/system", "icon" => "nested", "menu" => 1]
-         *   [ "id" => 2, name" => "管理员列表", parent_id" => 1, "page" => "/admins", "icon" => "", "menu" => 1]
+         *   [ "id" => 1, name" => "系统管理", parent_id" => 0, "page" => "/system", "icon" => "nested"]
+         *   [ "id" => 2, name" => "管理员列表", parent_id" => 1, "page" => "/admins", "icon" => ""]
          * ]
          */
         $menusFormatList = [];
