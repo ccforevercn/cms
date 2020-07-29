@@ -248,7 +248,7 @@ class AdminsRepository implements RepositoryInterface
             $cacheAdminIds = [];
             $pRedis = new PRedisExtend('read');
             foreach ($adminIds as &$value){
-                $redisValue = $pRedis::redis()->hget(self::$model::$redisHashName.$value, self::$model::$redisHashKeyParentIdsSelect);
+                $redisValue = $pRedis::redis()->hget(self::$model::redisHashName().$value, self::$model::redisHashKeyParentIdsSelect());
                 if(is_null($redisValue)){
                     $cacheAdminIds[] = $value;
                 }
@@ -260,7 +260,7 @@ class AdminsRepository implements RepositoryInterface
                     $parentIds = [];
                     $parentIds = self::adminTotalIds($adminId, $parentIds);
                     if(count($parentIds)){
-                        $result = $pRedis::redis()->hset(self::$model::$redisHashName.$adminId, self::$model::$redisHashKeyParentIdsSelect, json_encode($parentIds)) && $result;
+                        $result = $pRedis::redis()->hset(self::$model::redisHashName().$adminId, self::$model::redisHashKeyParentIdsSelect(), json_encode($parentIds)) && $result;
                     }
                 }
             }
@@ -310,7 +310,7 @@ class AdminsRepository implements RepositoryInterface
     {
         try{
             $pRedis = new PRedisExtend('read');  // 连接redis
-            $adminParentIds = $pRedis::redis()->hget(Admins::$redisHashName.$id, Admins::$redisHashKeyParentIdsSelect); // 获取缓存
+            $adminParentIds = $pRedis::redis()->hget(self::$model::redisHashName().$id, self::$model::redisHashKeyParentIdsSelect()); // 获取缓存
             if(is_null($adminParentIds)){ return self::setMsg("没有权限", false); } // 缓存不存在时
             $adminParentIds = json_decode($adminParentIds, true); // 格式化缓存
         }catch (\Exception $exception){// 未开启redis时
@@ -361,12 +361,12 @@ class AdminsRepository implements RepositoryInterface
         try{
             $result = true;
             $pRedis = new PRedisExtend('read');
-            $redisValue = $pRedis::redis()->hget(self::$model::$redisHashName.$id, self::$model::$redisHashKeyRuleMenusRoutes);
+            $redisValue = $pRedis::redis()->hget(self::$model::redisHashName().$id, self::$model::redisHashKeyRuleMenusRoutes());
             if(!is_null($redisValue)){ return self::setMsg("管理员菜单路由缓存成功", true); }
             $pRedis = new PRedisExtend('write');
             $adminRuleMenusRoutes = self::adminRuleMenusRoutes($id);
             if(count($adminRuleMenusRoutes)){
-                $result = $pRedis::redis()->hset(self::$model::$redisHashName.$id, self::$model::$redisHashKeyRuleMenusRoutes, json_encode($adminRuleMenusRoutes));
+                $result = $pRedis::redis()->hset(self::$model::redisHashName().$id, self::$model::redisHashKeyRuleMenusRoutes(), json_encode($adminRuleMenusRoutes));
             }
             if($result){
                 return self::setMsg("管理员菜单路由缓存成功", true);
@@ -418,7 +418,7 @@ class AdminsRepository implements RepositoryInterface
         try{
             $pRedis = new PRedisExtend('read');// 获取redis实例
             // 获取管理员菜单路由缓存
-            $adminRuleMenusRoutes = $pRedis::redis()->hget(self::$model::$redisHashName.$id, self::$model::$redisHashKeyRuleMenusRoutes);
+            $adminRuleMenusRoutes = $pRedis::redis()->hget(self::$model::redisHashName().$id, self::$model::redisHashKeyRuleMenusRoutes());
             // 缓存不存在时
             if(is_null($adminRuleMenusRoutes)){ return self::setMsg("权限不存在，请联系管理员", false); }
             // 格式化缓存
@@ -447,14 +447,14 @@ class AdminsRepository implements RepositoryInterface
         try{
             $result = true;
             $pRedis = new PRedisExtend('read');
-            $menusBottom = $pRedis::redis()->hget(self::$model::$redisHashName.$id, self::$model::$redisHashKeyRuleMenusPages);
+            $menusBottom = $pRedis::redis()->hget(self::$model::redisHashName().$id, self::$model::redisHashKeyRuleMenusPages());
             if(!is_null($menusBottom)){ return self::setMsg("管理员菜单按钮列表缓存成功", true); }
             $pRedis = new PRedisExtend('write');
             $menusRepository = new MenusRepository();
             $status = $menusRepository::menusButton($id);
             if($status){
                 $menusBottom = $menusRepository::returnData([]);
-                $result = $pRedis::redis()->hset(self::$model::$redisHashName.$id, self::$model::$redisHashKeyRuleMenusPages, json_encode($menusBottom, JSON_UNESCAPED_UNICODE));
+                $result = $pRedis::redis()->hset(self::$model::redisHashName().$id, self::$model::redisHashKeyRuleMenusPages(), json_encode($menusBottom, JSON_UNESCAPED_UNICODE));
             }
             if($result){
                 return self::setMsg("管理员菜单按钮列表缓存成功", true);

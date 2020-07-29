@@ -222,7 +222,7 @@ class MenusRepository implements RepositoryInterface
             // 实例化AdminsRepository类
             $adminsRepository = new AdminsRepository();
             // 获取管理员菜单按钮缓存
-            $menusBottom = $pRedis::redis()->hget($adminsRepository::GetModel()::$redisHashName.$adminId, $adminsRepository::GetModel()::$redisHashKeyRuleMenusPages);
+            $menusBottom = $pRedis::redis()->hget($adminsRepository::GetModel()::redisHashName().$adminId, $adminsRepository::GetModel()::redisHashKeyRuleMenusPages());
             if(is_null($menusBottom)){ return self::setMsg("权限不存在，请联系管理员", false); } // 缓存不存在时
             $menusBottom = json_decode($menusBottom, true); // 格式化缓存
             return self::setMsg("按钮列表", true, $menusBottom);

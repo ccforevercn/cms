@@ -85,28 +85,35 @@ class Admins extends  JWTModel
      *
      * @var string
      */
-    public static $redisHashName = 'admins_number_';
+    private static $redisHashName = 'admins_number_';
 
     /**
      * 当前管理员的上级+
      *
      * @var string
      */
-    public static $redisHashKeyParentIdsSelect = 'parent_ids_select';
+    private static $redisHashKeyParentIdsSelect = 'parent_ids_select';
+
+    /**
+     * 当前管理员的下级+
+     *
+     * @var string
+     */
+    private static $redisHashKeySubordinateIdsSelect = 'subordinate_ids_select';
 
     /**
      * 当管理员可以访问的路由
      *
      * @var string
      */
-    public static $redisHashKeyRuleMenusRoutes = 'rule_menus_routes';
+    private static $redisHashKeyRuleMenusRoutes = 'rule_menus_routes';
 
     /**
      * 当前管理员可以打开的页面
      *
      * @var string
      */
-    public static $redisHashKeyRuleMenusPages = 'rule_menus_pages';
+    private static $redisHashKeyRuleMenusPages = 'rule_menus_pages';
 
     /**
      * 超级管理员编号 所有接口都可以访问
@@ -200,12 +207,16 @@ class Admins extends  JWTModel
         return $list;
     }
 
+    /**
+     * 列表总数
+     * @param array $where
+     * @return int
+     */
     public static function count(array $where): int
     {
         // TODO: Implement count() method.
         return self::listWhere($where)->isDel(0)->count();
     }
-
 
     /**
      * 登陆
@@ -259,5 +270,55 @@ class Admins extends  JWTModel
     public static function noMenusRoute(): array
     {
         return self::$noMenusRoute;
+    }
+
+    /**
+     * admin表中的数组在redis数据库 hash表中的name
+     *
+     * @return string
+     */
+    public static function redisHashName(): string
+    {
+        return self::$redisHashName;
+    }
+
+    /**
+     * 当前管理员的上级+
+     *
+     * @return string
+     */
+    public static function redisHashKeyParentIdsSelect():string
+    {
+        return self::$redisHashKeyParentIdsSelect;
+    }
+
+    /**
+     * 当前管理员的下级+
+     *
+     * @return string
+     */
+    public static function redisHashKeySubordinateIdsSelect():string
+    {
+        return self::$redisHashKeySubordinateIdsSelect;
+    }
+
+    /**
+     * 当管理员可以访问的路由
+     *
+     * @return string
+     */
+    public static function redisHashKeyRuleMenusRoutes(): string
+    {
+        return self::$redisHashKeyRuleMenusRoutes;
+    }
+
+    /**
+     * 当前管理员可以打开的页面
+     *
+     * @return string
+     */
+    public static function redisHashKeyRuleMenusPages(): string
+    {
+        return self::$redisHashKeyRuleMenusPages;
     }
 }
