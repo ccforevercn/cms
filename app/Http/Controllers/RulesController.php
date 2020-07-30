@@ -36,6 +36,7 @@ class RulesController extends BaseController
         $where = $rulesListRequest->all();
         $page = $where['page']; // 页数
         $limit = $where['limit']; // 每页数据
+        $where['login_id'] = auth('login')->id();
         $list = []; // 查询的列表
         $count = 0; // 查询的总数
         $result = $rulesRepository::lst($where, $page, $limit);

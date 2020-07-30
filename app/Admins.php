@@ -78,7 +78,7 @@ class Admins extends  JWTModel
      * 所有管理员编号
      * @var array
      */
-    private static $adminParentIds = [];
+    private static $adminTotalIds = [];
 
     /**
      * admin表中的数组在redis数据库 hash表中的name
@@ -153,13 +153,14 @@ class Admins extends  JWTModel
 
     /**
      * 上级管理员查询 普通索引
+     *
      * @param $query
-     * @param int $parentId
+     * @param array $parentId
      * @return mixed
      */
-    public static function scopeParentId($query, int $parentId)
+    public static function scopeParentId($query, array $parentId)
     {
-        return $query->where(self::$modelTableJoin.'parentId', $parentId);
+        return $query->wherein(self::$modelTableJoin.'parent_id', $parentId);
     }
 
     /**
@@ -181,7 +182,7 @@ class Admins extends  JWTModel
      */
     public static function scopeListWhere($query, array $where)
     {
-        $query = strlen($where['parent_id']) ? self::parentId((int)$where['parent_id']) : $query;
+        $query = count($where['parent_id']) ? self::parentId($where['parent_id']) : $query;
         $query = strlen($where['username']) ? self::username($where['username']) : $query;
         return $query;
     }
@@ -237,11 +238,11 @@ class Admins extends  JWTModel
     /**
      * 所有管理员赋值
      *
-     * @param array $adminParentIds
+     * @param array $adminTotalIds
      */
-    public static function SetAdminParentIds(array $adminParentIds): void
+    public static function SetAdminTotalIds(array $adminTotalIds): void
     {
-        self::$adminParentIds = two_key_and_value_one($adminParentIds, 'id', 'parent_id');
+        self::$adminTotalIds = two_key_and_value_one($adminTotalIds, 'id', 'parent_id');
     }
 
     /**
@@ -330,8 +331,8 @@ class Admins extends  JWTModel
      *
      * @return array
      */
-    public static function adminParentIds(): array
+    public static function adminTotalIds(): array
     {
-        return self::$adminParentIds;
+        return self::$adminTotalIds;
     }
 }

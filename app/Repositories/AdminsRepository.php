@@ -33,7 +33,7 @@ class AdminsRepository implements RepositoryInterface
     /**
      * 手动加载Model
      */
-    public static function loading(): void
+    private static function loading(): void
     {
         self::$model = new Admins();
     }
@@ -98,8 +98,18 @@ class AdminsRepository implements RepositoryInterface
     public static function lst(array $where, int $page, int $limit): bool
     {
         // TODO: Implement lst() method.
-        $where['parent_id'] = array_key_exists('parent_id', $where) ? $where['parent_id'] : '';// 上级管理员是否存在
+        self::subordinateIds($where['login_id']); // 获取当前管理员编号和下级管理员编号+
+        $subordinateIds = self::returnData([]);
+        $where['parent_id'] = array_key_exists('parent_id', $where) ? (int)$where['parent_id'] : 0;// 上级管理员是否存在
         $where['username'] = array_key_exists('username', $where) ? $where['username'] : '';// 管理员账号是否存在
+        if($where['parent_id']){
+            if(!in_array($where['parent_id'], $subordinateIds)){
+                return self::setMsg('菜单列表', true, []);
+            }
+            $where['parent_id'] = [$where['parent_id']];
+        }else{// 所有的下级管理员
+            $where['parent_id'] = $subordinateIds;
+        }
         $offset = page_to_offset($page, $limit); // 获取起始值
         $list = self::$model::lst($where, $offset, $limit);// 菜单列表
         return self::setMsg('菜单列表', true, $list);
@@ -113,8 +123,18 @@ class AdminsRepository implements RepositoryInterface
     public static function count(array $where): bool
     {
         // TODO: Implement count() method.
-        $where['parent_id'] = array_key_exists('parent_id', $where) ? $where['parent_id'] : '';// 上级管理员是否存在
+        self::subordinateIds($where['login_id']); // 获取当前管理员编号和下级管理员编号+
+        $subordinateIds = self::returnData([]);
+        $where['parent_id'] = array_key_exists('parent_id', $where) ? $where['parent_id'] : 0;// 上级管理员是否存在
         $where['username'] = array_key_exists('username', $where) ? $where['username'] : '';// 管理员账号是否存在
+        if($where['parent_id']){
+            if(!in_array($where['parent_id'], $subordinateIds)){
+                return self::setMsg('菜单总数', true, [0]);
+            }
+            $where['parent_id'] = [$where['parent_id']];
+        }else{// 所有的下级管理员
+            $where['parent_id'] = $subordinateIds;
+        }
         $count = self::$model::count($where);// 菜单列表
         return self::setMsg('菜单总数', true, [$count]);
     }
@@ -242,6 +262,19 @@ class AdminsRepository implements RepositoryInterface
      */
     public static function checkAdminHandle(int $id, int $adminId): bool
     {
+        $adminParentIds = self::parentIds($id); // 获取当前管理员的编号和上级编号+
+        if(!in_array($adminId, $adminParentIds)){ return false; }// 判断是否有权限
+        return true;
+    }
+
+    /**
+     * 获取当前管理员和上级管理员+
+     *
+     * @param int $id
+     * @return array
+     */
+    private static function parentIds(int $id): array
+    {
         try{
             $pRedis = new PRedisExtend('read');  // 连接redis
             $adminParentIds = $pRedis::redis()->hget(self::$model::redisHashName().$id, self::$model::redisHashKeyParentIdsSelect()); // 获取缓存
@@ -250,12 +283,11 @@ class AdminsRepository implements RepositoryInterface
         }catch (\Exception $exception){// 未开启redis时
             $adminParentIds = self::adminParentIds($id, []);  // 可以操作的管理员编号
         }
-        if(!in_array($adminId, $adminParentIds)){ return false; }
-        return true;
+        return $adminParentIds;
     }
 
     /**
-     * 获取当前管理员和上级管理员+
+     * 缓存当前管理员和上级管理员+
      * @param array $messageArr
      * @return bool
      */
@@ -294,20 +326,19 @@ class AdminsRepository implements RepositoryInterface
         }
     }
 
-
     /**
-     * 重置当前管理员和上级管理员+
+     * 当前管理员和上级管理员+
      * @param int $adminId
      * @param array $parentIds
      * @return array
      */
-    public static function adminParentIds(int  $adminId, array $parentIds): array
+    private static function adminParentIds(int  $adminId, array $parentIds): array
     {
         $newAdminId = $adminId;
-        $adminTotalIds = self::$model::adminParentIds();
+        $adminTotalIds = self::$model::adminTotalIds();
         if(!count($adminTotalIds)){ // 所有管理员为空时
-            self::$model::SetAdminParentIds(self::$model::base_array('all', [], [], ['id', 'parent_id'])); // 获取所有管理员
-            $adminTotalIds = self::$model::adminParentIds();
+            self::$model::SetAdminTotalIds(self::$model::base_array('all', [], [], ['id', 'parent_id'])); // 获取所有管理员
+            $adminTotalIds = self::$model::adminTotalIds();
         }
         foreach ($adminTotalIds as $id=>$parentId){
             if($adminId == $id){
@@ -321,9 +352,75 @@ class AdminsRepository implements RepositoryInterface
         return $parentIds;
     }
 
-    public static function adminSubordinateIds()
+    /**
+     * 获取当前管理员和下级管理员+
+     *
+     * @param int $id
+     * @return array
+     */
+    public static function subordinateIds(int $id): bool
     {
+        $subordinateIds = []; // 当前管理员和下级管理员+
+        try{
+            $pRedis = new PRedisExtend('read');  // 连接redis
+            $adminSubordinateIds = $pRedis::redis()->hget(self::$model::redisHashName().$id, self::$model::redisHashKeySubordinateIdsSelect()); // 获取缓存
+            if(is_null($adminSubordinateIds)){ return self::setMsg('权限不足', false, $subordinateIds); } // 缓存不存在时
+            $subordinateIds = json_decode($adminSubordinateIds, true); // 格式化缓存
+        }catch (\Exception $exception){  // 未开启redis时
+            $subordinateIds = self::adminSubordinateIds([$id]);  // 当前管理员和下级管理员
+        }
+        return self::setMsg('当前管理员和下级管理员+', true, $subordinateIds);
+    }
 
+    /**
+     * 缓存当前管理员和下级管理员+
+     *
+     * @param int $id
+     * @return bool
+     */
+    public static function adminSubordinateIdsCache(int $id): bool
+    {
+        try{
+            $pRedis = new PRedisExtend('read');
+            $adminSubordinateIds = $pRedis::redis()->hget(self::$model::redisHashName().$id, self::$model::redisHashKeySubordinateIdsSelect());
+            if(!is_null($adminSubordinateIds)){ return self::setMsg("管理员下级编号缓存成功", true); }
+            $pRedis = new PRedisExtend('write');
+            $subordinateIds = self::adminSubordinateIds([$id]);
+            $result = $pRedis::redis()->hset(self::$model::redisHashName().$id, self::$model::redisHashKeySubordinateIdsSelect(), json_encode($subordinateIds));
+            if($result){
+                return self::setMsg("管理员上级编号缓存成功", true);
+            }
+            return self::setMsg("管理员上级编号缓存失败", false);
+        }catch (\Exception $exception){
+            // 缓存失败
+            return self::setMsg($exception->getMessage(), false);
+        }
+    }
+
+    /**
+     * 当前管理员和下级管理员+
+     *
+     * @param array $subordinateIdsNew
+     * @return array
+     */
+    private static function adminSubordinateIds(array $subordinateIdsNew): array
+    {
+        $subordinateIds = $subordinateIdsNew;
+        $adminTotalIds = self::$model::adminTotalIds();
+        if(!count($adminTotalIds)){ // 所有管理员为空时
+            self::$model::SetAdminTotalIds(self::$model::base_array('all', [], [], ['id', 'parent_id'])); // 获取所有管理员
+            $adminTotalIds = self::$model::adminTotalIds();
+        }
+        foreach ($adminTotalIds as $id=>$parentId){
+            if(in_array($parentId, $subordinateIdsNew)){
+                $subordinateIdsNew[] = $id;
+            }
+        }
+        $subordinateIdsNew = array_flip(array_flip($subordinateIdsNew));
+        if(count($subordinateIdsNew) !== count($subordinateIds)){
+            return self::adminSubordinateIds($subordinateIdsNew);
+        }
+        return array_merge($subordinateIdsNew, []);
     }
 
     /**

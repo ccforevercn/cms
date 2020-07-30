@@ -34,6 +34,7 @@ class AdminsController extends BaseController
     {
         // TODO: Implement lst() method.
         $where = $adminsListRequest->all();
+        $where['login_id'] = auth('login')->id();
         $page = $where['page'];
         $limit = $where['limit'];
         $list = [];

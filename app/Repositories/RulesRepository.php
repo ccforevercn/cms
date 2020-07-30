@@ -57,11 +57,25 @@ class RulesRepository implements RepositoryInterface
     public static function lst(array $where, int $page, int $limit): bool
     {
         // TODO: Implement lst() method.
-        $where['admin_id'] = array_key_exists('admin_id', $where) ? $where['admin_id'] : null;// 创建管理员
-        if(!$where['admin_id']) $where['admin_id'] = null;
-        $offset = page_to_offset($page, $limit); // 获取起始值
-        $list = self::$model::lst($where, $offset, $limit); // 规则列表
-        return self::setMsg('规则列表', true, $list);
+        $adminsRepository = new AdminsRepository();
+        $adminsRepository::subordinateIds($where['login_id']); // 获取当前管理员编号和下级管理员编号+
+        $subordinateIds = $adminsRepository::returnData([]);
+        $where['admin_id'] = array_key_exists('admin_id', $where) ? $where['admin_id'] : 0;// 创建管理员
+        if($where['admin_id']){
+            if(!in_array($where['admin_id'], $subordinateIds)){
+                return self::setMsg('规则列表', true, []);
+            }
+            $where['admin_id'] = [$where['admin_id']];
+        }else{// 所有的下级管理员
+            $where['admin_id'] = $subordinateIds;
+        }
+        $count = self::$model::count($where); // 规则总数
+        if($count){
+            $offset = page_to_offset($page, $limit); // 获取起始值
+            $list = self::$model::lst($where, $offset, $limit); // 规则列表
+            return self::setMsg('规则列表', true, $list);
+        }
+        return self::setMsg('规则列表', true, []);// 规则列表
     }
 
     /**
@@ -72,9 +86,19 @@ class RulesRepository implements RepositoryInterface
     public static function count(array $where): bool
     {
         // TODO: Implement count() method.
-        $where['admin_id'] = array_key_exists('admin_id', $where) ? $where['admin_id'] : null;// 创建管理员
-        if(!$where['admin_id']) $where['admin_id'] = null;
-        $count = self::$model::count($where); // 规则列表
+        $adminsRepository = new AdminsRepository();
+        $adminsRepository::subordinateIds($where['login_id']); // 获取当前管理员编号和下级管理员编号+
+        $subordinateIds = $adminsRepository::returnData([]);
+        $where['admin_id'] = array_key_exists('admin_id', $where) ? $where['admin_id'] : 0;// 创建管理员
+        if($where['admin_id']){
+            if(!in_array($where['admin_id'], $subordinateIds)){
+                return self::setMsg('规则总数', true, 0);
+            }
+            $where['admin_id'] = [$where['admin_id']];
+        }else{// 所有的下级管理员
+            $where['admin_id'] = $subordinateIds;
+        }
+        $count = self::$model::count($where); // 规则总数
         return self::setMsg('规则总数', true, [$count]);
     }
 

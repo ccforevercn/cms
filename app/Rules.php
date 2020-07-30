@@ -45,13 +45,14 @@ class Rules extends BaseModel implements ModelInterface
 
     /**
      * 管理员编号查询 普通索引
+     *
      * @param $query
-     * @param int $adminId
+     * @param array $adminId
      * @return mixed
      */
-    public static function scopeAdminId($query, int $adminId)
+    public static function scopeAdminId($query, array $adminId)
     {
-        return $query->where(self::$modelTableJoin.'admin_id', $adminId);
+        return $query->whereIn(self::$modelTableJoin.'admin_id', $adminId);
     }
 
     /**
@@ -73,7 +74,7 @@ class Rules extends BaseModel implements ModelInterface
      */
     public static function scopeListWhere($query, array $where)
     {
-        $query = is_null($where['admin_id']) ? $query : self::adminId((int)$where['admin_id']);
+        $query = count($where['admin_id']) ? self::adminId($where['admin_id']) : $query;
         return $query;
     }
 

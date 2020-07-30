@@ -66,9 +66,19 @@ class ManagesExtend
             $adminId = 1;
             if(array_key_exists('type', $messageArr)){
                 switch ($messageArr['type']){
-                    case 'adminparentids': // 缓存管理员的编号和上级+编号
+                    case 'adminparentids': // 缓存管理员的编号和上级编号+
                         $adminsRepository = new AdminsRepository();
                         $status = $adminsRepository::adminParentIdsCache($messageArr);
+                        $msg = $adminsRepository::returnMsg();
+                        if($status){
+                            $connection->send(json_encode(JsonExtend::success($msg)->original, JSON_UNESCAPED_UNICODE));
+                        }else{
+                            $connection->send(json_encode(JsonExtend::error($msg)->original, JSON_UNESCAPED_UNICODE));
+                        }
+                        break;
+                    case 'adminsubordinateids': // 缓存管理员的编号和下级编号+
+                        $adminsRepository = new AdminsRepository();
+                        $status = $adminsRepository::adminSubordinateIdsCache($adminId);
                         $msg = $adminsRepository::returnMsg();
                         if($status){
                             $connection->send(json_encode(JsonExtend::success($msg)->original, JSON_UNESCAPED_UNICODE));
