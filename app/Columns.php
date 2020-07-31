@@ -23,7 +23,21 @@ class Columns extends BaseModel implements ModelInterface
      *
      * @var string
      */
-    public static $modelTable = 'admins';
+    protected static $modelTable = 'columns';
+
+    /**
+     * 表所有字段
+     *
+     * @var array
+     */
+    private static $select = ['id', 'name', 'name_alias', 'parent_id', 'image', 'banner_image', 'description', 'weight', 'sort', 'navigation', 'render', 'page', 'add_time', 'is_del'];
+
+    /**
+     * 基本信息
+     *
+     * @var array
+     */
+    private static $message = ['id', 'name', 'name_alias', 'parent_id', 'image', 'banner_image', 'description', 'weight', 'sort', 'navigation', 'render', 'page', 'add_time'];
 
     /**
      * 编号查询 唯一索引
@@ -34,7 +48,7 @@ class Columns extends BaseModel implements ModelInterface
      */
     public static function scopeId($query, int $id)
     {
-        return $query->where('id', $id);
+        return $query->where(self::GetAlias().'id', $id);
     }
 
     /**
@@ -46,7 +60,7 @@ class Columns extends BaseModel implements ModelInterface
      */
     public static function scopeParentId($query, int $parentId)
     {
-        return $query->where('parent_id', $parentId);
+        return $query->where(self::GetAlias().'parent_id', $parentId);
     }
 
     /**
@@ -58,7 +72,7 @@ class Columns extends BaseModel implements ModelInterface
      */
     public static function scopeNavigation($query, int $navigation)
     {
-        return $query->where('navigation', $navigation);
+        return $query->where(self::GetAlias().'navigation', $navigation);
     }
 
     /**
@@ -70,7 +84,7 @@ class Columns extends BaseModel implements ModelInterface
      */
     public static function scopeIsDel($query, int $isDel)
     {
-        return $query->where('is_del', $isDel);
+        return $query->where(self::GetAlias().'is_del', $isDel);
     }
 
     /**
@@ -94,6 +108,26 @@ class Columns extends BaseModel implements ModelInterface
     public static function GetAlias(bool $alias = false): string
     {
         return $alias ? self::$modelTable : self::$modelTable.'.';
+    }
+
+    /**
+     * 所有字段
+     *
+     * @return array
+     */
+    public static function GetSelect(): array
+    {
+        return self::$select;
+    }
+
+    /**
+     * 基本信息
+     *
+     * @return array
+     */
+    public static function GetMessage(): array
+    {
+        return self::$message;
     }
 
     /**

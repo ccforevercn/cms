@@ -8,7 +8,10 @@ namespace App\Http\Controllers\message;
 use App\CcForever\controller\BaseController;
 use App\CcForever\extend\JsonExtend;
 use App\CcForever\traits\ControllerTrait;
+use App\Http\Requests\Columns\ColumnsInsertRequest;
 use App\Http\Requests\Columns\ColumnsListRequest;
+use App\Http\Requests\Columns\ColumnsRequest;
+use App\Http\Requests\Columns\ColumnsUpdateRequest;
 use App\Repositories\ColumnsRepository;
 
 /**
@@ -40,26 +43,81 @@ class ColumnsController extends BaseController
         if($result){ $list = $columnsRepository::returnData($list); }
         $result = $columnsRepository::count($where);
         if($result){ list($count) = $columnsRepository::returnData([]); }
-        return JsonExtend::success('菜单列表', compact('list', 'count'));
+        return JsonExtend::success('栏目列表', compact('list', 'count'));
     }
 
-    public function insert(): object
+    /**
+     * 栏目添加
+     *
+     * @param ColumnsInsertRequest $columnsInsertRequest
+     * @param ColumnsRepository $columnsRepository
+     * @return object
+     */
+    public function insert(ColumnsInsertRequest $columnsInsertRequest, ColumnsRepository $columnsRepository): object
     {
         // TODO: Implement insert() method.
+        $data = $columnsInsertRequest->all();
+        $bool = $columnsRepository::insert($data);
+        if($bool){
+            return JsonExtend::success($columnsRepository::returnMsg('添加成功'));
+        }
+        return JsonExtend::error($columnsRepository::returnMsg('添加失败'));
+
     }
 
-    public function update(): object
+    /**
+     * 栏目修改
+     *
+     * @param ColumnsUpdateRequest $columnsUpdateRequest
+     * @param ColumnsRepository $columnsRepository
+     * @return object
+     */
+    public function update(ColumnsUpdateRequest $columnsUpdateRequest, ColumnsRepository $columnsRepository): object
     {
         // TODO: Implement update() method.
+        $data = $columnsUpdateRequest->all();
+        $id = (int)$data['id'];
+        $bool = $columnsRepository::update($data, $id);
+        if($bool){
+            return JsonExtend::success($columnsRepository::returnMsg('修改成功'));
+        }
+        return JsonExtend::error($columnsRepository::returnMsg('修改失败'));
     }
 
-    public function delete(): object
+    /**
+     * 栏目删除
+     *
+     * @param ColumnsRequest $columnsRequest
+     * @param ColumnsRepository $columnsRepository
+     * @return object
+     */
+    public function delete(ColumnsRequest $columnsRequest, ColumnsRepository $columnsRepository): object
     {
         // TODO: Implement delete() method.
+        $id = (int)$columnsRequest->input('id');
+        $bool = $columnsRepository::delete($id);
+        if($bool){
+            return JsonExtend::success($columnsRepository::returnMsg('删除成功'));
+        }
+        return JsonExtend::error($columnsRepository::returnMsg('删除失败'));
     }
 
-    public function message(): object
+    /**
+     * 栏目信息
+     *
+     * @param ColumnsRequest $columnsRequest
+     * @param ColumnsRepository $columnsRepository
+     * @return object
+     */
+    public function message(ColumnsRequest $columnsRequest, ColumnsRepository $columnsRepository): object
     {
         // TODO: Implement message() method.
+        $id = (int)$columnsRequest->input('id');
+        if(!$id){ return JsonExtend::error($columnsRepository::returnMsg('参数错误')); }
+        $bool = $columnsRepository::message($id);
+        if($bool){
+            return JsonExtend::success($columnsRepository::returnMsg('栏目信息'), $columnsRepository::returnData([]));
+        }
+        return JsonExtend::error($columnsRepository::returnMsg('数据不存在'));
     }
 }

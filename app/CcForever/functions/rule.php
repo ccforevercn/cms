@@ -94,3 +94,22 @@ if(!function_exists('create_millisecond')){
         return $millisecond;
     }
 }
+
+if(!function_exists('check_null')){
+    /**
+     * 验证多个字段是否为空值
+     *
+     * @param mixed ...$value
+     * @return bool
+     */
+    function check_null(...$value): bool
+    {
+        $status = true;
+        foreach ($value as $item){
+            if(is_null($item)){
+                return false;
+            }
+        }
+        return $status;
+    }
+}

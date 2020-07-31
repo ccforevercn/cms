@@ -110,8 +110,7 @@ class MenusRepository implements RepositoryInterface
         $menu['icon'] = array_key_exists('icon', $data) ? $data['icon'] : '';// icon是否存在
         $menu['sort'] = array_key_exists('sort', $data) ? (int)$data['sort'] : 1;// 排序是否存在
         $menu['menu'] = array_key_exists('menu', $data) ? (int)$data['menu'] : 1;// 状态是否存在
-        if(is_null($menu['name']) || is_null($menu['parent_id']) || is_null($menu['routes'])){
-            // 菜单名称 || 菜单父级 || 菜单路由 不存在
+        if(!check_null($menu['name'],$menu['parent_id'], $menu['routes'])){
             return self::setMsg('参数错误', false);
         }
         $menu['is_del'] = 0;
@@ -154,8 +153,7 @@ class MenusRepository implements RepositoryInterface
         $menu['icon'] = array_key_exists('icon', $data) ? $data['icon'] : '';
         $menu['sort'] = array_key_exists('sort', $data) ? (int)$data['sort'] : 1;
         $menu['menu'] = array_key_exists('menu', $data) ? (int)$data['menu'] : 0;
-        if(is_null($menu['name']) || is_null($menu['parent_id']) || is_null($menu['routes'])){
-            // 菜单名称 || 菜单父级 || 菜单路由 不存在
+        if(!check_null($menu['name'],$menu['parent_id'], $menu['routes'])){
             return self::setMsg('参数错误', false);
         }
         $message = self::$model::base_array('message', [], $id, array_keys($menu));

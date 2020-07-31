@@ -34,7 +34,20 @@ class ColumnsRequest extends Request
     public function rules()
     {
         return [
-            //
+            'id' => 'bail|required|integer|min:0',
+        ];
+    }
+
+    /**
+     * 重写参数描述
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'id.required' => '参数错误',
+            'id.integer' => '参数错误',
+            'id.min' => '参数错误'
         ];
     }
 }

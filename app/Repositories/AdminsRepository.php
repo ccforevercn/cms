@@ -156,7 +156,7 @@ class AdminsRepository implements RepositoryInterface
         $admin['found'] = array_key_exists('found', $data) ? (int)$data['found'] : null;
         $admin['rule_id'] = array_key_exists('rule_id', $data) ? (int)$data['rule_id'] : null;
         $admin['email'] = array_key_exists('email', $data) ? $data['email'] : null;
-        if(is_null($admin['username']) || is_null($admin['password']) || is_null($admin['real_name']) || is_null($admin['parent_id']) || is_null($admin['status']) || is_null($admin['found']) || is_null($admin['rule_id']) || is_null($admin['email'])){
+        if(!check_null($admin['username'], $admin['password'], $admin['real_name'], $admin['parent_id'], $admin['status'], $admin['found'], $admin['rule_id'], $admin['email'])){
             return self::setMsg('参数错误', false);
         }
         $admin['password'] = Hash::make(create_admin_password($admin['password'])); // 加密管理员密码
@@ -195,9 +195,10 @@ class AdminsRepository implements RepositoryInterface
         $admin['found'] = array_key_exists('found', $data) ? (int)$data['found'] : null;
         $admin['rule_id'] = array_key_exists('rule_id', $data) ? (int)$data['rule_id'] : null;
         $admin['email'] = array_key_exists('email', $data) ? $data['email'] : null;
-        if(is_null($admin['real_name']) || is_null($admin['status']) || is_null($admin['found']) || is_null($admin['rule_id']) || is_null($admin['email'])){
+        if(!check_null($admin['real_name'],$admin['status'], $admin['found'], $admin['rule_id'], $admin['email'])){
             return self::setMsg('参数错误', false);
         }
+
         $admin['password'] = strlen($admin['password']) ? Hash::make(create_admin_password($admin['password'])) : ''; // 加密管理员密码
         if(!strlen($admin['password'])){ // 密码不存在时
             unset($admin['password']);
