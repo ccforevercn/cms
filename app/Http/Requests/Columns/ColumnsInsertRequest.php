@@ -39,6 +39,7 @@ class ColumnsInsertRequest extends Request
             'parent_id' => 'bail|required|integer|min:0',
             'image' => 'bail|required|max:128',
             'banner_image' => 'bail|required|max:128',
+            'keywords' =>  'bail|required|max:80',
             'description' =>  'bail|required|max:150',
             'weight' =>  'bail|required|integer|min:0|max:99999',
             'sort' =>  'bail|required|integer|min:0|max:6',
@@ -55,9 +56,9 @@ class ColumnsInsertRequest extends Request
     public function messages()
     {
         return [
-            'name.required' => '栏目名称',
+            'name.required' => '请填写栏目名称',
             'name.max' => '栏目名称不能超过20个汉字',
-            'name_alias.required' => '栏目别名',
+            'name_alias.required' => '请填写栏目别名',
             'name_alias.max' => '栏目别名不能超过20个汉字',
             'parent_id.required' => '请选择上级栏目',
             'parent_id.integer' => '上级栏目类型错误',
@@ -66,8 +67,10 @@ class ColumnsInsertRequest extends Request
             'image.max' => '栏目图片不能超过128位',
             'banner_image.required' => '请选择栏目轮播图片',
             'banner_image.max' => '栏目轮播图片路径不能超过128位',
-            'description.required' => '栏目描述',
-            'description.max' => '栏目名称不能超过150个汉字',
+            'keywords.required' => '请填写栏目关键字',
+            'keywords.max' => '栏目关键字不能超过80个汉字',
+            'description.required' => '请填写栏目描述',
+            'description.max' => '栏目描述不能超过150个汉字',
             'weight.required' => '请填写权重',
             'weight.integer' => '权重类型错误',
             'weight.min' => '权重不能小于0',

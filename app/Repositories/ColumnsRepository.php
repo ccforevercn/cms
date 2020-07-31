@@ -87,6 +87,7 @@ class ColumnsRepository implements RepositoryInterface
         $columns['parent_id'] = array_key_exists('parent_id', $data) ? (int)$data['parent_id'] : null;// 栏目父级
         $columns['image'] = array_key_exists('image', $data) ? $data['image'] : '';// 栏目图片
         $columns['banner_image'] = array_key_exists('banner_image', $data) ? $data['banner_image'] : '';// 栏目轮播
+        $columns['keywords'] = array_key_exists('keywords', $data) ? $data['keywords'] : $columns['name'];// 栏目关键字
         $columns['description'] = array_key_exists('description', $data) ? $data['description'] : $columns['name'];// 栏目描述
         $columns['weight'] = array_key_exists('weight', $data) ? (int)$data['weight'] : 1;// 栏目权重
         $columns['sort'] = array_key_exists('sort', $data) ? (int)$data['sort'] : 2;// 栏目排序
@@ -122,6 +123,7 @@ class ColumnsRepository implements RepositoryInterface
         $columns['parent_id'] = array_key_exists('parent_id', $data) ? (int)$data['parent_id'] : null;// 栏目父级
         $columns['image'] = array_key_exists('image', $data) ? $data['image'] : '';// 栏目图片
         $columns['banner_image'] = array_key_exists('banner_image', $data) ? $data['banner_image'] : '';// 栏目轮播
+        $columns['keywords'] = array_key_exists('keywords', $data) ? $data['keywords'] : $columns['name'];// 栏目关键字
         $columns['description'] = array_key_exists('description', $data) ? $data['description'] : $columns['name'];// 栏目描述
         $columns['weight'] = array_key_exists('weight', $data) ? (int)$data['weight'] : 1;// 栏目权重
         $columns['sort'] = array_key_exists('sort', $data) ? (int)$data['sort'] : 2;// 栏目排序

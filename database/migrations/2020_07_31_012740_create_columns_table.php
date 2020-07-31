@@ -32,6 +32,7 @@ class CreateColumnsTable extends Migration
             $table->integer('parent_id')->comment('父级栏目编号')->default(0)->nullable();
             $table->string('image', '128')->comment('栏目图片')->default('')->nullable();
             $table->string('banner_image', '128')->comment('栏目轮播图片')->default('')->nullable();
+            $table->string('keywords', '256')->comment('栏目关键字')->default('栏目关键字');
             $table->string('description', '512')->comment('栏目描述')->default('栏目描述');
             $table->integer('weight')->comment('栏目权重')->default(1);
             $table->integer('sort')->comment('栏目排序(栏目下的文章排序) 0 默认编号倒叙 1 修改时间升序 2 修改时间倒叙 3 权重升序 4 权重倒叙 5 点击量升序 6 点击量降序')->default(0);
