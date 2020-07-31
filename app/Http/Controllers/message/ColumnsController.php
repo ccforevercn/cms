@@ -8,6 +8,7 @@ namespace App\Http\Controllers\message;
 use App\CcForever\controller\BaseController;
 use App\CcForever\extend\JsonExtend;
 use App\CcForever\traits\ControllerTrait;
+use App\Http\Requests\Columns\ColumnsContentRequest;
 use App\Http\Requests\Columns\ColumnsInsertRequest;
 use App\Http\Requests\Columns\ColumnsListRequest;
 use App\Http\Requests\Columns\ColumnsRequest;
@@ -119,5 +120,23 @@ class ColumnsController extends BaseController
             return JsonExtend::success($columnsRepository::returnMsg('栏目信息'), $columnsRepository::returnData([]));
         }
         return JsonExtend::error($columnsRepository::returnMsg('数据不存在'));
+    }
+
+    /**
+     * 栏目内容
+     *
+     * @param ColumnsContentRequest $columnsContentRequest
+     * @param ColumnsRepository $columnsRepository
+     * @return object
+     */
+    public function content(ColumnsContentRequest $columnsContentRequest, ColumnsRepository $columnsRepository): object
+    {
+        $data = $columnsContentRequest->all();
+        $type = (bool)$data['type'];
+        $bool = $columnsRepository::content($data, $type);
+        if($bool){
+            return JsonExtend::success($columnsRepository::returnMsg('内容信息'), $columnsRepository::returnData([]));
+        }
+        return JsonExtend::error($columnsRepository::returnMsg('内容信息不存在'));
     }
 }

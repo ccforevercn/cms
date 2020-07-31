@@ -174,4 +174,49 @@ class ColumnsRepository implements RepositoryInterface
         $message = self::$model::base_array('message', [], $id, self::$model::GetMessage());
         return self::setMsg('菜单信息', true, $message);
     }
+
+    /**
+     * 栏目内容添加、修改、查询
+     * @param array $data
+     * @param bool $type
+     * @return bool
+     */
+    public static function content(array  $data, bool $type): bool
+    {
+        unset($data['type']); // $type  false 添加/修改  true 查询
+        $id = (int)$data['id']; // 栏目编号
+        $content = $data['content']; // 栏目内容
+        $markdown = array_key_exists('markdown', $data) ? $data['markdown'] : ''; // 栏目内容
+        $returnMsg = '栏目内容'; // 返回提示
+        $returnStatus = true; // 返回状态
+        $returnData = []; // 返回信息
+        self::$model::SetModelTable('columns_content');
+        $check = self::$model::base_bool('check', [], $id);
+        if($type){ // 查询
+            if($check){
+                $returnData = self::$model::base_array('message', [], $id, ['content']);
+            }
+        }else{ // 添加/修改
+            $columns = []; // 栏目内容数据
+            $columns['content'] = $content; // 栏目内容
+            $columns['markdown'] = $markdown; // 栏目内容
+            if(!$check){ // 添加
+                $columns['id'] = $id; // 栏目编号
+                $columns['is_del'] = 0; // 栏目是否删除
+                $returnStatus = self::$model::base_bool('insert', $columns, 0);
+                $returnMsg = $returnStatus ? '添加成功' : '添加失败';
+            }else{ // 修改
+                $columns['content'] = $content;
+                $message = self::$model::base_array('message', [], $id, array_keys($columns));
+                if($message === $columns){ // 数据库的数据和修改的数据一致
+                    $returnMsg = '修改成功';
+                }else{
+                    $returnStatus = self::$model::base_bool('update', $columns, $id);
+                    $returnMsg = $returnStatus ? '修改成功' : '修改失败';
+                }
+            }
+        }
+        self::$model::SetModelTable('content');
+        return self::setMsg($returnMsg, $returnStatus, $returnData);
+    }
 }

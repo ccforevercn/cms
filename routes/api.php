@@ -35,11 +35,12 @@ Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
             Route::get('/rules/menus', 'RulesController@menus')->name('rulesmenus'.$admin);// 规则菜单
         });
         Route::namespace('message')->group(function () use($admin) { // 文章信息路由组
-            Route::get('/columns/list', 'ColumnsController@lst')->name('ruleslist'.$admin);// 栏目列表
-            Route::post('/columns/insert', 'ColumnsController@insert')->name('rulesinsert'.$admin);// 栏目添加
-            Route::post('/columns/update', 'ColumnsController@update')->name('rulesupdate'.$admin);// 栏目修改
-            Route::post('/columns/delete', 'ColumnsController@delete')->name('rulesdelete'.$admin);// 栏目删除
-            Route::get('/columns/message', 'ColumnsController@message')->name('rulesmessage'.$admin);// 栏目信息
+            Route::get('/columns/list', 'ColumnsController@lst')->name('columnslist'.$admin);// 栏目列表
+            Route::post('/columns/insert', 'ColumnsController@insert')->name('columnsinsert'.$admin);// 栏目添加
+            Route::post('/columns/update', 'ColumnsController@update')->name('columnsupdate'.$admin);// 栏目修改
+            Route::post('/columns/delete', 'ColumnsController@delete')->name('columnsdelete'.$admin);// 栏目删除
+            Route::get('/columns/message', 'ColumnsController@message')->name('columnsmessage'.$admin);// 栏目信息
+            Route::post('/columns/content', 'ColumnsController@content')->name('columnscontent'.$admin);// 栏目内容 添加、修改、查询
         });
     });
 });

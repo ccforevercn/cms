@@ -9,11 +9,11 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * 文章信息内容表
+ * 栏目内容表
  *
- * Class CreateMessagesContentTable
+ * Class CreateColumnsContentTable
  */
-class CreateMessagesContentTable extends Migration
+class CreateColumnsContentTable extends Migration
 {
     /**
      * Run the migrations.
@@ -22,11 +22,10 @@ class CreateMessagesContentTable extends Migration
      */
     public function up()
     {
-        Schema::create('messages_content', function (Blueprint $table) {
-            $table->integer('id')->primary()->unique()->comment('文章内容表');
-            $table->longText('content')->comment('文章内容')->nullable();
-            $table->longText('markdown')->comment('文章内容')->nullable();
-            $table->longText('images')->comment('文章图片')->nullable();
+        Schema::create('columns_content', function (Blueprint $table) {
+            $table->integer('id')->primary()->unique()->comment('栏目内容表');
+            $table->longText('content')->comment('栏目内容')->nullable();
+            $table->longText('markdown')->comment('栏目内容')->nullable();
             $table->tinyInteger('is_del')->comment('是否删除 1是 0否')->default(1);
             $table->index('is_del'); // 是否删除添加唯一索引
         });
@@ -39,6 +38,6 @@ class CreateMessagesContentTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('messages_content');
+        Schema::dropIfExists('columns_content');
     }
 }
