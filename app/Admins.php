@@ -37,14 +37,7 @@ class Admins extends  JWTModel
      *
      * @var string
      */
-    public static $modelTable = 'admins';
-
-    /**
-     * 表名称 + .
-     *
-     * @var string
-     */
-    public static $modelTableJoin = 'admins.';
+    protected static $modelTable = 'admins';
 
     /**
      * 不自动更新 created_at 和 updated_at
@@ -65,14 +58,14 @@ class Admins extends  JWTModel
      *
      * @var array
      */
-    protected static $select = ['id', 'username', 'password', 'real_name', 'status', 'found', 'parent_id', 'rule_id', 'add_time', 'add_ip', 'last_ip', 'last_time', 'login_count', 'is_del'];
+    private static $select = ['id', 'username', 'password', 'real_name', 'status', 'found', 'parent_id', 'rule_id', 'add_time', 'add_ip', 'last_ip', 'last_time', 'login_count', 'is_del'];
 
     /**
      * 基本信息
      *
      * @var array
      */
-    public static $message = ['id', 'username', 'real_name', 'status', 'found', 'parent_id', 'rule_id', 'add_time', 'add_ip', 'last_ip', 'last_time', 'login_count'];
+    private static $message = ['id', 'username', 'real_name', 'status', 'found', 'parent_id', 'rule_id', 'add_time', 'add_ip', 'last_ip', 'last_time', 'login_count'];
 
     /**
      * 所有管理员编号
@@ -137,7 +130,7 @@ class Admins extends  JWTModel
      */
     public static function scopeId($query, int $id)
     {
-        return $query->where(self::$modelTableJoin.'id', $id);
+        return $query->where(self::GetAlias().'id', $id);
     }
 
     /**
@@ -148,7 +141,7 @@ class Admins extends  JWTModel
      */
     public static function scopeUsername($query, string $username)
     {
-        return $query->where(self::$modelTableJoin.'username', $username);
+        return $query->where(self::GetAlias().'username', $username);
     }
 
     /**
@@ -160,7 +153,7 @@ class Admins extends  JWTModel
      */
     public static function scopeParentId($query, array $parentId)
     {
-        return $query->wherein(self::$modelTableJoin.'parent_id', $parentId);
+        return $query->wherein(self::GetAlias().'parent_id', $parentId);
     }
 
     /**
@@ -171,7 +164,7 @@ class Admins extends  JWTModel
      */
     public static function scopeIsDel($query, int $isDel)
     {
-        return $query->where(self::$modelTableJoin.'is_del', $isDel);
+        return $query->where(self::GetAlias().'is_del', $isDel);
     }
 
     /**
@@ -200,8 +193,8 @@ class Admins extends  JWTModel
         $model = new self;
         $model = $model->listWhere($where);
         $model = $model->isDel(0);
-        $model = $model->select(self::$message);
         $model = $model->offset($offset);
+        $model = $model->select(self::GetMessage());
         $model = $model->limit($limit);
         $list = $model->get();
         $list = is_null($list) ? [] : $list->toArray();

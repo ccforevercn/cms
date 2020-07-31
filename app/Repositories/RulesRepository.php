@@ -140,9 +140,9 @@ class RulesRepository implements RepositoryInterface
         }
         self::$model::beginTransaction(); // 开启事务
         $ruleStatus = self::$model::base_bool('insert', $rule, 0); // 添加规则
-        self::$model::$modelTable = 'rules_menus';
+        self::$model::SetModelTable('rules_menus');
         $ruleMenusStatus = self::$model::base_bool('insert', $ruleMenu, 0); // 添加规规则菜单
-        self::$model::$modelTable = 'rules';
+        self::$model::SetModelTable('rules');
         $bool = $ruleStatus && $ruleMenusStatus;
         self::$model::checkTransaction($bool); // 事务提交
         return self::setMsg($bool ? '添加成功' : '添加失败', $bool);
@@ -203,9 +203,9 @@ class RulesRepository implements RepositoryInterface
         }
         self::$model::beginTransaction(); // 开启事务
         $ruleStatus = self::$model::base_bool('update', $rule, $id); // 添加规则
-        self::$model::$modelTable = 'rules_menus';
+        self::$model::SetModelTable('rules_menus');
         $ruleMenusStatus = self::$model::base_bool('insert', $ruleMenu, 0); // 添加规规则菜单
-        self::$model::$modelTable = 'rules';
+        self::$model::SetModelTable('rules');
         $bool = $ruleStatus && $ruleMenusStatus;
         self::$model::checkTransaction($bool); // 事务提交
         return self::setMsg($bool ? '修改成功' : '修改失败', $bool);
@@ -233,9 +233,9 @@ class RulesRepository implements RepositoryInterface
         if(!$checkAdminHandleStatus){ return self::setMsg('没有权限修改', false); }
         self::$model::beginTransaction(); // 开启事务
         $ruleStatus = self::$model::base_bool('delete', [] , $id); // 删除规则
-        self::$model::$modelTable = 'rules_menus';
+        self::$model::SetModelTable('rules_menus');
         $ruleMenusStatus = self::$model::base_bool('delete', [], [$ruleMessage['unique'], 'unique']); // 删除规规则菜单
-        self::$model::$modelTable = 'rules';
+        self::$model::SetModelTable('rules');
         $bool = $ruleStatus && $ruleMenusStatus;
         self::$model::checkTransaction($bool); // 事务提交
         return self::setMsg($bool ? '删除成功' : '删除失败', $bool);
@@ -253,7 +253,7 @@ class RulesRepository implements RepositoryInterface
         if(!$check){
             return self::setMsg('规则不存在', false);
         }
-        $message = self::$model::base_array('message', [], $id, self::$model::$message); // 查询规则信息
+        $message = self::$model::base_array('message', [], $id, self::$model::GetMessage()); // 查询规则信息
         $status = count($message);
         return self::setMsg($status ? '规则信息' : '获取失败', $status, $message);
     }

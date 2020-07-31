@@ -24,13 +24,26 @@ class Rules extends BaseModel implements ModelInterface
 
     protected $table = 'rules'; // 表名称
 
-    public static $modelTable = 'rules';// 表名称 ModelTraits 使用
+    /**
+     * 表名称 ModelTraits 使用
+     *
+     * @var string
+     */
+    protected static $modelTable = 'rules';
 
-    public static $modelTableJoin = 'rules.';// 表名称 + .
+    /**
+     * 表所有字段
+     *
+     * @var array
+     */
+    private static $select = ['id', 'name', 'unique', 'admin_id', 'add_time', 'is_del'];
 
-    protected static $select = ['id', 'name', 'unique', 'admin_id', 'add_time', 'is_del']; // 表所有字段
-
-    public static $message = ['id', 'name', 'unique', 'admin_id', 'add_time'];// 基本信息
+    /**
+     * 基本信息
+     *
+     * @var array
+     */
+    private static $message = ['id', 'name', 'unique', 'admin_id', 'add_time'];
 
     /**
      * 规则编号查询 唯一索引
@@ -40,7 +53,7 @@ class Rules extends BaseModel implements ModelInterface
      */
     public static function scopeId($query, int $id)
     {
-        return $query->where(self::$modelTableJoin.'id', $id);
+        return $query->where(self::GetAlias().'id', $id);
     }
 
     /**
@@ -52,7 +65,7 @@ class Rules extends BaseModel implements ModelInterface
      */
     public static function scopeAdminId($query, array $adminId)
     {
-        return $query->whereIn(self::$modelTableJoin.'admin_id', $adminId);
+        return $query->whereIn(self::GetAlias().'admin_id', $adminId);
     }
 
     /**
@@ -63,7 +76,7 @@ class Rules extends BaseModel implements ModelInterface
      */
     public static function scopeIsDel($query, int $isDel)
     {
-        return $query->where(self::$modelTableJoin.'is_del', $isDel);
+        return $query->where(self::GetAlias().'is_del', $isDel);
     }
 
     /**
@@ -89,10 +102,10 @@ class Rules extends BaseModel implements ModelInterface
     public static function lst(array $where, int $offset, int $limit): array
     {
         // TODO: Implement lst() method.
-        $select = [self::$modelTableJoin.'add_time', self::$modelTableJoin.'admin_id', self::$modelTableJoin.'id', self::$modelTableJoin.'name', Admins::$modelTableJoin.'real_name as admin_name'];  // 查询的字段
+        $select = [self::GetAlias().'add_time', self::GetAlias().'admin_id', self::GetAlias().'id', self::GetAlias().'name', Admins::GetAlias().'real_name as admin_name'];  // 查询的字段
         $model = new self;
-        $model = $model->leftJoin('admins', self::$modelTableJoin.'admin_id', '=', Admins::$modelTableJoin.'id');
         $model = $model->listWhere($where);
+        $model = $model->leftJoin('admins', self::GetAlias().'admin_id', '=', Admins::GetAlias().'id');
         $model = $model->isDel(0);
         $model = $model->select($select);
         $model = $model->offset($offset);

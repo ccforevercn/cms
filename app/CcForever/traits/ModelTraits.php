@@ -11,6 +11,46 @@ use Illuminate\Support\Facades\DB;
 trait ModelTraits
 {
     /**
+     * 表别名
+     *
+     * @param bool $alias
+     * @return string
+     */
+    public static function GetAlias(bool $alias = false): string
+    {
+        return $alias ? self::$modelTable : self::$modelTable.'.';
+    }
+
+    /**
+     * 设置表名称
+     *
+     * @param string $modelTable
+     */
+    public static function SetModelTable(string $modelTable):void
+    {
+        self::$modelTable = $modelTable;
+    }
+    /**
+     * 所有字段
+     *
+     * @return array
+     */
+    public static function GetSelect(): array
+    {
+        return self::$select;
+    }
+
+    /**
+     * 基本信息
+     *
+     * @return array
+     */
+    public static function GetMessage(): array
+    {
+        return self::$message;
+    }
+
+    /**
      * bool返回值的操作
      * @param string $function
      * @param mixed ...$parameter

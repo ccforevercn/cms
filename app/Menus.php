@@ -23,13 +23,26 @@ class Menus extends BaseModel implements ModelInterface
 
     protected $table = 'menus'; // 表名称
 
-    public static $modelTable = 'menus';// 表名称 ModelTraits 使用
+    /**
+     * 表名称 ModelTraits 使用
+     *
+     * @var string
+     */
+    protected static $modelTable = 'menus';
 
-    public static $modelTableJoin = 'menus.';// 表名称 + .
+    /**
+     * 表所有字段
+     *
+     * @var array
+     */
+    private static $select = ['id', 'name', 'parent_id', 'routes', 'page', 'icon', 'menu', 'add_time', 'sort', 'is_del'];
 
-    protected static $select = ['id', 'name', 'parent_id', 'routes', 'page', 'icon', 'menu', 'add_time', 'sort', 'is_del']; // 表所有字段
-
-    public static $message = ['id', 'name', 'parent_id', 'routes', 'page', 'icon', 'menu', 'add_time', 'sort']; // 基本信息
+    /**
+     * 基本信息
+     *
+     * @var array
+     */
+    private static $message = ['id', 'name', 'parent_id', 'routes', 'page', 'icon', 'menu', 'add_time', 'sort'];
 
     /**
      * 编号查询 唯一索引
@@ -39,7 +52,7 @@ class Menus extends BaseModel implements ModelInterface
      */
     public static function scopeId($query, int $id)
     {
-        return $query->where(self::$modelTableJoin.'id', $id);
+        return $query->where(self::GetAlias().'id', $id);
     }
 
     /**
@@ -50,7 +63,7 @@ class Menus extends BaseModel implements ModelInterface
      */
     public static function scopeIds($query, array $ids)
     {
-        return $query->whereIn(self::$modelTableJoin.'id', $ids);
+        return $query->whereIn(self::GetAlias().'id', $ids);
     }
 
     /**
@@ -61,7 +74,7 @@ class Menus extends BaseModel implements ModelInterface
      */
     public static function scopeRoutes($query, string $routes)
     {
-        return $query->where(self::$modelTableJoin.'routes', $routes);
+        return $query->where(self::GetAlias().'routes', $routes);
     }
 
     /**
@@ -72,7 +85,7 @@ class Menus extends BaseModel implements ModelInterface
      */
     public static function scopeParentId($query, int $parentId)
     {
-        return $query->where(self::$modelTableJoin.'parent_id', $parentId);
+        return $query->where(self::GetAlias().'parent_id', $parentId);
     }
 
     /**
@@ -83,7 +96,7 @@ class Menus extends BaseModel implements ModelInterface
      */
     public static function scopeMenu($query, int $menu)
     {
-        return $query->where(self::$modelTableJoin.'menu', $menu);
+        return $query->where(self::GetAlias().'menu', $menu);
     }
 
     /**
@@ -94,7 +107,7 @@ class Menus extends BaseModel implements ModelInterface
      */
     public static function scopeIsDel($query, int $isDel)
     {
-        return $query->where(self::$modelTableJoin.'is_del', $isDel);
+        return $query->where(self::GetAlias().'is_del', $isDel);
     }
 
     /**
@@ -123,6 +136,7 @@ class Menus extends BaseModel implements ModelInterface
         $model = new self;
         $model = $model->listWhere($where);
         $model = $model->isDel(0);
+        $model = $model->select(self::GetMessage());
         $model = $model->offset($offset);
         $model = $model->limit($limit);
         $list = $model->get();

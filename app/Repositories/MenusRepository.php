@@ -192,7 +192,7 @@ class MenusRepository implements RepositoryInterface
         if(!$check){// 编号不存在
             return self::setMsg('数据不存在', false);
         }
-        $message = self::$model::base_array('message', [], $id, self::$model::$message);
+        $message = self::$model::base_array('message', [], $id, self::$model::GetMessage());
         return self::setMsg('菜单信息', true, $message);
     }
 
@@ -259,14 +259,14 @@ class MenusRepository implements RepositoryInterface
             // 规则唯一值不存在
             if(!strlen($unique)){ return self::setMsg('菜单不存在', false); }
             // 设置table为rules_menus表
-            $rulesRepository::GetModel()::$modelTable = 'rules_menus';
+            $rulesRepository::GetModel()::SetModelTable('rules_menus');
             // 获取规则菜单编号
             $menusIds = $rulesRepository::GetModel()::base_array('equal', [], ['unique' => $unique], ['menu_id']);
             // 二维数组转为一维数组
             $menusIds = array_column($menusIds, 'menu_id');
         }
         // 获取菜单列表信息
-        $menusMessageList = self::$model::base_array('pluck', [], $menusIds, self::$model::$message);
+        $menusMessageList = self::$model::base_array('pluck', [], $menusIds, self::$model::GetMessage());
         $menusMessageBottomList = [];  // 菜单按钮列表
         foreach ($menusMessageList as $key=>$value){
             if($value['menu']){

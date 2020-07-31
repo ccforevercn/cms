@@ -77,7 +77,7 @@ class AdminsRepository implements RepositoryInterface
         if(!$check){ // 管理员已删除
             return self::setMsg('用户不存在', false);
         }
-        $userInfo = self::$model::base_array('message', [], $id, self::$model::$message); // 管理员登陆信息
+        $userInfo = self::$model::base_array('message', [], $id, self::$model::GetMessage()); // 管理员登陆信息
         if(!$userInfo['status']){// 管理员账号已锁定
             return self::setMsg('账号已锁定', false);
         }
@@ -250,7 +250,7 @@ class AdminsRepository implements RepositoryInterface
         if(!$check){
             return self::setMsg('管理员不存在', false);
         }
-        $message = self::$model::base_array('message', [], $id, self::$model::$message); // 查询管理员信息
+        $message = self::$model::base_array('message', [], $id, self::$model::GetMessage()); // 查询管理员信息
         $status = count($message);
         return self::setMsg($status ? '管理员信息' : '获取失败', $status, $message);
     }

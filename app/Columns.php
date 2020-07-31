@@ -99,36 +99,6 @@ class Columns extends BaseModel implements ModelInterface
         $query = strlen($where['parent_id']) ? self::parentId($where['parent_id']) : $query;
         return $query;
     }
-    /**
-     * 表别名
-     *
-     * @param bool $alias
-     * @return string
-     */
-    public static function GetAlias(bool $alias = false): string
-    {
-        return $alias ? self::$modelTable : self::$modelTable.'.';
-    }
-
-    /**
-     * 所有字段
-     *
-     * @return array
-     */
-    public static function GetSelect(): array
-    {
-        return self::$select;
-    }
-
-    /**
-     * 基本信息
-     *
-     * @return array
-     */
-    public static function GetMessage(): array
-    {
-        return self::$message;
-    }
 
     /**
      * 列表
@@ -144,6 +114,7 @@ class Columns extends BaseModel implements ModelInterface
         $model = new self;
         $model = $model->listWhere($where);
         $model = $model->isDel(0);
+        $model = $model->select(self::GetMessage());
         $model = $model->offset($offset);
         $model = $model->limit($limit);
         $list = $model->get();
