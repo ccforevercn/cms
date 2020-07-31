@@ -23,11 +23,9 @@ class CreateMessagesContentTable extends Migration
     public function up()
     {
         Schema::create('messages_content', function (Blueprint $table) {
-            $table->integer('mid')->comment('文章信息表');
-            $table->text('content')->comment('文章内容')->default('文章内容');
-            $table->text('images')->comment('文章图片')->default('');
-            $table->primary('mid'); // 文章编号设置为主键
-            $table->unique('mid'); // 文章编号唯一索引
+            $table->integer('mid')->primary()->unique()->comment('文章信息表');
+            $table->longText('content')->comment('文章内容')->nullable();
+            $table->longText('images')->comment('文章图片')->nullable();
         });
     }
 

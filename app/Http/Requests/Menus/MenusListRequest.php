@@ -4,8 +4,9 @@
  * @day: 2020/7/21
  */
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Menus;
 
+use App\Http\Requests\Request;
 /**
  * 菜单列表
  * Class MenusListRequest

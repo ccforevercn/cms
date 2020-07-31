@@ -18,6 +18,7 @@ use App\CcForever\traits\ModelTraits;
 class Menus extends BaseModel implements ModelInterface
 {
     use ModelTraits;
+
     protected $primaryKey = 'id'; // 表主键
 
     protected $table = 'menus'; // 表名称

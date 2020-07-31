@@ -3,8 +3,9 @@
  * @author: cc_forever<1253705861@qq.com>
  * @day: 2020/7/21
  */
-namespace App\Http\Requests;
+namespace App\Http\Requests\Admins;
 
+use App\Http\Requests\Request;
 /**
  * 管理员列表验证
  * Class AdminsListRequest

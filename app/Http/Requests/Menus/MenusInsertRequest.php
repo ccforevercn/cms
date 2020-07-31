@@ -4,14 +4,16 @@
  * @day: 2020/7/21
  */
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Menus;
+
+use App\Http\Requests\Request;
 
 /**
- * 按钮修改规则
- * Class MenusUpdateRequest
+ * 菜单添加
+ * Class MenusInsertRequest
  * @package App\Http\Requests
  */
-class MenusUpdateRequest extends Request
+class MenusInsertRequest extends Request
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -31,10 +33,9 @@ class MenusUpdateRequest extends Request
     public function rules()
     {
         return [
-            'id' =>  'bail|required|integer|min:1',
             'name' =>  'bail|required|max:20',
             'parent_id' => 'bail|required|integer|min:0',
-            'routes' =>  'bail|required|max:64',
+            'routes' =>  'bail|required|max:64|unique:menus',
             'page' =>  'bail|required|max:64',
             'icon' => ['bail', 'filled', 'max:16'],
             'sort' => ['bail', 'filled', 'integer'],
@@ -49,9 +50,6 @@ class MenusUpdateRequest extends Request
     public function messages()
     {
         return [
-            'id.required' => '编号不存在',
-            'id.integer' => '编号格式错误',
-            'id.min' => '编号错误',
             'name.required' => '请填写菜单名称',
             'name.max' => '菜单名称不能超过20个汉字',
             'parent_id.required' => '请选择父级菜单',
@@ -61,8 +59,8 @@ class MenusUpdateRequest extends Request
             'routes.max' => '路由地址不能超过64个字母',
             'page.required' => '请填写页面链接',
             'page.max' => '页面链接不能超过64个字符',
-            'icon.max' => '菜单icon不能超过16个字符',
             'icon.filled' => '请填写菜单icon',
+            'icon.max' => '菜单icon不能超过16个字符',
             'sort.integer' => '菜单排序格式错误',
             'sort.filled' => '请填写菜单排序',
             'menu.integer' => '菜单状态格式错误',

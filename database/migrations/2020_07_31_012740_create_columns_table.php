@@ -42,7 +42,6 @@ class CreateColumnsTable extends Migration
             $table->tinyInteger('is_del')->comment('栏目是否删除(1是 0否)')->default(0);
             $table->unique('id'); // 编号添加唯一索引
             $table->index('parent_id'); // 父级栏目编号添加唯一索引
-            $table->index('weight'); // 栏目权重普通索引
             $table->index('navigation'); // 导航状态普通索引
             $table->index('is_del'); // 菜单是否删除普通索引
         });

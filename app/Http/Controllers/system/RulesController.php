@@ -4,15 +4,15 @@
  * @day: 2020/7/23
  */
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\system;
 
 use App\CcForever\controller\BaseController;
 use App\CcForever\extend\JsonExtend;
 use App\CcForever\traits\ControllerTrait;
-use App\Http\Requests\RulesInsertRequest;
-use App\Http\Requests\RulesListRequest;
-use App\Http\Requests\RulesRequest;
-use App\Http\Requests\RulesUpdateRequest;
+use App\Http\Requests\Rules\RulesInsertRequest;
+use App\Http\Requests\Rules\RulesListRequest;
+use App\Http\Requests\Rules\RulesRequest;
+use App\Http\Requests\Rules\RulesUpdateRequest;
 use App\Repositories\RulesRepository;
 
 /**

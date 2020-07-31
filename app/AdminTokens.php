@@ -8,6 +8,11 @@ namespace App;
 
 use App\CcForever\model\BaseModel;
 
+/**
+ * 管理员登陆记录Model
+ * Class AdminTokens
+ * @package App
+ */
 class AdminTokens extends BaseModel
 {
 

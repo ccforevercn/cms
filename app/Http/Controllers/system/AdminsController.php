@@ -4,15 +4,15 @@
  * @day: 2020/7/22
  */
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\system;
 
 use App\CcForever\controller\BaseController;
 use App\CcForever\extend\JsonExtend;
 use App\CcForever\traits\ControllerTrait;
-use App\Http\Requests\AdminsInsertRequest;
-use App\Http\Requests\AdminsListRequest;
-use App\Http\Requests\AdminsRequest;
-use App\Http\Requests\AdminsUpdateRequest;
+use App\Http\Requests\Admins\AdminsInsertRequest;
+use App\Http\Requests\Admins\AdminsListRequest;
+use App\Http\Requests\Admins\AdminsRequest;
+use App\Http\Requests\Admins\AdminsUpdateRequest;
 use App\Repositories\AdminsRepository;
 
 /**

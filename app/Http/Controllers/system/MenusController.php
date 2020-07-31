@@ -4,15 +4,15 @@
  * @day: 2020/7/21
  */
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\system;
 
 use App\CcForever\controller\BaseController;
 use App\CcForever\extend\JsonExtend;
 use App\CcForever\traits\ControllerTrait;
-use App\Http\Requests\MenusInsertRequest;
-use App\Http\Requests\MenusListRequest;
-use App\Http\Requests\MenusUpdateRequest;
-use App\Http\Requests\MenusRequest;
+use App\Http\Requests\Menus\MenusInsertRequest;
+use App\Http\Requests\Menus\MenusListRequest;
+use App\Http\Requests\Menus\MenusUpdateRequest;
+use App\Http\Requests\Menus\MenusRequest;
 use App\Repositories\MenusRepository;
 
 /**

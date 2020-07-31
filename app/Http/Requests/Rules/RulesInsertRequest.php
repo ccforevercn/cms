@@ -3,8 +3,9 @@
  * @author: cc_forever<1253705861@qq.com>
  * @day: 2020/7/23
  */
-namespace App\Http\Requests;
+namespace App\Http\Requests\Rules;
 
+use App\Http\Requests\Request;
 /**
  * 规则添加验证
  * Class RulesInsertRequest
