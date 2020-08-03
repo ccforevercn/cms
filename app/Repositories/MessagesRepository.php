@@ -205,4 +205,61 @@ class MessagesRepository implements RepositoryInterface
         self::$model::SetModelTable('messages');
         return self::setMsg($returnMsg, $returnStatus, $returnData);
     }
+
+    /**
+     * 信息 点击量
+     *
+     * @param int $id
+     * @param int $click
+     * @return bool
+     */
+    public static function click(int $id, int $click): bool
+    {
+        $check = self::$model::base_bool('check', [], $id); // 验证编号
+        if(!$check){
+            return self::setMsg('参数错误', false);
+        }
+        $clicks = (int)self::$model::base_string('select', [], $id, 'click');
+        if(!$clicks && $click < 0){
+            return self::setMsg('修改失败，参数错误', false);
+        }
+        $total = (int)bcadd($click, $clicks, 0);
+        if($total > 999) {
+            return self::setMsg('修改失败，点击量最多三位数', false);
+        }
+        $total = (int)bcadd($click, $clicks, 0);
+        if($total < 0){ $click = (int)('-'.$clicks); }
+        $status = self::$model::click($id, $click);
+        return self::setMsg($status ? '修改成功' : '修改失败', $status);
+    }
+
+    /**
+     * 信息状态
+     *
+     * @param int $id
+     * @param string $type
+     * @param int $value
+     * @return bool
+     */
+    public static function state(int $id, string $type, int $value): bool
+    {
+        if(!in_array($type, self::$model::GetState())){ // 验证类型
+            return self::setMsg('状态类型错误', false);
+        }
+        if(!in_array($value, [0, 1])){ // 验证状态值
+            return self::setMsg('状态值错误', false);
+        }
+        $check = self::$model::base_bool('check', [], $id); // 验证编号
+        if(!$check){
+            return self::setMsg('参数错误', false);
+        }
+        $messages = [];
+        $messages[$type] = $value;
+        $message = self::$model::base_array('message', [], $id, array_keys($messages));
+        if($message === $messages){ // 数据库的数据和修改的数据一致
+            return self::setMsg('修改成功', true);
+        }
+        $status = self::$model::base_bool('update', $messages, $id);
+        return self::setMsg($status ? '修改成功' : '修改失败', $status);
+    }
 }

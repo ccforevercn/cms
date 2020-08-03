@@ -137,4 +137,43 @@ class MessagesController extends BaseController
         }
         return JsonExtend::error($messagesRepository::returnMsg('内容信息不存在'));
     }
+
+    /**
+     * 信息 添加点击量
+     *
+     * @param MessagesRequest $messagesRequest
+     * @param MessagesRepository $messagesRepository
+     * @return object
+     */
+    public function click(MessagesRequest $messagesRequest, MessagesRepository $messagesRepository): object
+    {
+        $id = (int)$messagesRequest->input('id');
+        $click = (int)$messagesRequest->input('click', 1);
+        if(is_null($id)){ $click = 1; } // 如果没有登录添加的点击量为1
+        $bool = $messagesRepository::click($id, $click);
+        if($bool){
+            return JsonExtend::success($messagesRepository::returnMsg('修改成功'));
+        }
+        return JsonExtend::error($messagesRepository::returnMsg('修改失败'));
+
+    }
+
+    /**
+     * 信息 状态修改
+     *
+     * @param MessagesRequest $messagesRequest
+     * @param MessagesRepository $messagesRepository
+     * @return object
+     */
+    public function state(MessagesRequest $messagesRequest, MessagesRepository $messagesRepository): object
+    {
+        $id = (int)$messagesRequest->input('id');
+        $type = $messagesRequest->input('type', '');
+        $value = (int)$messagesRequest->input('value', 0);
+        $bool = $messagesRepository::state($id, $type, $value);
+        if($bool){
+            return JsonExtend::success($messagesRepository::returnMsg('修改成功'));
+        }
+        return JsonExtend::error($messagesRepository::returnMsg('修改失败'));
+    }
 }

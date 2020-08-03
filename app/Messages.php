@@ -40,6 +40,13 @@ class Messages extends BaseModel implements ModelInterface
     private static $message = ['id', 'name', 'columns_id', 'image', 'writer', 'click', 'weight', 'keywords', 'description', 'index', 'hot', 'release', 'add_time', 'update_time', 'release_time', 'page', ];
 
     /**
+     * 状态类型
+     *
+     * @var array
+     */
+    private static $state = ['index', 'hot', 'release'];
+
+    /**
      * 编号查询 唯一索引
      *
      * @param $query
@@ -183,5 +190,28 @@ class Messages extends BaseModel implements ModelInterface
     {
         // TODO: Implement count() method.
         return self::listWhere($where)->isDel(0)->count();
+    }
+
+    /**
+     * 信息 点击量
+     *
+     * @param int $id
+     * @param int $click
+     * @return bool
+     */
+    public static function click(int $id, int $click): bool
+    {
+        $result = (bool)self::id($id)->increment('click', $click);
+        return $result;
+    }
+
+    /**
+     * 状态类型
+     *
+     * @return array
+     */
+    public static function GetState(): array
+    {
+        return self::$state;
     }
 }
