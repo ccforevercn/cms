@@ -7,6 +7,7 @@
 namespace App\Repositories;
 
 use App\AdminTokens;
+use App\CcForever\interfaces\RepositoryInterface;
 use App\CcForever\traits\RepositoryReturnMsgData;
 
 /**
@@ -14,7 +15,7 @@ use App\CcForever\traits\RepositoryReturnMsgData;
  * Class AdminsTokenRepository
  * @package App\Repositories
  */
-class AdminsTokenRepository
+class AdminsTokenRepository implements RepositoryInterface
 {
     use RepositoryReturnMsgData;
 
@@ -27,7 +28,10 @@ class AdminsTokenRepository
         }
     }
 
-    public static function loading(): void
+    /**
+     * 手动加载Model
+     */
+    private static function loading(): void
     {
         self::$model = new AdminTokens();
     }
@@ -60,5 +64,35 @@ class AdminsTokenRepository
     {
         $adminId = self::$model::tokenSelectAdminId($token);
         return (int)$adminId;
+    }
+
+    public static function lst(array $where, int $page, int $limit): bool
+    {
+        // TODO: Implement lst() method.
+    }
+
+    public static function count(array $where): bool
+    {
+        // TODO: Implement count() method.
+    }
+
+    public static function insert(array $data): bool
+    {
+        // TODO: Implement insert() method.
+    }
+
+    public static function update(array $data, int $id): bool
+    {
+        // TODO: Implement update() method.
+    }
+
+    public static function delete(int $id): bool
+    {
+        // TODO: Implement delete() method.
+    }
+
+    public static function message(int $id): bool
+    {
+        // TODO: Implement message() method.
     }
 }

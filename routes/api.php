@@ -41,6 +41,12 @@ Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
             Route::post('/columns/delete', 'ColumnsController@delete')->name('columnsdelete'.$admin);// 栏目删除
             Route::get('/columns/message', 'ColumnsController@message')->name('columnsmessage'.$admin);// 栏目信息
             Route::post('/columns/content', 'ColumnsController@content')->name('columnscontent'.$admin);// 栏目内容 添加、修改、查询
+            Route::get('/messages/list', 'MessagesController@lst')->name('messageslist'.$admin);// 信息列表
+            Route::post('/messages/insert', 'MessagesController@insert')->name('messagesinsert'.$admin);// 信息添加
+            Route::post('/messages/update', 'MessagesController@update')->name('messagesupdate'.$admin);// 信息修改
+            Route::post('/messages/delete', 'MessagesController@delete')->name('messagesdelete'.$admin);// 信息删除
+            Route::get('/messages/message', 'MessagesController@message')->name('messagesmessage'.$admin);// 信息信息
+            Route::post('/messages/content', 'MessagesController@content')->name('messagescontent'.$admin);// 信息内容 添加、修改、查询
         });
     });
 });

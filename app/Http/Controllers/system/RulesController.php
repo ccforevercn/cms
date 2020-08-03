@@ -42,7 +42,7 @@ class RulesController extends BaseController
         $result = $rulesRepository::lst($where, $page, $limit);
         if($result){ $list = $rulesRepository::returnData($list); }
         $result = $rulesRepository::count($where);
-        if($result){ list($count) = $rulesRepository::returnData([]); }
+        if($result){ list($count) = $rulesRepository::returnData([0]); }
         return JsonExtend::success('规则列表', compact('list', 'count'));
     }
 

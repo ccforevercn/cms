@@ -20,7 +20,8 @@ class RulesRepository implements RepositoryInterface
 {
     use RepositoryReturnMsgData;
 
-    public function __construct(Rules $model = null) {
+    public function __construct(Rules $model = null)
+    {
         if(is_null($model)){
             self::loading();
         }else{
@@ -31,20 +32,9 @@ class RulesRepository implements RepositoryInterface
     /**
      * 手动加载Model
      */
-    public static function loading(): void
+    private static function loading(): void
     {
         self::$model = new Rules();
-    }
-
-    /**
-     * 外部调用Model
-     *
-     * @return object
-     */
-    public static function GetModel(): object
-    {
-        // TODO: Implement GetModel() method.
-        return self::$model;
     }
 
     /**

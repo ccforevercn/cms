@@ -1,20 +1,20 @@
 <?php
 /**
  * @author: cc_forever<1253705861@qq.com>
- * @day: 2020/7/31
+ * @day: 2020/8/3
  */
 
-namespace App\Http\Requests\Columns;
+namespace App\Http\Requests\Messages;
 
 use App\Http\Requests\Request;
 
 /**
- * 栏目验证
+ * 信息验证
  *
- * Class ColumnsRequest
- * @package App\Http\Requests\Columns
+ * Class MessagesRequest
+ * @package App\Http\Requests\Messages
  */
-class ColumnsRequest extends Request
+class MessagesRequest extends Request
 {
     /**
      * Determine if the user is authorized to make this request.

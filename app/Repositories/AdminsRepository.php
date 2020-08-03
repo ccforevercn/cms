@@ -22,7 +22,8 @@ class AdminsRepository implements RepositoryInterface
 {
     use RepositoryReturnMsgData;
 
-    public function __construct(Admins $model = null) {
+    public function __construct(Admins $model = null)
+    {
         if(is_null($model)){
             self::loading();
         }else{
@@ -36,17 +37,6 @@ class AdminsRepository implements RepositoryInterface
     private static function loading(): void
     {
         self::$model = new Admins();
-    }
-
-    /**
-     * 外部调用Model
-     *
-     * @return object
-     */
-    public static function GetModel(): object
-    {
-        // TODO: Implement GetModel() method.
-        return self::$model;
     }
 
     /**
@@ -189,7 +179,7 @@ class AdminsRepository implements RepositoryInterface
             return self::setMsg('参数错误', false);
         }
         $admin = [];
-        $admin['password'] = array_key_exists('password', $data) ? $data['password'] : '';
+        $admin['password'] = array_key_exists('password', $data) ? $data['password'] : null;
         $admin['real_name'] = array_key_exists('real_name', $data) ? $data['real_name'] : null;
         $admin['status'] = array_key_exists('status', $data) ? (int)$data['status'] : null;
         $admin['found'] = array_key_exists('found', $data) ? (int)$data['found'] : null;
@@ -198,9 +188,13 @@ class AdminsRepository implements RepositoryInterface
         if(!check_null($admin['real_name'],$admin['status'], $admin['found'], $admin['rule_id'], $admin['email'])){
             return self::setMsg('参数错误', false);
         }
-
-        $admin['password'] = strlen($admin['password']) ? Hash::make(create_admin_password($admin['password'])) : ''; // 加密管理员密码
-        if(!strlen($admin['password'])){ // 密码不存在时
+        if(check_null($admin['password'])){ // 管理员密码不为空时
+            $passwordLen = strlen($admin['password']);
+            if($passwordLen < 8 || $passwordLen > 18){
+                return self::setMsg('密码至少是8个字符，最多18个字符', false);
+            }
+            $admin['password'] = Hash::make(create_admin_password($admin['password'])); // 管理员密码加密
+        }else{ // 密码不存在时
             unset($admin['password']);
             // 当前数据库的信息和用户提交的信息是否一致
             $message = self::$model::base_array('message', [], $id, array_keys($admin));
@@ -209,7 +203,7 @@ class AdminsRepository implements RepositoryInterface
             }
         }
         // 判断当前管理员是否有修改管理员的权限
-        $checkAdminHandleStatus = self::checkAdminHandle($id, auth('login')->id());
+        $checkAdminHandleStatus = self::checkAdminHandle($id, $data['parent_id']);
         if(!$checkAdminHandleStatus){
             return self::setMsg('没有权限修改', false);
         }
@@ -236,23 +230,6 @@ class AdminsRepository implements RepositoryInterface
         }
         $status = self::$model::base_bool('delete', [], $id); // 删除数据
         return self::setMsg($status ? '删除成功' : '删除失败', $status);
-    }
-
-    /**
-     * 管理员信息
-     * @param int $id
-     * @return bool
-     */
-    public static function message(int $id): bool
-    {
-        // TODO: Implement message() method.
-        $check = self::$model::base_bool('check', [], $id); // 验证编号
-        if(!$check){
-            return self::setMsg('管理员不存在', false);
-        }
-        $message = self::$model::base_array('message', [], $id, self::$model::GetMessage()); // 查询管理员信息
-        $status = count($message);
-        return self::setMsg($status ? '管理员信息' : '获取失败', $status, $message);
     }
 
     /**

@@ -5,6 +5,7 @@
  */
 
 namespace App\Http\Controllers\message;
+
 use App\CcForever\controller\BaseController;
 use App\CcForever\extend\JsonExtend;
 use App\CcForever\traits\ControllerTrait;
@@ -43,7 +44,7 @@ class ColumnsController extends BaseController
         $result = $columnsRepository::lst($where, $page, $limit);
         if($result){ $list = $columnsRepository::returnData($list); }
         $result = $columnsRepository::count($where);
-        if($result){ list($count) = $columnsRepository::returnData([]); }
+        if($result){ list($count) = $columnsRepository::returnData([0]); }
         return JsonExtend::success('栏目列表', compact('list', 'count'));
     }
 

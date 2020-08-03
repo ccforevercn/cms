@@ -74,7 +74,7 @@ class ColumnsInsertRequest extends Request
             'weight.required' => '请填写权重',
             'weight.integer' => '权重类型错误',
             'weight.min' => '权重不能小于0',
-            'weight.max' => '权重不能小于99999',
+            'weight.max' => '权重不能大于99999',
             'sort.required' => '请选择排序',
             'sort.integer' => '排序类型错误',
             'sort.min' => '排序错误，请重新选择',
@@ -87,7 +87,7 @@ class ColumnsInsertRequest extends Request
             'render.integer' => '渲染类型类型错误',
             'render.min' => '渲染类型错误，请重新选择',
             'render.max' => '渲染类型错误，请重新选择',
-            'page.required' => '请填写栏目页面/链接',
+            'page.required' => '请选择栏目页面/链接',
             'page.max' => '栏目页面/链接不能超过32个字符',
         ];
     }

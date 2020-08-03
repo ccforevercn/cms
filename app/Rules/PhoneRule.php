@@ -3,11 +3,17 @@
  * @author: cc_forever<1253705861@qq.com>
  * @day: 2020/7/21
  */
+
 namespace App\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
 
-class EmailRule implements Rule
+/**
+ * 手机号验证
+ * Class PhoneRule
+ * @package App\Rules
+ */
+class PhoneRule implements Rule
 {
     /**
      * Create a new rule instance.
@@ -28,7 +34,7 @@ class EmailRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        return check_email($value);
+        return check_phone($value);
     }
 
     /**
@@ -38,6 +44,6 @@ class EmailRule implements Rule
      */
     public function message()
     {
-        return '邮箱格式错误';
+        return '手机号格式错误';
     }
 }

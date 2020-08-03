@@ -42,7 +42,7 @@ class AdminsController extends BaseController
         $result = $adminsRepository::lst($where, $page, $limit);
         if($result){ $list = $adminsRepository::returnData($list); }
         $result = $adminsRepository::count($where);
-        if($result){ list($count) = $adminsRepository::returnData([]); }
+        if($result){ list($count) = $adminsRepository::returnData([0]); }
         return JsonExtend::success('菜单列表', compact('list', 'count'));
     }
 
@@ -83,7 +83,7 @@ class AdminsController extends BaseController
         if(!$user->found){
             return JsonExtend::error('没有权限修改管理员');
         }
-        $admin['parent_id'] = $user->id;
+        $data['parent_id'] = $user->id;
         $bool = $adminsRepository::update($data, $id);
         if($bool){
             return JsonExtend::success($adminsRepository::returnMsg('修改成功'));

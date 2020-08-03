@@ -19,7 +19,8 @@ class ColumnsRepository implements RepositoryInterface
 {
     use RepositoryReturnMsgData;
 
-    public function __construct(Columns $model = null) {
+    public function __construct(Columns $model = null)
+    {
         if(is_null($model)){
             self::loading();
         }else{
@@ -33,12 +34,6 @@ class ColumnsRepository implements RepositoryInterface
     private static function loading(): void
     {
         self::$model = new Columns();
-    }
-
-    public static function GetModel(): object
-    {
-        // TODO: Implement GetModel() method.
-        return self::$model;
     }
 
     /**
@@ -139,40 +134,6 @@ class ColumnsRepository implements RepositoryInterface
         }
         $status = self::$model::base_bool('update', $columns, $id); // 修改数据
         return self::setMsg($status ? '修改成功' : '修改失败', $status);
-    }
-
-    /**
-     * 栏目删除
-     *
-     * @param int $id
-     * @return bool
-     */
-    public static function delete(int $id): bool
-    {
-        // TODO: Implement delete() method.
-        $check = self::$model::base_bool('check', [], $id); // 验证编号
-        if(!$check){
-            return self::setMsg('已删除', true);
-        }
-        $status = self::$model::base_bool('delete', [], $id);
-        return self::setMsg($status ? '删除成功' : '删除失败', $status);
-    }
-
-    /**
-     * 栏目信息
-     *
-     * @param int $id
-     * @return bool
-     */
-    public static function message(int $id): bool
-    {
-        // TODO: Implement message() method.
-        $check = self::$model::base_bool('check', [], $id);
-        if(!$check){// 编号不存在
-            return self::setMsg('数据不存在', false);
-        }
-        $message = self::$model::base_array('message', [], $id, self::$model::GetMessage());
-        return self::setMsg('菜单信息', true, $message);
     }
 
     /**

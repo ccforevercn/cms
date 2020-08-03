@@ -41,7 +41,7 @@ class MenusController extends BaseController
         $result = $menusRepository::lst($where, $page, $limit);
         if($result){ $list = $menusRepository::returnData($list); }
         $result = $menusRepository::count($where);
-        if($result){ list($count) = $menusRepository::returnData([]); }
+        if($result){ list($count) = $menusRepository::returnData([0]); }
         return JsonExtend::success('菜单列表', compact('list', 'count'));
     }
 

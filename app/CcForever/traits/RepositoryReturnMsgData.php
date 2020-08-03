@@ -53,4 +53,44 @@ trait RepositoryReturnMsgData
     {
         return count(self::$returnData) ? self::$returnData : $data;
     }
+
+    public static function GetModel(): object
+    {
+        // TODO: Implement GetModel() method.
+        return self::$model;
+    }
+
+    /**
+     * 信息删除
+     *
+     * @param int $id
+     * @return bool
+     */
+    public static function delete(int $id): bool
+    {
+        // TODO: Implement delete() method.
+        $check = self::$model::base_bool('check', [], $id); // 验证编号
+        if(!$check){
+            return self::setMsg('已删除', true);
+        }
+        $status = self::$model::base_bool('delete', [], $id);
+        return self::setMsg($status ? '删除成功' : '删除失败', $status);
+    }
+
+    /**
+     * 信息查询
+     *
+     * @param int $id
+     * @return bool
+     */
+    public static function message(int $id): bool
+    {
+        // TODO: Implement message() method.
+        $check = self::$model::base_bool('check', [], $id);
+        if(!$check){// 编号不存在
+            return self::setMsg('数据不存在', false);
+        }
+        $message = self::$model::base_array('message', [], $id, self::$model::GetMessage());
+        return self::setMsg('信息', true, $message);
+    }
 }

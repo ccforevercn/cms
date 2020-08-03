@@ -33,6 +33,7 @@ class CreateMessagesTable extends Migration
             $table->string('writer', '32')->comment('文章作者')->default('ccforever<1253705861@qq.com>');
             $table->integer('click')->comment('文章点击量')->default(1);
             $table->integer('weight')->comment('文章权重')->default(1);
+            $table->string('keywords', '256')->comment('文章关键字')->default('文章关键字');
             $table->string('description', '512')->comment('文章描述')->default('文章描述');
             $table->tinyInteger('index')->comment('首页推荐(1是 0否)')->default(1);
             $table->tinyInteger('hot')->comment('热门推荐(1是 0否)')->default(1);
@@ -40,14 +41,16 @@ class CreateMessagesTable extends Migration
             $table->integer('add_time')->comment('文章添加时间');
             $table->integer('update_time')->comment('文章修改时间');
             $table->integer('release_time')->comment('文章发布时间');
+            $table->char('page', '32')->comment('文章页面');
             $table->tinyInteger('is_del')->comment('文章是否删除(1是 0否)')->default(0);
             $table->unique('id'); // 编号唯一索引
             $table->index('columns_id'); // 栏目编号唯一索引
-            $table->index('click'); // 点击量普通索引
-            $table->index('weight'); // 权重普通索引
             $table->index('index'); // 首页推荐普通索引
             $table->index('hot');   // 热门推荐普通索引
             $table->index('release');  // 发布状态普通索引
+            $table->index(['click', 'columns_id', 'is_del']); // 点击量普通索引
+            $table->index(['weight', 'columns_id', 'is_del']); // 权重普通索引
+            $table->index(['update_time', 'columns_id', 'is_del']);   // 文章修改时间普通索引
             $table->index('is_del'); // 菜单是否删除普通索引
         });
     }

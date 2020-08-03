@@ -6,7 +6,6 @@
 namespace App\Http\Requests\Admins;
 
 use App\Http\Requests\Request;
-use App\Rules\EmailRule;
 
 /**
  * 管理员修改验证
@@ -34,12 +33,12 @@ class AdminsUpdateRequest extends Request
     {
         return [
             'id' => 'bail|required|min:1', // 编号
-            'password' => 'bail|required|min:8|max:18', // 密码
+            'password' => 'bail|present', // 密码
             'real_name' =>  'bail|required|max:20',  // 管理员昵称
             'status' => 'bail|required|integer|min:0|max:1', // 管理员状态
             'found' => 'bail|required|integer|min:0|max:1', // 创建管理员权限
             'rule_id' =>  'bail|required|integer|min:2', // 规则编号
-            'email' =>  ['bail', 'required', new EmailRule()], // 管理员邮箱
+            'email' =>  'bail|required|email:rfc,filter', // 管理员邮箱
         ];
     }
 
@@ -52,9 +51,7 @@ class AdminsUpdateRequest extends Request
         return [
             'id.required' => '参数错误',
             'id.min' => '参数错误',
-            'password.required' => '请填写密码',
-            'password.min' => '密码至少是8个字符',
-            'password.max' => '密码最多18个字符',
+            'password.present' => '参数错误',
             'real_name.required' => '请填写管理员昵称',
             'real_name.max' => '管理员昵称不能超过20个汉字',
             'status.required' => '请选择管理员状态',
@@ -69,6 +66,7 @@ class AdminsUpdateRequest extends Request
             'rule_id.integer' => '规则编号格式错误',
             'rule_id.min' => '规则编号错误',
             'email.required' => '请填写邮箱',
+            'email.email' => '邮箱格式错误',
         ];
     }
 }
