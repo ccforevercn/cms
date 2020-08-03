@@ -158,4 +158,51 @@ class MessagesRepository implements RepositoryInterface
         $status = self::$model::base_bool('update', $messages, $id); // 修改数据
         return self::setMsg($status ? '修改成功' : '修改失败', $status);
     }
+
+    /**
+     * 信息内容  添加/修改/查询
+     *
+     * @param array $data
+     * @param bool $type
+     * @return bool
+     */
+    public static function content(array $data, bool $type):bool
+    {
+        unset($data['type']); // $type  false 添加/修改  true 查询
+        $id = array_key_exists('id', $data) ? (int)$data['id'] : null; // 信息编号
+        $content = array_key_exists('content', $data) && !is_null($data['content']) ? $data['content'] : ''; // 信息内容
+        $markdown = array_key_exists('markdown', $data) && !is_null($data['markdown']) ? $data['markdown'] : ''; // 信息内容
+        $images = array_key_exists('images', $data) && !is_null($data['images']) ? $data['images'] : ''; // 信息图片
+        $returnMsg = '信息内容'; // 返回提示
+        $returnStatus = true; // 返回状态
+        $returnData = []; // 返回信息
+        self::$model::SetModelTable('messages_content');
+        $check = self::$model::base_bool('check', [], $id);
+        if($type){ // 查询
+            if($check){
+                $returnData = self::$model::base_array('message', [], $id, ['content', 'markdown', 'images']);
+            }
+        }else{ // 添加/修改
+            $messages = []; // 信息内容数据
+            $messages['content'] = $content; // 信息内容
+            $messages['markdown'] = $markdown; // 信息内容
+            $messages['images'] = $images; // 信息图片
+            if(!$check){ // 添加
+                $messages['id'] = $id; // 信息编号
+                $messages['is_del'] = 0; // 信息是否删除
+                $returnStatus = self::$model::base_bool('insert', $messages, 0);
+                $returnMsg = $returnStatus ? '添加成功' : '添加失败';
+            }else{ // 修改
+                $message = self::$model::base_array('message', [], $id, array_keys($messages));
+                if($message === $messages){ // 数据库的数据和修改的数据一致
+                    $returnMsg = '修改成功';
+                }else{
+                    $returnStatus = self::$model::base_bool('update', $messages, $id);
+                    $returnMsg = $returnStatus ? '修改成功' : '修改失败';
+                }
+            }
+        }
+        self::$model::SetModelTable('messages');
+        return self::setMsg($returnMsg, $returnStatus, $returnData);
+    }
 }

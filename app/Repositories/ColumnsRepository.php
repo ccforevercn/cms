@@ -155,7 +155,7 @@ class ColumnsRepository implements RepositoryInterface
         $check = self::$model::base_bool('check', [], $id);
         if($type){ // 查询
             if($check){
-                $returnData = self::$model::base_array('message', [], $id, ['content']);
+                $returnData = self::$model::base_array('message', [], $id, ['content', 'markdown']);
             }
         }else{ // 添加/修改
             $columns = []; // 栏目内容数据
@@ -167,7 +167,6 @@ class ColumnsRepository implements RepositoryInterface
                 $returnStatus = self::$model::base_bool('insert', $columns, 0);
                 $returnMsg = $returnStatus ? '添加成功' : '添加失败';
             }else{ // 修改
-                $columns['content'] = $content;
                 $message = self::$model::base_array('message', [], $id, array_keys($columns));
                 if($message === $columns){ // 数据库的数据和修改的数据一致
                     $returnMsg = '修改成功';
@@ -177,7 +176,7 @@ class ColumnsRepository implements RepositoryInterface
                 }
             }
         }
-        self::$model::SetModelTable('content');
+        self::$model::SetModelTable('columns');
         return self::setMsg($returnMsg, $returnStatus, $returnData);
     }
 }

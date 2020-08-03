@@ -9,6 +9,7 @@ namespace App\Http\Controllers\message;
 use App\CcForever\controller\BaseController;
 use App\CcForever\extend\JsonExtend;
 use App\CcForever\traits\ControllerTrait;
+use App\Http\Requests\Messages\MessagesContentRequest;
 use App\Http\Requests\Messages\MessagesInsertRequest;
 use App\Http\Requests\Messages\MessagesListRequest;
 use App\Http\Requests\Messages\MessagesRequest;
@@ -118,5 +119,22 @@ class MessagesController extends BaseController
             return JsonExtend::success($messagesRepository::returnMsg('栏目信息'), $messagesRepository::returnData([]));
         }
         return JsonExtend::error($messagesRepository::returnMsg('数据不存在'));
+    }
+
+    /**
+     * 信息内容 添加/修改
+     * @param MessagesContentRequest $messagesContentRequest
+     * @param MessagesRepository $messagesRepository
+     * @return object
+     */
+    public function content(MessagesContentRequest $messagesContentRequest, MessagesRepository $messagesRepository): object
+    {
+        $data = $messagesContentRequest->all();
+        $type = (bool)$data['type'];
+        $bool = $messagesRepository::content($data, $type);
+        if($bool){
+            return JsonExtend::success($messagesRepository::returnMsg('内容信息'), $messagesRepository::returnData([]));
+        }
+        return JsonExtend::error($messagesRepository::returnMsg('内容信息不存在'));
     }
 }

@@ -34,12 +34,13 @@ class ColumnsContentRequest extends Request
     public function rules()
     {
         return [
-            'id' => 'bail|required|integer|min:0',
+            'id' => 'bail|required|integer|min:1',
             'content' =>  'bail|required',
-            'markdown' =>  'bail|nullable',
+            'markdown' =>  'bail|present',
             'type' => 'bail|required|integer|min:0|max:1',  // 0 添加/修改  1 查询
         ];
     }
+
     /**
      * 重写参数描述
      * @return array
@@ -51,6 +52,7 @@ class ColumnsContentRequest extends Request
             'id.integer' => '参数错误',
             'id.min' => '参数错误',
             'content.required' => '请填写栏目内容',
+            'markdown.present' => '参数错误',
             'type.required' => '类型错误',
             'type.integer' => '类型错误',
             'type.min' => '参数错误',

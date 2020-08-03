@@ -34,7 +34,31 @@ class MessagesContentRequest extends Request
     public function rules()
     {
         return [
-            //
+            'id' => 'bail|required|integer|min:1',
+            'content' =>  'bail|required',
+            'markdown' =>  'bail|present',
+            'images' =>  'bail|present',
+            'type' => 'bail|required|integer|min:0|max:1',  // 0 添加/修改  1 查询
+        ];
+    }
+
+    /**
+     * 重写参数描述
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'id.required' => '参数错误',
+            'id.integer' => '参数错误',
+            'id.min' => '参数错误',
+            'content.required' => '请填写栏目内容',
+            'markdown.present' => '参数错误',
+            'images.present' => '参数错误',
+            'type.required' => '类型错误',
+            'type.integer' => '类型错误',
+            'type.min' => '参数错误',
+            'type.max' => '参数错误',
         ];
     }
 }
