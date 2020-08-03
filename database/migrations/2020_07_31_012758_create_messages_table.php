@@ -44,7 +44,7 @@ class CreateMessagesTable extends Migration
             $table->char('page', '32')->comment('文章页面');
             $table->tinyInteger('is_del')->comment('文章是否删除(1是 0否)')->default(0);
             $table->unique('id'); // 编号唯一索引
-            $table->index('columns_id'); // 栏目编号唯一索引
+            $table->index('columns_id'); // 栏目编号普通索引
             $table->index('index'); // 首页推荐普通索引
             $table->index('hot');   // 热门推荐普通索引
             $table->index('release');  // 发布状态普通索引
