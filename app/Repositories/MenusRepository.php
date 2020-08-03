@@ -146,7 +146,7 @@ class MenusRepository implements RepositoryInterface
         if(!check_null($menu['name'],$menu['parent_id'], $menu['routes'])){
             return self::setMsg('参数错误', false);
         }
-        $message = self::$model::base_array('message', [], $id, array_keys($menu));
+        $message = self::$model::base_array('message', $id, array_keys($menu), []);
         if($message === $menu){ // 数据库的数据和修改的数据一致
             return self::setMsg('修改成功', true);
         }
@@ -162,7 +162,10 @@ class MenusRepository implements RepositoryInterface
     public static function menusIdsRoutes(array $ids):array
     {
         // 获取菜单路由
-        $menusIdsRoutes = self::$model::base_array('pluck', [], $ids, ['routes']);
+        $order = []; // 排序方式
+        $order['select'] = 'sort';
+        $order['value'] = 'DESC';
+        $menusIdsRoutes = self::$model::base_array('pluck', $ids, ['routes'], $order);
         return $menusIdsRoutes;
     }
 
@@ -199,8 +202,11 @@ class MenusRepository implements RepositoryInterface
         $adminsRepository = new AdminsRepository();
         // 判断是否是超级管理员
         if(in_array($adminId, $adminsRepository::superAdministratorIds())){ // 是
+            $order = []; // 排序方式
+            $order['select'] = 'sort';
+            $order['value'] = 'DESC';
             // 获取菜单列表信息
-            $menusIds = self::$model::base_array('all', [], [], ['id']);
+            $menusIds = self::$model::base_array('all', [], ['id'], $order);
             // 二维数组转为一维数组
             $menusIds = array_column($menusIds, 'id');
         }else{ // 否
@@ -223,8 +229,11 @@ class MenusRepository implements RepositoryInterface
             // 二维数组转为一维数组
             $menusIds = array_column($menusIds, 'menu_id');
         }
+        $order = []; // 排序方式
+        $order['select'] = 'sort';
+        $order['value'] = 'DESC';
         // 获取菜单列表信息
-        $menusMessageList = self::$model::base_array('pluck', [], $menusIds, self::$model::GetMessage());
+        $menusMessageList = self::$model::base_array('pluck', $menusIds, self::$model::GetMessage(), $order);
         $menusMessageBottomList = [];  // 菜单按钮列表
         foreach ($menusMessageList as $key=>$value){
             if($value['menu']){

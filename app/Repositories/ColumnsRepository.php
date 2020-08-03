@@ -128,7 +128,7 @@ class ColumnsRepository implements RepositoryInterface
         if(!check_null($columns['name'], $columns['name_alias'], $columns['parent_id'], $columns['page'])){
             return self::setMsg('参数错误', false);
         }
-        $message = self::$model::base_array('message', [], $id, array_keys($columns));
+        $message = self::$model::base_array('message', $id, array_keys($columns), []);
         if($message === $columns){ // 数据库的数据和修改的数据一致
             return self::setMsg('修改成功', true);
         }
@@ -155,7 +155,7 @@ class ColumnsRepository implements RepositoryInterface
         $check = self::$model::base_bool('check', [], $id);
         if($type){ // 查询
             if($check){
-                $returnData = self::$model::base_array('message', [], $id, ['content', 'markdown']);
+                $returnData = self::$model::base_array('message', $id, ['content', 'markdown'], []);
             }
         }else{ // 添加/修改
             $columns = []; // 栏目内容数据
@@ -167,7 +167,7 @@ class ColumnsRepository implements RepositoryInterface
                 $returnStatus = self::$model::base_bool('insert', $columns, 0);
                 $returnMsg = $returnStatus ? '添加成功' : '添加失败';
             }else{ // 修改
-                $message = self::$model::base_array('message', [], $id, array_keys($columns));
+                $message = self::$model::base_array('message', $id, array_keys($columns), []);
                 if($message === $columns){ // 数据库的数据和修改的数据一致
                     $returnMsg = '修改成功';
                 }else{

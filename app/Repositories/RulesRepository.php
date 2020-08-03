@@ -214,7 +214,7 @@ class RulesRepository implements RepositoryInterface
         // 编号不存在
         if(!$check){ return self::setMsg('参数错误', false); }
         // 获取规则信息  规则创建者和唯一值
-        $ruleMessage = self::$model::base_array('message', [] , $id, ['admin_id', 'unique']);
+        $ruleMessage = self::$model::base_array('message', $id, ['admin_id', 'unique'], []);
         // 实例化AdminsRepository类
         $adminsRepository = new AdminsRepository();
         // 判断当前管理员是否有修改规则的权限
@@ -243,7 +243,7 @@ class RulesRepository implements RepositoryInterface
         if(!$check){
             return self::setMsg('规则不存在', false);
         }
-        $message = self::$model::base_array('message', [], $id, self::$model::GetMessage()); // 查询规则信息
+        $message = self::$model::base_array('message', $id, self::$model::GetMessage(), []); // 查询规则信息
         $status = count($message);
         return self::setMsg($status ? '规则信息' : '获取失败', $status, $message);
     }

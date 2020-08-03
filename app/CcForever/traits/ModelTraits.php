@@ -52,6 +52,7 @@ trait ModelTraits
 
     /**
      * bool返回值的操作
+     *
      * @param string $function
      * @param mixed ...$parameter
      * @return bool
@@ -87,6 +88,7 @@ trait ModelTraits
 
     /**
      * 添加
+     *
      * @param array $data
      * @return bool
      */
@@ -101,6 +103,7 @@ trait ModelTraits
 
     /**
      * 修改
+     *
      * @param array $data
      * @param int $value
      * @param string $field
@@ -118,6 +121,7 @@ trait ModelTraits
 
     /**
      * 删除
+     *
      * @param string $value
      * @param string $field
      * @return bool
@@ -130,6 +134,7 @@ trait ModelTraits
 
     /**
      * 验证编号是否存在 false 不存在  true 存在
+     *
      * @param int $value
      * @param string $field
      * @return bool
@@ -142,6 +147,7 @@ trait ModelTraits
 
     /**
      * string返回值操作
+     *
      * @param string $function
      * @param mixed ...$parameter
      * @return string
@@ -164,6 +170,7 @@ trait ModelTraits
 
     /**
      * 查询字段值
+     *
      * @param int $value
      * @param string $select
      * @return string
@@ -176,6 +183,7 @@ trait ModelTraits
 
     /**
      * array返回值操作
+     *
      * @param string $function
      * @param mixed ...$parameter
      * @return array
@@ -184,19 +192,16 @@ trait ModelTraits
     {
         $array = [];
         try{
-            list($data, $where, $select) = $parameter;
+            list($where, $select, $order) = $parameter;
             switch ($function){
                 case 'message': // 信息
                     $array = self::model_handle_message($where, $select);
                     break;
                 case 'pluck': // 批量获取一列值
-                    $array = self::model_handle_pluck($where, $select);
-                    break;
-                case 'equal':// 获取where相同的值
-                    $array = self::model_handle_equal($where, $select);
+                    $array = self::model_handle_pluck($where, $select, $order);
                     break;
                 case 'all': // 批量获取指定字段值
-                    $array = self::model_handle_all($select);
+                    $array = self::model_handle_all($select, $order);
                     break;
                 // ...
                 default:;
@@ -207,6 +212,7 @@ trait ModelTraits
 
     /**
      * 信息
+     *
      * @param int $value
      * @param array $select
      * @return array
@@ -220,16 +226,18 @@ trait ModelTraits
 
     /**
      * 列值
+     *
      * @param array $values
      * @param array $select
+     * @param array $order
      * @return array
      */
-    public static function model_handle_pluck(array $values, array $select): array
+    public static function model_handle_pluck(array $values, array $select, array $order): array
     {
         if(count($select) === 1){
-            $message = DB::table(self::$modelTable)->whereIn('id', $values)->where('is_del', 0)->pluck($select[0])->toArray();
+            $message = DB::table(self::$modelTable)->whereIn('id', $values)->where('is_del', 0)->pluck($select[0])->orderBy($order['select'], $order['value'])->toArray();
         }else{
-            $message = DB::table(self::$modelTable)->whereIn('id', $values)->where('is_del', 0)->select($select)->get();
+            $message = DB::table(self::$modelTable)->whereIn('id', $values)->where('is_del', 0)->select($select)->orderBy($order['select'], $order['value'])->get();
             $message = is_null($message) ? [] : $message->toArray();
             foreach ($message as $key=>$value){
                 $message[$key] = (array)$value;
@@ -239,29 +247,15 @@ trait ModelTraits
     }
 
     /**
-     * 相同值
-     * @param array $where
-     * @param array $select
-     * @return array
-     */
-    public static function model_handle_equal(array $where, array $select):array
-    {
-        $message = DB::table(self::$modelTable)->where($where)->where('is_del', 0)->select($select)->get();
-        $message = is_null($message) ? [] : $message->toArray();
-        foreach ($message as $key=>$value){
-            $message[$key] = (array)$value;
-        }
-        return $message;
-    }
-
-    /**
      * 批量获取指定字段值
+     *
      * @param array $select
+     * @param array $order
      * @return array
      */
-    public static function model_handle_all(array $select): array
+    public static function model_handle_all(array $select, array $order): array
     {
-        $message = DB::table(self::$modelTable)->where('is_del', 0)->select($select)->get();
+        $message = DB::table(self::$modelTable)->where('is_del', 0)->select($select)->orderBy($order['select'], $order['value'])->get();
         $message = is_null($message) ? [] : $message->toArray();
         foreach ($message as $key=>$value){
             $message[$key] = (array)$value;

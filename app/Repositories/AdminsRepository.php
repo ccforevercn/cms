@@ -67,7 +67,7 @@ class AdminsRepository implements RepositoryInterface
         if(!$check){ // 管理员已删除
             return self::setMsg('用户不存在', false);
         }
-        $userInfo = self::$model::base_array('message', [], $id, self::$model::GetMessage()); // 管理员登陆信息
+        $userInfo = self::$model::base_array('message', $id, self::$model::GetMessage(), []); // 管理员登陆信息
         if(!$userInfo['status']){// 管理员账号已锁定
             return self::setMsg('账号已锁定', false);
         }
@@ -197,7 +197,7 @@ class AdminsRepository implements RepositoryInterface
         }else{ // 密码不存在时
             unset($admin['password']);
             // 当前数据库的信息和用户提交的信息是否一致
-            $message = self::$model::base_array('message', [], $id, array_keys($admin));
+            $message = self::$model::base_array('message', $id, array_keys($admin), []);
             if($message === $admin){ // 数据库的数据和修改的数据一致
                 return self::setMsg('修改成功', true);
             }
@@ -315,7 +315,10 @@ class AdminsRepository implements RepositoryInterface
         $newAdminId = $adminId;
         $adminTotalIds = self::$model::adminTotalIds();
         if(!count($adminTotalIds)){ // 所有管理员为空时
-            self::$model::SetAdminTotalIds(self::$model::base_array('all', [], [], ['id', 'parent_id'])); // 获取所有管理员
+            $order = []; // 排序方式
+            $order['select'] = 'id';
+            $order['value'] = 'ASC';
+            self::$model::SetAdminTotalIds(self::$model::base_array('all', [], ['id', 'parent_id'], $order)); // 获取所有管理员
             $adminTotalIds = self::$model::adminTotalIds();
         }
         foreach ($adminTotalIds as $id=>$parentId){
@@ -386,7 +389,10 @@ class AdminsRepository implements RepositoryInterface
         $subordinateIds = $subordinateIdsNew;
         $adminTotalIds = self::$model::adminTotalIds();
         if(!count($adminTotalIds)){ // 所有管理员为空时
-            self::$model::SetAdminTotalIds(self::$model::base_array('all', [], [], ['id', 'parent_id'])); // 获取所有管理员
+            $order = []; // 排序方式
+            $order['select'] = 'id';
+            $order['value'] = 'ASC';
+            self::$model::SetAdminTotalIds(self::$model::base_array('all', [], ['id', 'parent_id'], $order)); // 获取所有管理员
             $adminTotalIds = self::$model::adminTotalIds();
         }
         foreach ($adminTotalIds as $id=>$parentId){
