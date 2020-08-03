@@ -42,8 +42,10 @@ class CreateMessagesTable extends Migration
             $table->integer('update_time')->comment('文章修改时间');
             $table->integer('release_time')->comment('文章发布时间');
             $table->char('page', '32')->comment('文章页面');
+            $table->char('unique', '32')->comment('文章标签唯一值');
             $table->tinyInteger('is_del')->comment('文章是否删除(1是 0否)')->default(0);
             $table->unique('id'); // 编号唯一索引
+            $table->unique('unique'); // 标签名称唯一索引
             $table->index('columns_id'); // 栏目编号普通索引
             $table->index('index'); // 首页推荐普通索引
             $table->index('hot');   // 热门推荐普通索引
