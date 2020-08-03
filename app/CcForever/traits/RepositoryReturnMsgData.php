@@ -90,7 +90,7 @@ trait RepositoryReturnMsgData
         if(!$check){// 编号不存在
             return self::setMsg('数据不存在', false);
         }
-        $message = self::$model::base_array('message', [], $id, self::$model::GetMessage());
+        $message = self::$model::base_array('message', $id, self::$model::GetMessage(), []);
         return self::setMsg('信息', true, $message);
     }
 }

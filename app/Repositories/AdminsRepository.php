@@ -10,7 +10,6 @@ use App\Admins;
 use App\CcForever\extend\PRedisExtend;
 use App\CcForever\interfaces\RepositoryInterface;
 use App\CcForever\traits\RepositoryReturnMsgData;
-use App\Rules;
 use Illuminate\Support\Facades\Hash;
 
 /**
@@ -151,7 +150,9 @@ class AdminsRepository implements RepositoryInterface
         }
         $admin['password'] = Hash::make(create_admin_password($admin['password'])); // 加密管理员密码
         // 判断规则是否存在
-        $rulesCount = Rules::base_bool('check', [] , $admin['rule_id']);
+        $rulesRepository = new RulesRepository();
+        $rulesRepositoryModel = $rulesRepository::GetModel();
+        $rulesCount = $rulesRepositoryModel::base_bool('check', [] , $admin['rule_id']);
         if(!$rulesCount){
             return self::setMsg('规则不存在', false);
         }

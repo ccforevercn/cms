@@ -225,7 +225,7 @@ class MenusRepository implements RepositoryInterface
             // 设置table为rules_menus表
             $rulesRepository::GetModel()::SetModelTable('rules_menus');
             // 获取规则菜单编号
-            $menusIds = $rulesRepository::GetModel()::base_array('equal', [], ['unique' => $unique], ['menu_id']);
+            $menusIds = $rulesRepository::GetModel()::base_array('equal', ['unique' => $unique], ['menu_id'], []);
             // 二维数组转为一维数组
             $menusIds = array_column($menusIds, 'menu_id');
         }

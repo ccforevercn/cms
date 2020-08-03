@@ -5,6 +5,7 @@
  */
 
 namespace App\Repositories;
+
 use App\CcForever\interfaces\RepositoryInterface;
 use App\CcForever\traits\RepositoryReturnMsgData;
 use App\Columns;

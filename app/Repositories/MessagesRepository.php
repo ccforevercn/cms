@@ -5,6 +5,7 @@
  */
 
 namespace App\Repositories;
+
 use App\CcForever\interfaces\RepositoryInterface;
 use App\CcForever\traits\RepositoryReturnMsgData;
 use App\Messages;
@@ -69,7 +70,7 @@ class MessagesRepository implements RepositoryInterface
         $where['hot'] = array_key_exists('hot', $where) ? $where['hot'] : '';// 热门推荐
         $where['release'] = array_key_exists('release', $where) ? $where['release'] : '';// 发布状态
         $count = self::$model::count($where);// 信息总数
-        return self::setMsg('信息列表', true, [$count]);
+        return self::setMsg('信息总数', true, [$count]);
     }
 
     /**

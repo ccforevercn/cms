@@ -8,7 +8,6 @@ namespace App\Repositories;
 
 use App\CcForever\interfaces\RepositoryInterface;
 use App\CcForever\traits\RepositoryReturnMsgData;
-use App\Menus;
 use App\Rules;
 
 /**
@@ -106,7 +105,9 @@ class RulesRepository implements RepositoryInterface
             return self::setMsg('菜单不存在', false);
         }
         $menuIds = explode(',', $menuIdsStr);
-        $count = Menus::checkIds($menuIds);
+        $messagesRepository = new MessagesRepository();
+        $messagesRepositoryModel = $messagesRepository::GetModel();
+        $count = $messagesRepositoryModel::checkIds($menuIds);
         if($count !== count($menuIds)){
             return self::setMsg('菜单不存在', false);
         }
@@ -159,7 +160,9 @@ class RulesRepository implements RepositoryInterface
         // 格式化菜单编号
         $menuIds = explode(',', $menuIdsStr);
         // 获取实际存在的菜单编号个数
-        $count = Menus::checkIds($menuIds);
+        $messagesRepository = new MessagesRepository();
+        $messagesRepositoryModel = $messagesRepository::GetModel();
+        $count = $messagesRepositoryModel::checkIds($menuIds);
         // 实际存在的菜单个数 和 用户提交的数据不一致
         if($count !== count($menuIds)){ return self::setMsg('菜单不存在', false); }
         $rule = []; // 规则修改信息

@@ -27,7 +27,7 @@ class CreateTagsTable extends Migration
             $table->tinyInteger('status')->comment('标签状态 1 展示 0 隐藏');
             $table->tinyInteger('is_del')->comment('是否删除 1 是 0 否');
             $table->unique('id'); // 编号唯一索引
-            $table->index('name'); // 标签名称普通索引
+            $table->unique('name'); // 标签名称唯一索引
             $table->index('status'); // 标签状态普通索引
             $table->index('is_del'); // 是否删除普通索引
         });
