@@ -219,16 +219,16 @@ class MessagesRepository implements RepositoryInterface
         if(!$check){
             return self::setMsg('参数错误', false);
         }
-        $clicks = (int)self::$model::base_string('select', [], $id, 'click');
-        if(!$clicks && $click < 0){
+        $clicked = (int)self::$model::base_string('select', [], $id, 'click');
+        if(!$clicked && $click < 0){
             return self::setMsg('修改失败，参数错误', false);
         }
-        $total = (int)bcadd($click, $clicks, 0);
+        $total = (int)bcadd($click, $clicked, 0);
         if($total > 999) {
             return self::setMsg('修改失败，点击量最多三位数', false);
         }
-        $total = (int)bcadd($click, $clicks, 0);
-        if($total < 0){ $click = (int)('-'.$clicks); }
+        $total = (int)bcadd($click, $clicked, 0);
+        if($total < 0){ $click = (int)('-'.$clicked); }
         $status = self::$model::click($id, $click);
         return self::setMsg($status ? '修改成功' : '修改失败', $status);
     }
