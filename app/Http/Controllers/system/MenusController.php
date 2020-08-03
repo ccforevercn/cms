@@ -135,4 +135,25 @@ class MenusController extends BaseController
         }
         return JsonExtend::error($menusRepository::returnMsg('权限不足'));
     }
+
+    /**
+     * 所有菜单
+     *
+     * @param MenusRequest $menusRequest
+     * @param MenusRepository $menusRepository
+     * @return object
+     */
+    public function menus(MenusRequest $menusRequest, MenusRepository $menusRepository): object
+    {
+        $id = (int)$menusRequest->input('id'); // 管理员编号
+        $user = auth('login')->user(); // 当前登录的管理员信息
+        $adminId = (int)$user['id']; // 管理员编号
+        $ruleId = (int)$user['rule_id']; // 管理员规则编号
+        if($adminId !== $id){ return JsonExtend::error('权限不足'); } // 两个编号不相同
+        $bool = $menusRepository::menus($adminId, $ruleId);
+        if($bool){
+            return JsonExtend::success($menusRepository::returnMsg('菜单列表'), $menusRepository::returnData([]));
+        }
+        return JsonExtend::error($menusRepository::returnMsg('权限不足'));
+    }
 }

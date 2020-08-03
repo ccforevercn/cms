@@ -120,7 +120,7 @@ class Admins extends  JWTModel
      *
      * @var array
      */
-    private static $noMenusRoute = ['/menus/button'];
+    private static $noMenusRoute = ['/menus/button', '/menus/menus'];
 
     /**
      * 管理员编号 唯一索引

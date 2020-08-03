@@ -282,4 +282,48 @@ class MenusRepository implements RepositoryInterface
         }
         return $menusFormatList;
     }
+
+    /**
+     * 所有菜单
+     *
+     * @param int $adminId
+     * @param int $ruleId
+     * @return bool
+     */
+    public static function menus(int $adminId, int $ruleId): bool
+    {
+        // 判断是否是超级管理员 是 返回所有菜单 否 获取当前管理员对应的权限编号 根据权限编号获取菜单编号， 获取对应的菜单数据
+        $adminsRepository = new AdminsRepository(); // 实例化AdminsRepository类
+        $superAdministratorIds = $adminsRepository::superAdministratorIds();// 获取超级管理员编号
+        $menusIds = []; // 菜单编号
+        $order = []; // 菜单排序方式
+        $order['select'] = 'sort'; // 排序字段
+        $order['value'] = 'DESC'; // 排序方式 DESC 降序 ASC 升序
+        if(!in_array($adminId, $superAdministratorIds)) {// 不是超级管理员
+            $rulesRepository = new RulesRepository(); // 实例化RulesRepository类
+            $rulesRepositoryModel = $rulesRepository::GetModel(); // 获取RulesModel
+            $check = $rulesRepositoryModel::base_bool('check', [], $ruleId); // 验证编号
+            if(!$check){ // 规则编号不存在
+                return self::setMsg('权限不足', false);
+            }
+            $unique = $rulesRepositoryModel::base_string('select', [], $ruleId, 'unique'); // 查询规则信息
+            $menus = $rulesRepositoryModel::menus($unique); // 获取管理员对应的菜单
+            $status = (bool)count($menus); // 转为bool值
+            if(!$status){ // 没有菜单
+                return self::setMsg('获取失败', $status, []);
+            }
+            // 获取菜单对应的编号
+            foreach ($menus as $key=>&$menu){
+                $menusIds[] = $menu['mid'];
+            }
+            // 获取当前管理员菜单列表信息
+            $menusList = self::$model::base_array('pluck', $menusIds, ['id', 'parent_id', 'name'], $order);
+            $status = (bool)count($menusList);
+            return self::setMsg($status ? '菜单列表' : '获取失败', $status, $menusList);
+        }
+        // 获取超级管理员的菜单列表信息
+        $menusList = self::$model::base_array('all', $menusIds, ['id', 'parent_id', 'name'], $order);
+        $status = (bool)count($menusList);
+        return self::setMsg($status ? '菜单列表' : '获取失败', $status, $menusList);
+    }
 }
