@@ -133,7 +133,7 @@ class Rules extends BaseModel implements ModelInterface
      */
     public static function menus(string $unique): array
     {
-        $menus = DB::table('rules_menus')->where('unique', $unique)->leftJoin('menus', 'rules_menus.menu_id', '=', 'menus.id')->select('menus.id as mid', 'menus.name as mname')->orderBy('menus.add_time', 'DESC')->get();
+        $menus = DB::table('rules_menus')->where('unique', $unique)->leftJoin('menus', 'rules_menus.menu_id', '=', 'menus.id')->select('menus.id as mid', 'menus.name as mname')->orderBy('id.add_time', 'DESC')->get();
         $menus = is_null($menus) ? [] : $menus->toArray();
         foreach ($menus as $key=>$menu){
             $menus[$key] = (array)$menu;
