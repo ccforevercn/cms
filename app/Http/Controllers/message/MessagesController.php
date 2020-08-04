@@ -163,6 +163,21 @@ class MessagesController extends BaseController
     }
 
     /**
+     * 信息视图列表
+     *
+     * @param MessagesRepository $messagesRepository
+     * @return object
+     */
+    public function views(MessagesRepository $messagesRepository): object
+    {
+        $bool = $messagesRepository::views();
+        if($bool){
+            return JsonExtend::success($messagesRepository::returnMsg('信息视图列表'), $messagesRepository::returnData([]));
+        }
+        return JsonExtend::error($messagesRepository::returnMsg('信息视图列表'));
+    }
+
+    /**
      * 信息 添加点击量
      *
      * @param MessagesRequest $messagesRequest
