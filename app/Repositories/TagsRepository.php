@@ -82,6 +82,11 @@ class TagsRepository implements RepositoryInterface
         if(is_null($tags['name'])){
             return self::setMsg('参数错误', false);
         }
+        // 验证标签名称是否重复
+        $equal = self::$model::base_array('equal', ['name'=>$tags['name']], ['name'], []);
+        if(count($equal)) {
+            return self::setMsg('标签名称已存在', false);
+        }
         $tags['is_del'] = 0;
         $tags['add_time'] = time();
         $status = self::$model::base_bool('insert', $tags, 0);
@@ -108,7 +113,8 @@ class TagsRepository implements RepositoryInterface
         if(is_null($tags['name'])){
             return self::setMsg('参数错误', false);
         }
-        $equal = self::$model::base_array('equal', ['name'=>$tags['name']], self::$model::GetMessage(), []);
+        // 验证标签名称是否重复
+        $equal = self::$model::base_array('equal', ['name'=>$tags['name']], ['id', 'name'], []);
         switch (count($equal)){
             case 0:
                 break;

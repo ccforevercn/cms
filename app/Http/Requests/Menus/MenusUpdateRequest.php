@@ -37,9 +37,9 @@ class MenusUpdateRequest extends Request
             'parent_id' => 'bail|required|integer|min:0',
             'routes' =>  'bail|required|max:64',
             'page' =>  'bail|required|max:64',
-            'icon' => ['bail', 'filled', 'max:16'],
-            'sort' => ['bail', 'filled', 'integer'],
-            'menu' => ['bail', 'filled', 'min:0', 'max:1'],
+            'icon' => 'bail|filled|max:16',
+            'sort' => 'bail|filled|integer',
+            'menu' => 'bail|filled|min:0|max:1',
         ];
     }
 

@@ -33,7 +33,7 @@ class TagsInsertRequest extends Request
     public function rules()
     {
         return [
-            'name' =>  'bail|required|max:8|unique:tags',
+            'name' =>  'bail|required|max:8',
             'status' =>  'bail|required|integer|min:0|max:1',
         ];
     }
@@ -47,7 +47,6 @@ class TagsInsertRequest extends Request
         return [
             'name.required' => '请填写标签名称',
             'name.max' => '标签名称不能超过8个汉字',
-            'name.unique' => '标签名称已存在',
             'status.required' => '请选择标签状态',
             'status.integer' => '标签状态类型错误',
             'status.min' => '标签状态错误，请重新选择',

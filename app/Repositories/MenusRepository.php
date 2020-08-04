@@ -103,6 +103,11 @@ class MenusRepository implements RepositoryInterface
         if(!check_null($menu['name'],$menu['parent_id'], $menu['routes'])){
             return self::setMsg('参数错误', false);
         }
+        // 验证路由是否存在
+        $equal = self::$model::base_array('equal', ['routes' => $menu['routes']], ['routes'], []);
+        if(count($equal)){
+            return self::setMsg('路由地址已存在', false);
+        }
         $menu['is_del'] = 0;
         $menu['add_time'] = time();
         $status = self::$model::base_bool('insert', $menu, 0);
@@ -122,19 +127,6 @@ class MenusRepository implements RepositoryInterface
         if(!$check){ // 编号不存在
             return self::setMsg('菜单不存在', true);
         }
-        $routesListIds = self::$model::checkRoutes($data['routes']); // 获取相同路由地址数组
-        $routesListIdsCount = count($routesListIds);// 获取相同路由地址条数
-        switch ($routesListIdsCount){
-            case 0: // 没有
-                break;
-            case 1:// 一条
-                if($routesListIds[0]['id'] != $id){ // 修改的记录编号和查出来的不一样返回 false
-                    return self::setMsg('路由地址已存在', false);
-                }
-                break;
-            default:
-                return self::setMsg('路由地址已存在', false);
-        }
         $menu = [];
         $menu['name'] = array_key_exists('name', $data) ? $data['name'] : null;
         $menu['parent_id'] = array_key_exists('parent_id', $data) ? (int)$data['parent_id'] : null;
@@ -145,6 +137,19 @@ class MenusRepository implements RepositoryInterface
         $menu['menu'] = array_key_exists('menu', $data) ? (int)$data['menu'] : 0;
         if(!check_null($menu['name'],$menu['parent_id'], $menu['routes'])){
             return self::setMsg('参数错误', false);
+        }
+        // 验证路由是否重复
+        $equal = self::$model::base_array('equal', ['routes' => $menu['routes']], ['id', 'routes'], []);
+        switch (count($equal)){
+            case 0:
+                break;
+            case 1:
+                if($equal[0]['id'] !== $id){
+                    return self::setMsg('路由地址已存在', false);
+                }
+                break;
+            default:
+                return self::setMsg('路由地址已存在', false);
         }
         $message = self::$model::base_array('message', $id, array_keys($menu), []);
         if($message === $menu){ // 数据库的数据和修改的数据一致

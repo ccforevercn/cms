@@ -149,6 +149,16 @@ class AdminsRepository implements RepositoryInterface
             return self::setMsg('参数错误', false);
         }
         $admin['password'] = Hash::make(create_admin_password($admin['password'])); // 加密管理员密码
+        // 验证账号是否存在
+        $equal = self::$model::base_array('equal', ['username' => $admin['username']], ['username'], []);
+        if(count($equal)){
+            return self::setMsg('账号已存在', false);
+        }
+        // 验证邮箱是否存在
+        $equal = self::$model::base_array('equal', ['email' => $admin['email']], ['email'], []);
+        if(count($equal)){
+            return self::setMsg('邮箱已存在', false);
+        }
         // 判断规则是否存在
         $rulesRepository = new RulesRepository();
         $rulesRepositoryModel = $rulesRepository::GetModel();
@@ -202,6 +212,19 @@ class AdminsRepository implements RepositoryInterface
             if($message === $admin){ // 数据库的数据和修改的数据一致
                 return self::setMsg('修改成功', true);
             }
+        }
+        // 验证邮箱是否重复
+        $equal = self::$model::base_array('equal', ['email' => $admin['email']], ['id', 'email'], []);
+        switch (count($equal)){
+            case 0:
+                break;
+            case 1:
+                if($equal[0]['id'] !== $id){
+                    return self::setMsg('邮箱已存在', false);
+                }
+                break;
+            default:
+                return self::setMsg('邮箱已存在', false);
         }
         // 判断当前管理员是否有修改管理员的权限
         $checkAdminHandleStatus = self::checkAdminHandle($id, $data['parent_id']);

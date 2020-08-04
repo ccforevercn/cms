@@ -35,11 +35,11 @@ class MenusInsertRequest extends Request
         return [
             'name' =>  'bail|required|max:20',
             'parent_id' => 'bail|required|integer|min:0',
-            'routes' =>  'bail|required|max:64|unique:menus',
+            'routes' =>  'bail|required|max:64',
             'page' =>  'bail|required|max:64',
-            'icon' => ['bail', 'filled', 'max:16'],
-            'sort' => ['bail', 'filled', 'integer'],
-            'menu' => ['bail', 'filled', 'min:0', 'max:1'],
+            'icon' => 'bail|filled|max:16',
+            'sort' => 'bail|filled|integer',
+            'menu' => 'bail|filled|min:0|max:1',
         ];
     }
 
@@ -55,7 +55,6 @@ class MenusInsertRequest extends Request
             'parent_id.required' => '请选择父级菜单',
             'parent_id.min' => '父级菜单不存在',
             'routes.required' => '请填写路由地址',
-            'routes.unique' => '路由地址已存在',
             'routes.max' => '路由地址不能超过64个字母',
             'page.required' => '请填写页面链接',
             'page.max' => '页面链接不能超过64个字符',

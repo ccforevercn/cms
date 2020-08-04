@@ -165,16 +165,4 @@ class Menus extends BaseModel implements ModelInterface
         $count = self::ids($ids)->select('id')->isDel(0)->count();
         return $count;
     }
-
-    /**
-     * 验证路由地址
-     * @param string $routes
-     * @return array
-     */
-    public static function checkRoutes(string $routes): array
-    {
-        $routesListIds = self::routes($routes)->isDel(0)->select('id')->get();
-        return is_null($routesListIds) ? [] : $routesListIds->toArray();
-    }
-
 }

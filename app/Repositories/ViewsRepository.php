@@ -87,7 +87,7 @@ class ViewsRepository implements RepositoryInterface
             return self::setMsg('参数错误', false);
         }
         // 验证视图地址是否已存在
-        $equal = self::$model::base_array('equal', ['path'=>$views['path']], self::$model::GetMessage(), []);
+        $equal = self::$model::base_array('equal', ['path' => $views['path']], ['path'], []);
         if(count($equal)){
             return self::setMsg('视图地址已存在', false);
         }
@@ -119,7 +119,7 @@ class ViewsRepository implements RepositoryInterface
             return self::setMsg('参数错误', false);
         }
         // 验证视图地址是否已存在
-        $equal = self::$model::base_array('equal', ['path'=>$views['path']], self::$model::GetMessage(), []);
+        $equal = self::$model::base_array('equal', ['path'=>$views['path']], ['id', 'path'], []);
         switch (count($equal)){
             case 0:
                 break;

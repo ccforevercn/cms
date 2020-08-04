@@ -3,7 +3,6 @@
  * @author: cc_forever<1253705861@qq.com>
  * @day: 2020/8/3
  */
-
 namespace App\Http\Controllers\message;
 
 use App\CcForever\controller\BaseController;
@@ -194,7 +193,6 @@ class MessagesController extends BaseController
             return JsonExtend::success($messagesRepository::returnMsg('修改成功'));
         }
         return JsonExtend::error($messagesRepository::returnMsg('修改失败'));
-
     }
 
     /**
