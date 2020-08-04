@@ -58,6 +58,18 @@ class Tags extends BaseModel implements ModelInterface
     }
 
     /**
+     * 编号批量查询 唯一索引
+     *
+     * @param $query
+     * @param array $ids
+     * @return mixed
+     */
+    public static function scopeIds($query, array $ids)
+    {
+        return $query->whereIn(self::GetAlias().'id', $ids);
+    }
+
+    /**
      * 标签名称查询 普通索引
      *
      * @param $query
@@ -139,6 +151,17 @@ class Tags extends BaseModel implements ModelInterface
     {
         // TODO: Implement count() method.
         return self::listWhere($where)->isDel(0)->count();
+    }
+
+    /**
+     * 批量验证标签编号
+     * @param array $ids
+     * @return int
+     */
+    public static function checkIds(array $ids): int
+    {
+        $count = self::ids($ids)->select('id')->isDel(0)->count();
+        return $count;
     }
 
 }

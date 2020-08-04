@@ -3,6 +3,7 @@
  * @author: cc_forever<1253705861@qq.com>
  * @day: 2020/7/23
  */
+
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 

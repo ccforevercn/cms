@@ -36,6 +36,7 @@ class MessagesInsertRequest extends Request
         return [
             'name' =>  'bail|required|max:20',
             'columns_id' => 'bail|required|integer|min:1',
+            'tags_id' => 'bail|present',
             'image' => 'bail|required|max:128',
             'writer' => 'bail|required|max:32',
             'click' =>  'bail|required|integer|min:0|max:1000',
@@ -62,6 +63,7 @@ class MessagesInsertRequest extends Request
             'name.max' => '文章名称不能超过20个汉字',
             'columns_id.required' => '请选择栏目',
             'columns_id.min' => '栏目不存在',
+            'tags_id.present' => '参数错误',
             'image.required' => '请选择栏目图片',
             'image.max' => '栏目图片不能超过128位',
             'writer.required' => '请填写文章作者',

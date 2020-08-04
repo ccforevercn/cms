@@ -94,11 +94,7 @@ trait ModelTraits
      */
     private static function model_handle_insert(array $data): bool
     {
-        try{
-            return (bool)DB::table(self::$modelTable)->insert($data);
-        }catch (\Exception $exception){
-            return false;
-        }
+        return (bool)DB::table(self::$modelTable)->insert($data);
     }
 
     /**
@@ -111,12 +107,7 @@ trait ModelTraits
      */
     private static function model_handle_update(array $data, int $value, string $field): bool
     {
-        try{
-            $update = DB::table(self::$modelTable)->where($field, $value)->update($data);
-            return (bool)$update;
-        }catch (\Exception $exception){
-            return false;
-        }
+        return (bool)DB::table(self::$modelTable)->where($field, $value)->update($data);
     }
 
     /**
@@ -128,8 +119,7 @@ trait ModelTraits
      */
     private static function model_handle_delete(string $value, string $field): bool
     {
-        $update = DB::table(self::$modelTable)->where($field, $value)->update(['is_del' => 1]);
-        return (bool)$update;
+        return (bool)DB::table(self::$modelTable)->where($field, $value)->update(['is_del' => 1]);
     }
 
     /**
@@ -141,8 +131,7 @@ trait ModelTraits
      */
     private static function model_handle_check(int $value, string $field): bool
     {
-        $count = DB::table(self::$modelTable)->where($field, $value)->where('is_del', 0)->count();
-        return (bool)$count;
+        return (bool)DB::table(self::$modelTable)->where($field, $value)->where('is_del', 0)->count();
     }
 
     /**
@@ -156,10 +145,14 @@ trait ModelTraits
     {
         $string = '';
         try{
-            list($data, $id, $select) = $parameter;
+            list($value, $select) = $parameter;
+            $field = 'id';
+            if(is_array($value)){
+                list($field, $value) = $value;
+            }
             switch ($function){
                 case 'select': // 查询字段
-                    $string = self::model_handle_select($id, $select);
+                    $string = self::model_handle_select($field, $value, $select);
                     break;
                 // ...
                 default:;
@@ -171,13 +164,14 @@ trait ModelTraits
     /**
      * 查询字段值
      *
-     * @param int $value
+     * @param string $field
+     * @param string $value
      * @param string $select
      * @return string
      */
-    private static function model_handle_select(int $value, string $select): string
+    private static function model_handle_select(string $field, string $value, string $select): string
     {
-        $value = DB::table(self::$modelTable)->where('id', $value)->where('is_del', 0)->value($select);
+        $value = DB::table(self::$modelTable)->where($field, $value)->where('is_del', 0)->value($select);
         return is_null($value) ? '' : $value;
     }
 
@@ -223,8 +217,7 @@ trait ModelTraits
     public static function model_handle_message(int $value, array $select): array
     {
         // TODO: Implement message() method.
-        $message = DB::table(self::$modelTable)->where('id', $value)->select($select)->where('is_del', 0)->first();
-        return (array)$message;
+        return (array)DB::table(self::$modelTable)->where('id', $value)->select($select)->where('is_del', 0)->first();
     }
 
     /**

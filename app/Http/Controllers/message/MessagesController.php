@@ -58,6 +58,9 @@ class MessagesController extends BaseController
     {
         // TODO: Implement insert() method.
         $data = $messagesInsertRequest->all();
+        $admin = auth('login')->user();
+        $data['admin_id'] = $admin->id;
+        $data['username'] = $admin->username;
         $bool = $messagesRepository::insert($data);
         if($bool){
             return JsonExtend::success($messagesRepository::returnMsg('添加成功'));
@@ -77,6 +80,9 @@ class MessagesController extends BaseController
         // TODO: Implement update() method.
         $data = $messagesUpdateRequest->all();
         $id = (int)$data['id'];
+        $admin = auth('login')->user();
+        $data['admin_id'] = $admin->id;
+        $data['username'] = $admin->username;
         $bool = $messagesRepository::update($data, $id);
         if($bool){
             return JsonExtend::success($messagesRepository::returnMsg('修改成功'));

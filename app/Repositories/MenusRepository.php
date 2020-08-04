@@ -211,7 +211,7 @@ class MenusRepository implements RepositoryInterface
             $menusIds = array_column($menusIds, 'id');
         }else{ // 否
             // 获取管理员规则编号
-            $ruleId = $adminsRepository::GetModel()::base_string('select', [], $adminId, 'rule_id');
+            $ruleId = $adminsRepository::GetModel()::base_string('select', $adminId, 'rule_id');
             // 规则编号不存在
             if(!strlen($ruleId)){ return self::setMsg('菜单不存在', false); }
             // 格式化规则变化
@@ -219,7 +219,7 @@ class MenusRepository implements RepositoryInterface
             // 实例化RulesRepository类
             $rulesRepository = new RulesRepository();
             // 获取规则唯一值
-            $unique = $rulesRepository::GetModel()::base_string('select', [], $ruleId, 'unique');
+            $unique = $rulesRepository::GetModel()::base_string('select', $ruleId, 'unique');
             // 规则唯一值不存在
             if(!strlen($unique)){ return self::setMsg('菜单不存在', false); }
             // 设置table为rules_menus表
@@ -306,7 +306,7 @@ class MenusRepository implements RepositoryInterface
             if(!$check){ // 规则编号不存在
                 return self::setMsg('权限不足', false);
             }
-            $unique = $rulesRepositoryModel::base_string('select', [], $ruleId, 'unique'); // 查询规则信息
+            $unique = $rulesRepositoryModel::base_string('select', $ruleId, 'unique'); // 查询规则信息
             $menus = $rulesRepositoryModel::menus($unique); // 获取管理员对应的菜单
             $status = (bool)count($menus); // 转为bool值
             if(!$status){ // 没有菜单

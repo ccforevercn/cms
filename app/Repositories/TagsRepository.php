@@ -127,5 +127,4 @@ class TagsRepository implements RepositoryInterface
         $status = self::$model::base_bool('update', $tags, $id); // 修改数据
         return self::setMsg($status ? '修改成功' : '修改失败', $status);
     }
-
 }

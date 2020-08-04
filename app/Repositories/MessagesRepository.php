@@ -82,9 +82,10 @@ class MessagesRepository implements RepositoryInterface
     public static function insert(array $data): bool
     {
         // TODO: Implement insert() method.
-        $messages = [];
+        $messages = []; // 文章
         $messages['name'] = array_key_exists('name', $data) ? $data['name'] : null;// 文章名称
         $messages['columns_id'] = array_key_exists('columns_id', $data) ? (int)$data['columns_id'] : null;// 文章栏目
+        $tagsIds = array_key_exists('tags_id', $data) && !is_null($data['tags_id'])? $data['tags_id'] : null;// 文章标签
         $messages['image'] = array_key_exists('image', $data) ? $data['image'] : '';// 文章图片
         $messages['writer'] = array_key_exists('writer', $data) ? $data['writer'] : 'ccforever<1253705861@qq.com>"';// 文章作者
         $messages['click'] = array_key_exists('click', $data) ? (int)$data['click'] : 1;// 文章点击量
@@ -100,16 +101,48 @@ class MessagesRepository implements RepositoryInterface
         if(!check_null($messages['name'], $messages['columns_id'], $messages['page'])){
             return self::setMsg('参数错误', false);
         }
+        $messagesTags = []; // 文章标签
+        $messagesTagsCount = 0; // 文章标签添加总数
+        $unique = create_admin_password(create_millisecond(), $data['username'].$data['admin_id']); // 文章和文章标签的唯一值
+        $time = time(); // 添加时间
+        if(!is_null($tagsIds)){ // 文章标签存在
+            $tagsIds = explode(',', $tagsIds); // 格式化标签编号
+            $tagsRepository = new TagsRepository(); // 实例化TagsRepository类
+            $tagsRepositoryModel = $tagsRepository::GetModel(); // 获取TagsModel
+            $count = $tagsRepositoryModel::checkIds($tagsIds); // 验证标签编号
+            if($count !== count($tagsIds)){  // 编号和数据库编号不一致
+                return self::setMsg('标签不存在', false);
+            }
+            foreach ($tagsIds as $key=>$tagsId){
+                $messagesTags[$messagesTagsCount]['tag_id'] = (int)$tagsId; // 标签编号
+                $messagesTags[$messagesTagsCount]['unique'] = $unique; // 唯一值
+                $messagesTags[$messagesTagsCount]['add_time'] = $time; // 添加时间
+                $messagesTags[$messagesTagsCount]['clear_time'] = $time; // 清除时间 默认添加时间
+                $messagesTags[$messagesTagsCount]['is_del'] = 0; // 是否删除  删除时修改清除时间
+                $messagesTagsCount++; // key自增
+            }
+        }
         // 验证栏目编号
-        $columnsRepository =  new ColumnsRepository();
-        $columnsRepositoryModel = $columnsRepository::GetModel();
+        $columnsRepository =  new ColumnsRepository();  // 实例化ColumnsRepository类
+        $columnsRepositoryModel = $columnsRepository::GetModel(); // 获取ColumnsModel
         $check =$columnsRepositoryModel::base_bool('check', [], $messages['columns_id']); // 验证编号
-        if(!$check){
+        if(!$check){ // 编号不存
             return self::setMsg('栏目不存在', false);
         }
-        $message['is_del'] = 0;
-        $message['add_time'] = time();
-        $status = self::$model::base_bool('insert', $messages, 0);
+        $messages['unique'] = $unique;
+        $messages['is_del'] = 0;
+        $messages['add_time'] = $time;
+        // 开始添加数据
+        self::$model::beginTransaction(); // 开启事务
+        $messageStatus = self::$model::base_bool('insert', $messages, 0); // 添加文章信息
+        $messagesTagsStatus = true; // 设置默认文章标签添加成功
+        if($messagesTagsCount){ // 文章标签存在
+            self::$model::SetModelTable('messages_tags'); // 修改表为messages_tags
+            $messagesTagsStatus = self::$model::base_bool('insert', $messagesTags, 0); // 添加文章标签信息
+            self::$model::SetModelTable('messages');// 修改表为messages
+        }
+        $status = $messageStatus && $messagesTagsStatus;
+        self::$model::checkTransaction($status); // 提交事务
         return self::setMsg($status ? '添加成功' : '添加失败', $status);
     }
 
@@ -130,6 +163,7 @@ class MessagesRepository implements RepositoryInterface
         $messages = [];
         $messages['name'] = array_key_exists('name', $data) ? $data['name'] : null;// 文章名称
         $messages['columns_id'] = array_key_exists('columns_id', $data) ? (int)$data['columns_id'] : null;// 文章栏目
+        $tagsIds = array_key_exists('tags_id', $data) && !is_null($data['tags_id'])? $data['tags_id'] : null;// 文章标签
         $messages['image'] = array_key_exists('image', $data) ? $data['image'] : '';// 文章图片
         $messages['writer'] = array_key_exists('writer', $data) ? $data['writer'] : 'ccforever<1253705861@qq.com>"';// 文章作者
         $messages['click'] = array_key_exists('click', $data) ? (int)$data['click'] : 1;// 文章点击量
@@ -145,18 +179,46 @@ class MessagesRepository implements RepositoryInterface
         if(!check_null($messages['name'], $messages['columns_id'], $messages['page'])){
             return self::setMsg('参数错误', false);
         }
+        $messagesTags = []; // 文章标签
+        $messagesTagsCount = 0; // 文章标签添加总数
+        $unique = create_admin_password(create_millisecond(), $data['username'].$data['admin_id']); // 文章和文章标签的唯一值
+        $time = time(); // 添加时间
+        if(!is_null($tagsIds)){ // 文章标签存在
+            $tagsIds = explode(',', $tagsIds); // 格式化标签编号
+            $tagsRepository = new TagsRepository(); // 实例化TagsRepository类
+            $tagsRepositoryModel = $tagsRepository::GetModel(); // 获取TagsModel
+            $count = $tagsRepositoryModel::checkIds($tagsIds); // 验证标签编号
+            if($count !== count($tagsIds)){  // 编号和数据库编号不一致
+                return self::setMsg('标签不存在', false);
+            }
+            foreach ($tagsIds as $key=>$tagsId){
+                $messagesTags[$messagesTagsCount]['tag_id'] = (int)$tagsId; // 标签编号
+                $messagesTags[$messagesTagsCount]['unique'] = $unique; // 唯一值
+                $messagesTags[$messagesTagsCount]['add_time'] = $time; // 添加时间
+                $messagesTags[$messagesTagsCount]['clear_time'] = $time; // 清除时间 默认添加时间
+                $messagesTags[$messagesTagsCount]['is_del'] = 0; // 是否删除  删除时修改清除时间
+                $messagesTagsCount++; // key自增
+            }
+        }
         // 验证栏目编号
-        $columnsRepository =  new ColumnsRepository();
-        $columnsRepositoryModel = $columnsRepository::GetModel();
+        $columnsRepository =  new ColumnsRepository(); // 实例化ColumnsRepository类
+        $columnsRepositoryModel = $columnsRepository::GetModel(); // 获取ColumnsModel
         $check = $columnsRepositoryModel::base_bool('check', [], $messages['columns_id']); // 验证编号
         if(!$check){
             return self::setMsg('栏目不存在', false);
         }
-        $message = self::$model::base_array('message', $id, array_keys($messages), []);
-        if($message === $messages){ // 数据库的数据和修改的数据一致
-            return self::setMsg('修改成功', true);
+        $messages['unique'] = $unique;
+        // 开始添加数据
+        self::$model::beginTransaction(); // 开启事务
+        $messageStatus = self::$model::base_bool('update', $messages, $id); // 修改文章信息
+        $messagesTagsStatus = true; // 设置默认文章标签添加成功
+        if($messagesTagsCount){ // 文章标签存在
+            self::$model::SetModelTable('messages_tags'); // 修改表为messages_tags
+            $messagesTagsStatus = self::$model::base_bool('insert', $messagesTags, 0); // 添加文章标签信息
+            self::$model::SetModelTable('messages');// 修改表为messages
         }
-        $status = self::$model::base_bool('update', $messages, $id); // 修改数据
+        $status = $messageStatus && $messagesTagsStatus;
+        self::$model::checkTransaction($status); // 提交事务
         return self::setMsg($status ? '修改成功' : '修改失败', $status);
     }
 
@@ -208,6 +270,17 @@ class MessagesRepository implements RepositoryInterface
     }
 
     /**
+     * 信息标签
+     *
+     * @param int $id
+     * @return array
+     */
+    public static function tags(int $id): array
+    {
+
+    }
+
+    /**
      * 信息 点击量
      *
      * @param int $id
@@ -220,7 +293,7 @@ class MessagesRepository implements RepositoryInterface
         if(!$check){
             return self::setMsg('参数错误', false);
         }
-        $clicked = (int)self::$model::base_string('select', [], $id, 'click');
+        $clicked = (int)self::$model::base_string('select', $id, 'click');
         if(!$clicked && $click < 0){
             return self::setMsg('修改失败，参数错误', false);
         }

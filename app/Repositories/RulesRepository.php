@@ -105,9 +105,9 @@ class RulesRepository implements RepositoryInterface
             return self::setMsg('菜单不存在', false);
         }
         $menuIds = explode(',', $menuIdsStr);
-        $messagesRepository = new MessagesRepository();
-        $messagesRepositoryModel = $messagesRepository::GetModel();
-        $count = $messagesRepositoryModel::checkIds($menuIds);
+        $menusRepository = new MenusRepository();
+        $menusRepositoryModel = $menusRepository::GetModel();
+        $count = $menusRepositoryModel::checkIds($menuIds);
         if($count !== count($menuIds)){
             return self::setMsg('菜单不存在', false);
         }
@@ -171,7 +171,7 @@ class RulesRepository implements RepositoryInterface
         // 规则修改信息不完整
         if(is_null($rule['name'])){ return self::setMsg('参数错误', false); }
         // 获取规则创建者编号
-        $adminId = self::$model::base_string('select', [], $id, 'admin_id');
+        $adminId = self::$model::base_string('select', $id, 'admin_id');
         // 实例化AdminsRepository类
         $adminsRepository = new AdminsRepository();
         // 判断当前管理员是否有修改规则的权限
@@ -262,7 +262,7 @@ class RulesRepository implements RepositoryInterface
         if(!$check){
             return self::setMsg('规则不存在', false);
         }
-        $unique = self::$model::base_string('select', [], $id, 'unique');  // 查询规则信息
+        $unique = self::$model::base_string('select', $id, 'unique');  // 查询规则信息
         $menus = self::$model::menus($unique);
         $status = count($menus);
         return self::setMsg($status ? '规则菜单列表' : '获取失败', $status, $menus);

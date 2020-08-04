@@ -474,7 +474,7 @@ class AdminsRepository implements RepositoryInterface
      */
     public static function adminRuleMenusRoutes(int $id): array
     {
-        $ruleId = self::$model::base_string('select', [], $id, 'rule_id'); // 获取管理员规则编号
+        $ruleId = self::$model::base_string('select', $id, 'rule_id'); // 获取管理员规则编号
         if(strlen($ruleId)){ // 管理员信息存在
             $rulesRepository = new RulesRepository();// 实例化RulesRepository类
             $ruleId = (int)$ruleId;
