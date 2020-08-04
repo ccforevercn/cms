@@ -34,7 +34,7 @@ class ColumnsUpdateRequest extends Request
     public function rules()
     {
         return [
-            'id' => 'bail|required|integer|min:0',
+            'id' => 'bail|required|integer|min:1',
             'name' =>  'bail|required|max:20',
             'name_alias' =>  'bail|required|max:20',
             'parent_id' => 'bail|required|integer|min:0',

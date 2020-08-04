@@ -113,3 +113,32 @@ if(!function_exists('check_null')){
         return $status;
     }
 }
+
+if(!function_exists('format_config_message_type_value')){
+    /**
+     * 格式化配置信息类型值
+     *
+     * @param string $values
+     * @return array
+     */
+    function format_config_message_type_value(string $values): array
+    {
+        $format = [];
+        $formatCount = 0;
+        if(strlen($values)){
+            $values = explode('|', $values);
+            if(count($values) >= 2){
+                foreach ($values as $key=>$value){
+                    $formatValue = explode(':', $value);
+                    if(count($formatValue) !== 2){
+                        $format = [];
+                        break;
+                    }
+                    $format[$formatCount] = $formatValue;
+                    $formatCount++;
+                }
+            }
+        }
+        return $format;
+    }
+}

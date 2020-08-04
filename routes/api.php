@@ -65,7 +65,16 @@ Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
             Route::get('/views/message', 'ViewsController@message')->name('viewsmessage'.$admin);// 视图信息
         });
         Route::namespace('config')->group(function () use($admin) { // 配置路由组
-
+            Route::get('/config/category/list', 'ConfigCategoryController@lst')->name('configcategorylist'.$admin);// 配置分类列表
+            Route::post('/config/category/insert', 'ConfigCategoryController@insert')->name('configcategoryinsert'.$admin);// 配置分类添加
+            Route::post('/config/category/update', 'ConfigCategoryController@update')->name('configcategoryupdate'.$admin);// 配置分类修改
+            Route::post('/config/category/delete', 'ConfigCategoryController@delete')->name('configcategorydelete'.$admin);// 配置分类删除
+            Route::get('/config/category/message', 'ConfigCategoryController@message')->name('configcategorymessage'.$admin);// 配置分类信息
+            Route::get('/config/message/list', 'ConfigMessageController@lst')->name('configmessagelist'.$admin);// 配置信息列表
+            Route::post('/config/message/insert', 'ConfigMessageController@insert')->name('configmessageinsert'.$admin);// 配置信息添加
+            Route::post('/config/message/update', 'ConfigMessageController@update')->name('configmessageupdate'.$admin);// 配置信息修改
+            Route::post('/config/message/delete', 'ConfigMessageController@delete')->name('configmessagedelete'.$admin);// 配置信息删除
+            Route::get('/config/message/message', 'ConfigMessageController@message')->name('configmessagemessage'.$admin);// 配置信息信息
         });
     });
 });
