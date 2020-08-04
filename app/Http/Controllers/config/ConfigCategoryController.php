@@ -15,7 +15,7 @@ use App\Http\Requests\ConfigCategory\ConfigCategoryUpdateRequest;
 use App\Repositories\ConfigCategoryRepository;
 
 /**
- * 配置栏目控制器
+ * 配置分类控制器
  *
  * Class ConfigCategoryController
  * @package App\Http\Controllers\config
@@ -25,7 +25,7 @@ class ConfigCategoryController extends BaseController
     use ControllerTrait;
 
     /**
-     * 配置栏目列表
+     * 配置分类列表
      *
      * @param ConfigCategoryListRequest $configCategoryListRequest
      * @param ConfigCategoryRepository $configCategoryRepository
@@ -42,11 +42,11 @@ class ConfigCategoryController extends BaseController
         if($result){ $list = $configCategoryRepository::returnData($list); }
         $result = $configCategoryRepository::count($where);
         if($result){ list($count) = $configCategoryRepository::returnData([0]); }
-        return JsonExtend::success('配置栏目列表', compact('list', 'count'));
+        return JsonExtend::success('配置分类列表', compact('list', 'count'));
     }
 
     /**
-     * 配置栏目添加
+     * 配置分类添加
      *
      * @param ConfigCategoryInsertRequest $configCategoryInsertRequest
      * @param ConfigCategoryRepository $configCategoryRepository
@@ -64,7 +64,7 @@ class ConfigCategoryController extends BaseController
     }
 
     /**
-     * 配置栏目修改
+     * 配置分类修改
      *
      * @param ConfigCategoryUpdateRequest $configCategoryUpdateRequest
      * @param ConfigCategoryRepository $configCategoryRepository
@@ -83,7 +83,7 @@ class ConfigCategoryController extends BaseController
     }
 
     /**
-     * 配置栏目删除
+     * 配置分类删除
      *
      * @param ConfigCategoryRequest $configCategoryRequest
      * @param ConfigCategoryRepository $configCategoryRepository
@@ -101,7 +101,7 @@ class ConfigCategoryController extends BaseController
     }
 
     /**
-     * 配置栏目信息
+     * 配置分类信息
      *
      * @param ConfigCategoryRequest $configCategoryRequest
      * @param ConfigCategoryRepository $configCategoryRepository
@@ -114,8 +114,23 @@ class ConfigCategoryController extends BaseController
         if(!$id){ return JsonExtend::error($configCategoryRepository::returnMsg('参数错误')); }
         $bool = $configCategoryRepository::message($id);
         if($bool){
-            return JsonExtend::success($configCategoryRepository::returnMsg('配置栏目信息'), $configCategoryRepository::returnData([]));
+            return JsonExtend::success($configCategoryRepository::returnMsg('配置分类信息'), $configCategoryRepository::returnData([]));
         }
         return JsonExtend::error($configCategoryRepository::returnMsg('数据不存在'));
+    }
+
+    /**
+     * 配置分类列表(all)
+     *
+     * @param ConfigCategoryRepository $configCategoryRepository
+     * @return object
+     */
+    public function category(ConfigCategoryRepository $configCategoryRepository): object
+    {
+        $bool = $configCategoryRepository::category();
+        if($bool){
+            return JsonExtend::success($configCategoryRepository::returnMsg('配置分类列表'), $configCategoryRepository::returnData([]));
+        }
+        return JsonExtend::error($configCategoryRepository::returnMsg('配置分类列表'));
     }
 }

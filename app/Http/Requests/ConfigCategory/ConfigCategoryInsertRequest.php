@@ -8,7 +8,7 @@ namespace App\Http\Requests\ConfigCategory;
 use App\Http\Requests\Request;
 
 /**
- * 配置栏目添加验证
+ * 配置分类添加验证
  *
  * Class ConfigCategoryInsertRequest
  * @package App\Http\Requests\ConfigCategory

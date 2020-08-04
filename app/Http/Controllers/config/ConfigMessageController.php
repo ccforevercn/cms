@@ -114,7 +114,7 @@ class ConfigMessageController extends BaseController
         if(!$id){ return JsonExtend::error($configMessageRepository::returnMsg('参数错误')); }
         $bool = $configMessageRepository::message($id);
         if($bool){
-            return JsonExtend::success($configMessageRepository::returnMsg('配置栏目信息'), $configMessageRepository::returnData([]));
+            return JsonExtend::success($configMessageRepository::returnMsg('配置分类信息'), $configMessageRepository::returnData([]));
         }
         return JsonExtend::error($configMessageRepository::returnMsg('数据不存在'));
     }

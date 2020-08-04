@@ -11,7 +11,7 @@ use App\CcForever\traits\RepositoryReturnMsgData;
 use App\ConfigCategory;
 
 /**
- * 配置栏目
+ * 配置分类
  *
  * Class ConfigCategoryRepository
  * @package App\Repositories
@@ -38,7 +38,7 @@ class ConfigCategoryRepository implements RepositoryInterface
     }
 
     /**
-     * 配置栏目列表
+     * 配置分类列表
      *
      * @param array $where
      * @param int $page
@@ -49,12 +49,12 @@ class ConfigCategoryRepository implements RepositoryInterface
     {
         // TODO: Implement lst() method.
         $offset = page_to_offset($page, $limit); // 获取起始值
-        $list = self::$model::lst($where, $offset, $limit);// 配置栏目列表
-        return self::setMsg('配置栏目列表', true, $list);
+        $list = self::$model::lst($where, $offset, $limit);// 配置分类列表
+        return self::setMsg('配置分类列表', true, $list);
     }
 
     /**
-     * 配置栏目总数
+     * 配置分类总数
      *
      * @param array $where
      * @return bool
@@ -62,8 +62,8 @@ class ConfigCategoryRepository implements RepositoryInterface
     public static function count(array $where): bool
     {
         // TODO: Implement count() method.
-        $count = self::$model::count($where);// 配置栏目总数
-        return self::setMsg('配置栏目总数', true, [$count]);
+        $count = self::$model::count($where);// 配置分类总数
+        return self::setMsg('配置分类总数', true, [$count]);
     }
 
     /**
@@ -113,5 +113,20 @@ class ConfigCategoryRepository implements RepositoryInterface
         }
         $status = self::$model::base_bool('update', $configCategory, $id); // 修改数据
         return self::setMsg($status ? '修改成功' : '修改失败', $status);
+    }
+
+    /**
+     * 配置分类列表(all)
+     *
+     * @return bool
+     */
+    public static function category(): bool
+    {
+        $order = []; // 排序方式
+        $order['select'] = 'id'; // 排序字段
+        $order['value'] = 'ASC'; // 排序方式 DESC 降序 ASC 升序
+        $category = self::$model::base_array('all', [], ['id', 'name'], $order);
+        $status = (bool)count($category);
+        return self::setMsg($status ? '配置分类列表' : '配置分类列表', $status, $category);
     }
 }

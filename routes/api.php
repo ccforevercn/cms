@@ -70,6 +70,7 @@ Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
             Route::post('/config/category/update', 'ConfigCategoryController@update')->name('configcategoryupdate'.$admin);// 配置分类修改
             Route::post('/config/category/delete', 'ConfigCategoryController@delete')->name('configcategorydelete'.$admin);// 配置分类删除
             Route::get('/config/category/message', 'ConfigCategoryController@message')->name('configcategorymessage'.$admin);// 配置分类信息
+            Route::get('/config/category/category', 'ConfigCategoryController@category')->name('configcategorycategory'.$admin);// 配置分类列表(all)
             Route::get('/config/message/list', 'ConfigMessageController@lst')->name('configmessagelist'.$admin);// 配置信息列表
             Route::post('/config/message/insert', 'ConfigMessageController@insert')->name('configmessageinsert'.$admin);// 配置信息添加
             Route::post('/config/message/update', 'ConfigMessageController@update')->name('configmessageupdate'.$admin);// 配置信息修改

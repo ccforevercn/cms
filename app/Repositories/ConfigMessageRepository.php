@@ -52,7 +52,7 @@ class ConfigMessageRepository implements RepositoryInterface
             return self::setMsg('参数错误', false);
         }
         $offset = page_to_offset($page, $limit); // 获取起始值
-        $list = self::$model::lst($where, $offset, $limit);// 配置栏目列表
+        $list = self::$model::lst($where, $offset, $limit);// 配置分类列表
         return self::setMsg('配置信息列表', true, $list);
     }
 
@@ -95,12 +95,12 @@ class ConfigMessageRepository implements RepositoryInterface
         if(count($equal)){
             return self::setMsg('唯一值已存在', false);
         }
-        // 验证配置栏目编号
+        // 验证配置分类编号
         $configCategoryRepository = new ConfigCategoryRepository();
         $configCategoryRepositoryModel = $configCategoryRepository::GetModel();
-        $configCategoryIdCheck = $configCategoryRepositoryModel::base_bool('check', [], $configMessage['category_id']); // 验证配置栏目编号
+        $configCategoryIdCheck = $configCategoryRepositoryModel::base_bool('check', [], $configMessage['category_id']); // 验证配置分类编号
         if(!$configCategoryIdCheck){
-            return self::setMsg('配置栏目不存在', false);
+            return self::setMsg('配置分类不存在', false);
         }
         // 验证类型为 2 单选 3 多选的type_value和value不能为空并且value是type_value中的数据
         switch ($configMessage['type']){
