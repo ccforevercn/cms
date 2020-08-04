@@ -64,5 +64,8 @@ Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
             Route::post('/views/delete', 'ViewsController@delete')->name('viewsdelete'.$admin);// 视图删除
             Route::get('/views/message', 'ViewsController@message')->name('viewsmessage'.$admin);// 视图信息
         });
+        Route::namespace('config')->group(function () use($admin) { // 配置路由组
+
+        });
     });
 });
