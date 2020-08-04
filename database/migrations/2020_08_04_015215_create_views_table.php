@@ -35,7 +35,6 @@ class CreateViewsTable extends Migration
             $table->unique('id'); // 编号唯一索引
             $table->index('type'); // 视图类型普通索引
             $table->index('is_del'); // 是否删除普通索引
-
         });
     }
 

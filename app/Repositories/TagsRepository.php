@@ -49,7 +49,7 @@ class TagsRepository implements RepositoryInterface
         // TODO: Implement lst() method.
         $where['status'] = array_key_exists('status', $where) && !is_null($where['status']) ? (int)$where['status'] : '';// 标签状态是否存在
         $offset = page_to_offset($page, $limit); // 获取起始值
-        $list = self::$model::lst($where, $offset, $limit);// 信息列表
+        $list = self::$model::lst($where, $offset, $limit);// 标签列表
         return self::setMsg('标签列表', true, $list);
     }
 
@@ -63,7 +63,7 @@ class TagsRepository implements RepositoryInterface
     {
         // TODO: Implement count() method.
         $where['status'] = array_key_exists('status', $where) && !is_null($where['status']) ? (int)$where['status'] : '';// 标签状态是否存在
-        $count = self::$model::count($where);// 信息总数
+        $count = self::$model::count($where);// 标签总数
         return self::setMsg('标签总数', true, [$count]);
     }
 
