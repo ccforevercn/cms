@@ -9,6 +9,7 @@ namespace App;
 use App\CcForever\interfaces\ModelInterface;
 use App\CcForever\model\BaseModel;
 use App\CcForever\traits\ModelTraits;
+use Illuminate\Support\Facades\DB;
 
 class Messages extends BaseModel implements ModelInterface
 {
@@ -213,5 +214,21 @@ class Messages extends BaseModel implements ModelInterface
     public static function GetState(): array
     {
         return self::$state;
+    }
+
+    /**
+     * 信息标签
+     *
+     * @param string $unique
+     * @return array
+     */
+    public static function tags(string $unique): array
+    {
+        $tags = DB::table('messages_tags')->where('unique', $unique)->leftJoin('tags', 'messages_tags.tag_id', '=', 'tags.id')->select('tags.id as tid', 'tags.name as tname')->orderBy('tags.add_time', 'DESC')->get();
+        $tags = is_null($tags) ? [] : $tags->toArray();
+        foreach ($tags as $key=>$tag){
+            $tags[$key] = (array)$tag;
+        }
+        return $tags;
     }
 }

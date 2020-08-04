@@ -11,7 +11,7 @@ use App\CcForever\traits\RepositoryReturnMsgData;
 use App\Messages;
 
 /**
- * 文章信息
+ * 信息信息
  * Class MessagesRepository
  * @package App\Repositories
  */
@@ -82,30 +82,30 @@ class MessagesRepository implements RepositoryInterface
     public static function insert(array $data): bool
     {
         // TODO: Implement insert() method.
-        $messages = []; // 文章
-        $messages['name'] = array_key_exists('name', $data) ? $data['name'] : null;// 文章名称
-        $messages['columns_id'] = array_key_exists('columns_id', $data) ? (int)$data['columns_id'] : null;// 文章栏目
-        $tagsIds = array_key_exists('tags_id', $data) && !is_null($data['tags_id'])? $data['tags_id'] : null;// 文章标签
-        $messages['image'] = array_key_exists('image', $data) ? $data['image'] : '';// 文章图片
-        $messages['writer'] = array_key_exists('writer', $data) ? $data['writer'] : 'ccforever<1253705861@qq.com>"';// 文章作者
-        $messages['click'] = array_key_exists('click', $data) ? (int)$data['click'] : 1;// 文章点击量
-        $messages['weight'] = array_key_exists('weight', $data) ? (int)$data['weight'] : 1;// 文章权重
-        $messages['keywords'] = array_key_exists('keywords', $data) ? $data['keywords'] : $messages['name'];// 文章关键字
-        $messages['description'] = array_key_exists('description', $data) ? $data['description'] : $messages['name'];// 文章描述
-        $messages['index'] = array_key_exists('index', $data) ? (int)$data['index'] : 1;// 文章首页推荐状态 1 是 0 否
-        $messages['hot'] = array_key_exists('hot', $data) ? (int)$data['hot'] : 1;// 文章热门推荐状态 1 是 0 否
-        $messages['release'] = array_key_exists('release', $data) ? (int)$data['release'] : 1;// 文章是否发布状态 1 是 0 否
-        $messages['update_time'] = array_key_exists('update_time', $data) ? (int)$data['update_time'] : time();// 文章修改时间
-        $messages['release_time'] = array_key_exists('release_time', $data) ? (int)$data['release_time'] : ($messages['release']  ? time() : bcadd(time(), 86400));// 文章发布时间
-        $messages['page'] = array_key_exists('page', $data) ? $data['page'] : null;// 文章页面
+        $messages = []; // 信息
+        $messages['name'] = array_key_exists('name', $data) ? $data['name'] : null;// 信息名称
+        $messages['columns_id'] = array_key_exists('columns_id', $data) ? (int)$data['columns_id'] : null;// 信息栏目
+        $tagsIds = array_key_exists('tags_id', $data) && !is_null($data['tags_id'])? $data['tags_id'] : null;// 信息标签
+        $messages['image'] = array_key_exists('image', $data) ? $data['image'] : '';// 信息图片
+        $messages['writer'] = array_key_exists('writer', $data) ? $data['writer'] : 'ccforever<1253705861@qq.com>"';// 信息作者
+        $messages['click'] = array_key_exists('click', $data) ? (int)$data['click'] : 1;// 信息点击量
+        $messages['weight'] = array_key_exists('weight', $data) ? (int)$data['weight'] : 1;// 信息权重
+        $messages['keywords'] = array_key_exists('keywords', $data) ? $data['keywords'] : $messages['name'];// 信息关键字
+        $messages['description'] = array_key_exists('description', $data) ? $data['description'] : $messages['name'];// 信息描述
+        $messages['index'] = array_key_exists('index', $data) ? (int)$data['index'] : 1;// 信息首页推荐状态 1 是 0 否
+        $messages['hot'] = array_key_exists('hot', $data) ? (int)$data['hot'] : 1;// 信息热门推荐状态 1 是 0 否
+        $messages['release'] = array_key_exists('release', $data) ? (int)$data['release'] : 1;// 信息是否发布状态 1 是 0 否
+        $messages['update_time'] = array_key_exists('update_time', $data) ? (int)$data['update_time'] : time();// 信息修改时间
+        $messages['release_time'] = array_key_exists('release_time', $data) ? (int)$data['release_time'] : ($messages['release']  ? time() : bcadd(time(), 86400));// 信息发布时间
+        $messages['page'] = array_key_exists('page', $data) ? $data['page'] : null;// 信息页面
         if(!check_null($messages['name'], $messages['columns_id'], $messages['page'])){
             return self::setMsg('参数错误', false);
         }
-        $messagesTags = []; // 文章标签
-        $messagesTagsCount = 0; // 文章标签添加总数
-        $unique = create_admin_password(create_millisecond(), $data['username'].$data['admin_id']); // 文章和文章标签的唯一值
+        $messagesTags = []; // 信息标签
+        $messagesTagsCount = 0; // 信息标签添加总数
+        $unique = create_admin_password(create_millisecond(), $data['username'].$data['admin_id']); // 信息和信息标签的唯一值
         $time = time(); // 添加时间
-        if(!is_null($tagsIds)){ // 文章标签存在
+        if(!is_null($tagsIds)){ // 信息标签存在
             $tagsIds = explode(',', $tagsIds); // 格式化标签编号
             $tagsRepository = new TagsRepository(); // 实例化TagsRepository类
             $tagsRepositoryModel = $tagsRepository::GetModel(); // 获取TagsModel
@@ -134,11 +134,11 @@ class MessagesRepository implements RepositoryInterface
         $messages['add_time'] = $time;
         // 开始添加数据
         self::$model::beginTransaction(); // 开启事务
-        $messageStatus = self::$model::base_bool('insert', $messages, 0); // 添加文章信息
-        $messagesTagsStatus = true; // 设置默认文章标签添加成功
-        if($messagesTagsCount){ // 文章标签存在
+        $messageStatus = self::$model::base_bool('insert', $messages, 0); // 添加信息信息
+        $messagesTagsStatus = true; // 设置默认信息标签添加成功
+        if($messagesTagsCount){ // 信息标签存在
             self::$model::SetModelTable('messages_tags'); // 修改表为messages_tags
-            $messagesTagsStatus = self::$model::base_bool('insert', $messagesTags, 0); // 添加文章标签信息
+            $messagesTagsStatus = self::$model::base_bool('insert', $messagesTags, 0); // 添加信息标签信息
             self::$model::SetModelTable('messages');// 修改表为messages
         }
         $status = $messageStatus && $messagesTagsStatus;
@@ -161,29 +161,29 @@ class MessagesRepository implements RepositoryInterface
             return self::setMsg('参数错误', false);
         }
         $messages = [];
-        $messages['name'] = array_key_exists('name', $data) ? $data['name'] : null;// 文章名称
-        $messages['columns_id'] = array_key_exists('columns_id', $data) ? (int)$data['columns_id'] : null;// 文章栏目
-        $tagsIds = array_key_exists('tags_id', $data) && !is_null($data['tags_id'])? $data['tags_id'] : null;// 文章标签
-        $messages['image'] = array_key_exists('image', $data) ? $data['image'] : '';// 文章图片
-        $messages['writer'] = array_key_exists('writer', $data) ? $data['writer'] : 'ccforever<1253705861@qq.com>"';// 文章作者
-        $messages['click'] = array_key_exists('click', $data) ? (int)$data['click'] : 1;// 文章点击量
-        $messages['weight'] = array_key_exists('weight', $data) ? (int)$data['weight'] : 1;// 文章权重
-        $messages['keywords'] = array_key_exists('keywords', $data) ? $data['keywords'] : $messages['name'];// 文章关键字
-        $messages['description'] = array_key_exists('description', $data) ? $data['description'] : $messages['name'];// 文章描述
-        $messages['index'] = array_key_exists('index', $data) ? (int)$data['index'] : 1;// 文章首页推荐状态 1 是 0 否
-        $messages['hot'] = array_key_exists('hot', $data) ? (int)$data['hot'] : 1;// 文章热门推荐状态 1 是 0 否
-        $messages['release'] = array_key_exists('release', $data) ? (int)$data['release'] : 1;// 文章是否发布状态 1 是 0 否
-        $messages['update_time'] = array_key_exists('update_time', $data) ? (int)$data['update_time'] : time();// 文章修改时间
-        $messages['release_time'] = array_key_exists('release_time', $data) ? (int)$data['release_time'] : ($messages['release']  ? time() : bcadd(time(), 86400));// 文章发布时间
-        $messages['page'] = array_key_exists('page', $data) ? $data['page'] : null;// 文章页面
+        $messages['name'] = array_key_exists('name', $data) ? $data['name'] : null;// 信息名称
+        $messages['columns_id'] = array_key_exists('columns_id', $data) ? (int)$data['columns_id'] : null;// 信息栏目
+        $tagsIds = array_key_exists('tags_id', $data) && !is_null($data['tags_id'])? $data['tags_id'] : null;// 信息标签
+        $messages['image'] = array_key_exists('image', $data) ? $data['image'] : '';// 信息图片
+        $messages['writer'] = array_key_exists('writer', $data) ? $data['writer'] : 'ccforever<1253705861@qq.com>"';// 信息作者
+        $messages['click'] = array_key_exists('click', $data) ? (int)$data['click'] : 1;// 信息点击量
+        $messages['weight'] = array_key_exists('weight', $data) ? (int)$data['weight'] : 1;// 信息权重
+        $messages['keywords'] = array_key_exists('keywords', $data) ? $data['keywords'] : $messages['name'];// 信息关键字
+        $messages['description'] = array_key_exists('description', $data) ? $data['description'] : $messages['name'];// 信息描述
+        $messages['index'] = array_key_exists('index', $data) ? (int)$data['index'] : 1;// 信息首页推荐状态 1 是 0 否
+        $messages['hot'] = array_key_exists('hot', $data) ? (int)$data['hot'] : 1;// 信息热门推荐状态 1 是 0 否
+        $messages['release'] = array_key_exists('release', $data) ? (int)$data['release'] : 1;// 信息是否发布状态 1 是 0 否
+        $messages['update_time'] = array_key_exists('update_time', $data) ? (int)$data['update_time'] : time();// 信息修改时间
+        $messages['release_time'] = array_key_exists('release_time', $data) ? (int)$data['release_time'] : ($messages['release']  ? time() : bcadd(time(), 86400));// 信息发布时间
+        $messages['page'] = array_key_exists('page', $data) ? $data['page'] : null;// 信息页面
         if(!check_null($messages['name'], $messages['columns_id'], $messages['page'])){
             return self::setMsg('参数错误', false);
         }
-        $messagesTags = []; // 文章标签
-        $messagesTagsCount = 0; // 文章标签添加总数
-        $unique = create_admin_password(create_millisecond(), $data['username'].$data['admin_id']); // 文章和文章标签的唯一值
+        $messagesTags = []; // 信息标签
+        $messagesTagsCount = 0; // 信息标签添加总数
+        $unique = create_admin_password(create_millisecond(), $data['username'].$data['admin_id']); // 信息和信息标签的唯一值
         $time = time(); // 添加时间
-        if(!is_null($tagsIds)){ // 文章标签存在
+        if(!is_null($tagsIds)){ // 信息标签存在
             $tagsIds = explode(',', $tagsIds); // 格式化标签编号
             $tagsRepository = new TagsRepository(); // 实例化TagsRepository类
             $tagsRepositoryModel = $tagsRepository::GetModel(); // 获取TagsModel
@@ -210,11 +210,11 @@ class MessagesRepository implements RepositoryInterface
         $messages['unique'] = $unique;
         // 开始添加数据
         self::$model::beginTransaction(); // 开启事务
-        $messageStatus = self::$model::base_bool('update', $messages, $id); // 修改文章信息
-        $messagesTagsStatus = true; // 设置默认文章标签添加成功
-        if($messagesTagsCount){ // 文章标签存在
+        $messageStatus = self::$model::base_bool('update', $messages, $id); // 修改信息信息
+        $messagesTagsStatus = true; // 设置默认信息标签添加成功
+        if($messagesTagsCount){ // 信息标签存在
             self::$model::SetModelTable('messages_tags'); // 修改表为messages_tags
-            $messagesTagsStatus = self::$model::base_bool('insert', $messagesTags, 0); // 添加文章标签信息
+            $messagesTagsStatus = self::$model::base_bool('insert', $messagesTags, 0); // 添加信息标签信息
             self::$model::SetModelTable('messages');// 修改表为messages
         }
         $status = $messageStatus && $messagesTagsStatus;
@@ -273,11 +273,18 @@ class MessagesRepository implements RepositoryInterface
      * 信息标签
      *
      * @param int $id
-     * @return array
+     * @return bool
      */
-    public static function tags(int $id): array
+    public static function tags(int $id): bool
     {
-
+        $check = self::$model::base_bool('check', [], $id); // 验证编号
+        if(!$check){
+            return self::setMsg('参数错误', false);
+        }
+        $unique = self::$model::base_string('select', $id, 'unique');  // 查询信息标签唯一值
+        $tags = self::$model::tags($unique);
+        $status = count($tags);
+        return self::setMsg($status ? '信息标签列表' : '获取失败', $status, $tags);
     }
 
     /**

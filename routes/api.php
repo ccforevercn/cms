@@ -35,7 +35,7 @@ Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
             Route::get('/rules/message', 'RulesController@message')->name('rulesmessage'.$admin);// 规则信息
             Route::get('/rules/menus', 'RulesController@menus')->name('rulesmenus'.$admin);// 规则菜单
         });
-        Route::namespace('message')->group(function () use($admin) { // 文章信息路由组
+        Route::namespace('message')->group(function () use($admin) { // 信息路由组
             Route::get('/columns/list', 'ColumnsController@lst')->name('columnslist'.$admin);// 栏目列表
             Route::post('/columns/insert', 'ColumnsController@insert')->name('columnsinsert'.$admin);// 栏目添加
             Route::post('/columns/update', 'ColumnsController@update')->name('columnsupdate'.$admin);// 栏目修改
@@ -48,6 +48,7 @@ Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
             Route::post('/messages/delete', 'MessagesController@delete')->name('messagesdelete'.$admin);// 信息删除
             Route::get('/messages/message', 'MessagesController@message')->name('messagesmessage'.$admin);// 信息信息
             Route::post('/messages/content', 'MessagesController@content')->name('messagescontent'.$admin);// 信息内容 添加、修改、查询
+            Route::get('/messages/tags', 'MessagesController@tags')->name('messagestags'.$admin);// 信息标签
             Route::post('/messages/click', 'MessagesController@click')->name('messagesclick'.$admin);// 信息 点击量添加
             Route::post('/messages/state', 'MessagesController@state')->name('messagesstate'.$admin);// 信息内容 状态修改
             Route::get('/tags/list', 'TagsController@lst')->name('tagslist'.$admin);// 标签列表

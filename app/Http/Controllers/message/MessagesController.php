@@ -122,7 +122,7 @@ class MessagesController extends BaseController
         if(!$id){ return JsonExtend::error($messagesRepository::returnMsg('参数错误')); }
         $bool = $messagesRepository::message($id);
         if($bool){
-            return JsonExtend::success($messagesRepository::returnMsg('栏目信息'), $messagesRepository::returnData([]));
+            return JsonExtend::success($messagesRepository::returnMsg('信息'), $messagesRepository::returnData([]));
         }
         return JsonExtend::error($messagesRepository::returnMsg('数据不存在'));
     }
@@ -142,6 +142,24 @@ class MessagesController extends BaseController
             return JsonExtend::success($messagesRepository::returnMsg('内容信息'), $messagesRepository::returnData([]));
         }
         return JsonExtend::error($messagesRepository::returnMsg('内容信息不存在'));
+    }
+
+    /**
+     * 信息标签
+     *
+     * @param MessagesRequest $messagesRequest
+     * @param MessagesRepository $messagesRepository
+     * @return object
+     */
+    public function tags(MessagesRequest $messagesRequest, MessagesRepository $messagesRepository): object
+    {
+        $id = (int)$messagesRequest->input('id');
+        if(!$id){ return JsonExtend::error($messagesRepository::returnMsg('参数错误')); }
+        $bool = $messagesRepository::tags($id);
+        if($bool){
+            return JsonExtend::success($messagesRepository::returnMsg('信息标签'), $messagesRepository::returnData([]));
+        }
+        return JsonExtend::error($messagesRepository::returnMsg('数据不存在'));
     }
 
     /**
