@@ -180,4 +180,18 @@ class ColumnsRepository implements RepositoryInterface
         self::$model::SetModelTable('columns');
         return self::setMsg($returnMsg, $returnStatus, $returnData);
     }
+
+    /**
+     * 栏目视图列表
+     *
+     * @return bool
+     */
+    public static function views(): bool
+    {
+        $viewsRepository = new ViewsRepository();
+        $viewsRepositoryModel = $viewsRepository::GetModel();
+        $viewsColumns = $viewsRepositoryModel::base_array('equal', ['type' => 1], ['name', 'path'], []);
+        $status = (bool)count($viewsColumns);
+        return self::setMsg($status ? '栏目视图列表' : '获取失败', $status, $viewsColumns);
+    }
 }
