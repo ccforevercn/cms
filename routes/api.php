@@ -77,5 +77,8 @@ Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
             Route::post('/config/message/delete', 'ConfigMessageController@delete')->name('configmessagedelete'.$admin);// 配置信息删除
             Route::get('/config/message/message', 'ConfigMessageController@message')->name('configmessagemessage'.$admin);// 配置信息信息
         });
+        Route::namespace('markets')->group(function () use($admin) { // 营销路由组
+
+        });
     });
 });
