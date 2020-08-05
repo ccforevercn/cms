@@ -138,4 +138,25 @@ class BannersRepository implements RepositoryInterface
         $status = self::$model::base_bool('update', $banners, $id); // 修改数据
         return self::setMsg($status ? '添加成功' : '添加失败', $status);
     }
+
+    /**
+     * 轮播图
+     *
+     * @param int $type
+     * @return bool
+     */
+    public static function banners(int $type): bool
+    {
+        if(!in_array($type, self::$model::GetType())){
+            return self::setMsg('轮播图类型错误', false);
+        }
+        $where = [];
+        $where['type'] = $type;
+        $order = [];
+        $order['select'] = 'weight';
+        $order['value'] = 'ASC';
+        $banners = self::$model::base_array('all', $where, ['name', 'image', 'link'], $order);
+        $status = (bool)count($banners);
+        return self::setMsg($status ? '轮播图' : '获取失败', $status, $banners);
+    }
 }

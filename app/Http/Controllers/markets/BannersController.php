@@ -114,8 +114,26 @@ class BannersController extends BaseController
         if(!$id){ return JsonExtend::error($bannersRepository::returnMsg('参数错误')); }
         $bool = $bannersRepository::message($id);
         if($bool){
-            return JsonExtend::success($bannersRepository::returnMsg('配置分类信息'), $bannersRepository::returnData([]));
+            return JsonExtend::success($bannersRepository::returnMsg('轮播图信息'), $bannersRepository::returnData([]));
         }
         return JsonExtend::error($bannersRepository::returnMsg('数据不存在'));
+    }
+
+    /**
+     * 轮播图
+     *
+     * @param BannersRequest $bannersRequest
+     * @param BannersRepository $bannersRepository
+     * @return object
+     */
+    public function banners(BannersRequest $bannersRequest, BannersRepository $bannersRepository): object
+    {
+        $type = (int)$bannersRequest->input('type', 0);
+        $bool = $bannersRepository::banners($type);
+        if($bool){
+            return JsonExtend::success($bannersRepository::returnMsg('轮播图'), $bannersRepository::returnData([]));
+        }
+        return JsonExtend::error($bannersRepository::returnMsg('数据不存在'));
+
     }
 }

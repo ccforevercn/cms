@@ -34,6 +34,7 @@ class BannersRequest extends Request
     {
         return [
             'id' => 'bail|required|integer|min:1',
+            'type' => 'bail|nullable',  // 轮播图状态
         ];
     }
 
@@ -46,7 +47,7 @@ class BannersRequest extends Request
         return [
             'id.required' => '参数错误',
             'id.integer' => '参数错误',
-            'id.min' => '参数错误'
+            'id.min' => '参数错误',
         ];
     }
 }

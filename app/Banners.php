@@ -45,6 +45,13 @@ class Banners extends BaseModel implements ModelInterface
     private static $message = ['id', 'name', 'link', 'image', 'weight', 'add_time', 'type'];
 
     /**
+     * 轮播图类型  1 PC 2 WAP
+     *
+     * @var array
+     */
+    private static $type = [1, 2];
+
+    /**
      * 编号查询 唯一索引
      *
      * @param $query
@@ -126,5 +133,15 @@ class Banners extends BaseModel implements ModelInterface
     {
         // TODO: Implement count() method.
         return self::listWhere($where)->isDel(0)->count();
+    }
+
+    /**
+     * 获取轮播图类型
+     *
+     * @return array
+     */
+    public static function GetType(): array
+    {
+        return self::$type;
     }
 }
