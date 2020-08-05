@@ -78,7 +78,11 @@ Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
             Route::get('/config/message/message', 'ConfigMessageController@message')->name('configmessagemessage'.$admin);// 配置信息信息
         });
         Route::namespace('markets')->group(function () use($admin) { // 营销路由组
-
+            Route::get('/banners/list', 'BannersController@lst')->name('bannerslist'.$admin);// 轮播图列表
+            Route::post('/banners/insert', 'BannersController@insert')->name('bannersinsert'.$admin);// 轮播图添加
+            Route::post('/banners/update', 'BannersController@update')->name('bannersupdate'.$admin);// 轮播图修改
+            Route::post('/banners/delete', 'BannersController@delete')->name('bannersdelete'.$admin);// 轮播图删除
+            Route::get('/banners/message', 'BannersController@message')->name('bannersmessage'.$admin);// 轮播图信息
         });
     });
 });

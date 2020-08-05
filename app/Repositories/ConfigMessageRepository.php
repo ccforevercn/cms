@@ -65,6 +65,10 @@ class ConfigMessageRepository implements RepositoryInterface
     public static function count(array $where): bool
     {
         // TODO: Implement count() method.
+        $where['category_id'] = array_key_exists('category_id', $where) && !is_null($where['category_id']) ? (int)$where['category_id'] : null;
+        if(is_null($where['category_id'])){
+            return self::setMsg('参数错误', false);
+        }
         $count = self::$model::count($where);//配置信息总数
         return self::setMsg('配置信息总数', true, [$count]);
     }
