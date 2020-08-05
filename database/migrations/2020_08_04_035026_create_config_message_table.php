@@ -26,11 +26,11 @@ class CreateConfigMessageTable extends Migration
             $table->charset = 'utf8';  //表默认字符集
             $table->collation = 'utf8_general_ci';  // 表默认的排序规则
             $table->bigIncrements('id')->comment('配置信息表');
-            $table->string('name', '128')->comment('配置信息名称');
-            $table->string('description', '256')->comment('配置信息描述');
-            $table->char('select', '32')->comment('配置信息唯一值');
+            $table->string('name', 128)->comment('配置信息名称');
+            $table->string('description', 256)->comment('配置信息描述');
+            $table->char('select', 32)->comment('配置信息唯一值');
             $table->tinyInteger('type')->comment('配置信息类型 (1 文本框 2 单选 3 多选 4 图片 5 多行文本框)');
-            $table->string('type_value', '256')->comment('配置信息类型值(单选/多选 格式 field:value|field:value|field:value|field:value...)');
+            $table->string('type_value', 256)->comment('配置信息类型值(单选/多选 格式 field:value|field:value|field:value|field:value...)');
             $table->text('value')->comment('配置信息值');
             $table->integer('category_id')->comment('配置分类编号');
             $table->integer('add_time')->comment('配置信息添加时间');

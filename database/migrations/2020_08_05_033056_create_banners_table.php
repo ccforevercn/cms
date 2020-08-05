@@ -27,9 +27,9 @@ class CreateBannersTable extends Migration
             $table->charset = 'utf8';  //表默认字符集
             $table->collation = 'utf8_general_ci';  // 表默认的排序规则
             $table->bigIncrements('id')->comment('轮播图表');
-            $table->string('name', '128')->comment('轮播图名称');
-            $table->string('link', '128')->comment('轮播图链接');
-            $table->string('image', '128')->comment('轮播图地址');
+            $table->string('name', 128)->comment('轮播图名称');
+            $table->string('link', 128)->comment('轮播图链接');
+            $table->string('image', 128)->comment('轮播图地址');
             $table->integer('weight')->comment('轮播图权重');
             $table->tinyInteger('type')->comment('轮播图类型 1 PC 2 WAP');
             $table->integer('add_time')->comment('配置信息添加时间');
