@@ -18,4 +18,20 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+
+
+#    # www.aaa.com/aaa.php?/我是匹配到的内容/  重定向到 www.aaa.com/search.php?search=我是匹配到的内容
+#     RewriteCond %{QUERY_STRING} ^/(.*)/$
+#    # %{QUERY_STRING} 匹配地址栏问号后的参数
+#    # ^/(.*)/$  地址栏问号后的参数以/开始,以/结尾,匹配/和/中间的参数
+#    # 举例： 假如地址是[aaa.php?/我是匹配到的内容/],(.*)就会匹配到[我是匹配到的内容]
+#     RewriteRule ^aaa\.php$ /search?search=%1[R=302,L,NE]
+#    # 以a开头,以p结尾的字符串替换为/search?search=%1
+#    # %1是上面RewriteCond匹配到的值,%1==我是匹配到的内容
+#    # L 立即停止重写操作，并不再应用其他重写规则
+#    # NE 不对URI进行转义
+#    # RewriteCond 类似if
+#    # RewriteRule 类似if内的执行的语句
+#    RedirectMatch "/case/(.*)\.html$" "/catalog/1.htm"
+#    Redirect 301 /about /catalog/1.htm
 </IfModule>
