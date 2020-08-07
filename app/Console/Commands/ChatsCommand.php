@@ -1,41 +1,41 @@
 <?php
-/**
- * @author: cc_forever<1253705861@qq.com>
- * @day: 2020/7/25
- */
 
 namespace App\Console\Commands;
 
-use App\CcForever\extend\ManagesExtend;
-use App\CcForever\extend\WorkerManExtend;
 use Illuminate\Console\Command;
+use App\CcForever\extend\ChatsExtend;
+use App\CcForever\extend\WorkerManExtend;
 
 /**
- * 管理员启动
- * Class ManagesCommand
+ * 留言worker
+ *
+ * Class ChatsCommand
  * @package App\Console\Commands
  */
-class ManagesCommand extends Command
+class ChatsCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'manages {status} {--d}';
+    protected $signature = 'chats {status} {--d}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = '管理员worker 启动 manages start 关闭 manages stop 重启 manages restart 启动守护进程 manages start --d';
+    protected $description = '留言worker 启动留言 chats start  关闭留言 chats stop 重启留言 chats restart 启动守护进程 chats start --d';
+
 
     /**
      * worker 配置
+     *
      * @var array
      */
     private $workerConfig = [];
+
     /**
      * Create a new command instance.
      *
@@ -55,7 +55,7 @@ class ManagesCommand extends Command
     {
         $this->check();  // 验证配置
         global $argv;
-        $argv[0] = $this->workerConfig['options']['manages']['name']; // 设置当前worker名称
+        $argv[0] = $this->workerConfig['options']['chats']['name']; // 设置当前worker名称
         $status = $this->argument('status'); // 获取终端输入的状态 start 开启 stop 关闭 restart 重启
         $argv[1] = $status; // 设置当前worker状态
         $guard = $this->option('d'); // 获取是否守护进程 如果传 --d 则为守护进程(系统后台运行)
@@ -76,6 +76,7 @@ class ManagesCommand extends Command
         }
     }
 
+
     /**
      * 加载管理员配置
      */
@@ -90,8 +91,8 @@ class ManagesCommand extends Command
             var_dump("配置格式错误  文件路径：/config/worker.php    / : 项目根目录");
             exit();
         }
-        if(!array_key_exists('manages', $this->workerConfig['options'])){
-            var_dump("配置格式错误 没有options中【manages】配置 文件路径：/config/worker.php    / : 项目根目录");
+        if(!array_key_exists('chats', $this->workerConfig['options'])){
+            var_dump("配置格式错误 没有options中【chats】配置 文件路径：/config/worker.php    / : 项目根目录");
             exit();
         }
     }
@@ -101,7 +102,7 @@ class ManagesCommand extends Command
      */
     public function start()
     {
-        new ManagesExtend($this->workerConfig['options']['manages']);
+        new ChatsExtend($this->workerConfig['options']['chats']);
         WorkerManExtend::start();
         WorkerManExtend::runAll();
     }
@@ -111,7 +112,7 @@ class ManagesCommand extends Command
      */
     public function stop()
     {
-        new ManagesExtend($this->workerConfig['options']['manages']);
+        new ChatsExtend($this->workerConfig['options']['chats']);
         WorkerManExtend::stop();
         WorkerManExtend::runAll();
     }
@@ -121,7 +122,7 @@ class ManagesCommand extends Command
      */
     public function restart()
     {
-        new ManagesExtend($this->workerConfig['options']['manages']);
+        new ChatsExtend($this->workerConfig['options']['chats']);
         WorkerManExtend::restart();
         WorkerManExtend::runAll();
     }

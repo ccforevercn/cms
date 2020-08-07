@@ -65,7 +65,7 @@ class BannersRepository implements RepositoryInterface
         // TODO: Implement count() method.
         $where['type'] = array_key_exists('type', $where) && !is_null($where['type']) ? (int)$where['type'] : '';
         $count = self::$model::count($where);//配置信息总数
-        return self::setMsg('配置信息总数', true, [$count]);
+        return self::setMsg('轮播图总数', true, [$count]);
     }
 
     /**

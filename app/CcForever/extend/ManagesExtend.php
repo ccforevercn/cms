@@ -3,13 +3,9 @@
  * @author: cc_forever<1253705861@qq.com>
  * @day: 2020/7/25
  */
-
 namespace App\CcForever\extend;
 
 use App\Repositories\AdminsRepository;
-use App\Repositories\AdminsTokenRepository;
-
-
 /**
  * 管理员worker
  * Class ManagesExtend

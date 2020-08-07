@@ -7,16 +7,16 @@
 return [
     'name' => 'ccforever',  // worker名称
     'options' =>[
-        'blog' => [ // 前台博客配置
+        'chats' => [ // 留言配置
             'protocol' => 'websocket://',  // 协议 http://  websocket://  tcp://
             'ip' => '0.0.0.0', // ip地址 0.0.0.0 所有IP都可以接入
-            'port' => '1111',  // 端口 指定的端口在服务器的防火墙中
-            'name' => 'blog', // 名称
+            'port' => '2222',  // 端口 指定的端口在服务器的防火墙中
+            'name' => 'chats', // 名称
             'count' => 1,  // 启动多少个进程
             'transport' => 'tcp',  // 传输层协议
             'reusePort' => true,  // 是否开启监听端口复用
             'user' => 'www', //  Worker实例以哪个用户运行
-            'class' => 'App\CcForever\extend\BlogExtend' // 类的命名空间和类名(类的静态方法作为回调)
+            'class' => 'App\CcForever\extend\ChatsExtend' // 类的命名空间和类名(类的静态方法作为回调)
         ],
         'manages' => [ // 后台管理员配置
             'protocol' => 'websocket://',  // 协议 http://  websocket://  tcp://
