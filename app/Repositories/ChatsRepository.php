@@ -83,7 +83,21 @@ class ChatsRepository implements RepositoryInterface
     public static function insert(array $data): bool
     {
         // TODO: Implement insert() method.
-        dd($data);
+        $chats = []; // 留言记录
+        $chats['content'] = array_key_exists('content', $data) && !is_null($data['content']) ? $data['content'] : '';
+        $chats['user'] = array_key_exists('user', $data) && !is_null($data['user']) ? $data['user'] : null;
+        $chats['customer'] = array_key_exists('customer', $data) && !is_null($data['customer']) ? $data['customer'] : '';
+        $chats['see'] = array_key_exists('see', $data) && !is_null($data['see']) ? (int)$data['see'] : 0;
+        if(is_null($chats['user'])){
+            return self::setMsg('用户不存在', false);
+        }
+        if(!in_array($chats['see'], self::$model::GetSee())){
+            return self::setMsg('状态错误', false);
+        }
+        $chats['add_time'] = time();
+        $chats['is_del'] = 0;
+        $status = self::$model::base_bool('insert', $chats, 0);
+        return self::setMsg($status ? '添加成功' : '添加失败', $status);
     }
 
     /**

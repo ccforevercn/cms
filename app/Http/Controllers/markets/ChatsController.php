@@ -88,6 +88,11 @@ class ChatsController extends BaseController
     public function message(ChatsRequest $chatsRequest, ChatsRepository $chatsRepository): object
     {
         // TODO: Implement message() method.
+        dd(123);
+    }
+
+    public function see()
+    {
 
     }
 }
