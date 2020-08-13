@@ -72,6 +72,7 @@ trait ModelTraits
                     break;
                 case 'update': // 修改
                     $bool = self::model_handle_update($data, $value, $field);
+                    break;
                 case 'updates': // 批量修改
                     $bool = self::model_handle_updates($data, $value, $field);
                     break;
@@ -84,7 +85,7 @@ trait ModelTraits
                     // ...
                 default:;
             }
-        }catch (\Exception $exception){}
+        }catch (\Exception $exception){ dump($exception->getMessage()); }
         return $bool;
     }
 
