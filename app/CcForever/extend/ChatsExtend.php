@@ -87,9 +87,8 @@ class ChatsExtend
                 case 'chats_admin': // 聊天管理员
                     // 管理员验证   验证token和unique是否存在
                     if(array_key_exists('token', $messageArr) && array_key_exists('unique', $messageArr)) {
-//                        $adminsTokenRepository = new AdminsTokenRepository();// 实例化AdminsTokenRepository类
-//                        $adminId = $adminsTokenRepository::checkToken($messageArr['token']); // 验证Token获取管理员编号
-                        $adminId = 1;
+                        $adminsTokenRepository = new AdminsTokenRepository();// 实例化AdminsTokenRepository类
+                        $adminId = $adminsTokenRepository::checkToken($messageArr['token']); // 验证Token获取管理员编号
                         if($adminId){ // 管理员访问
                             // 验证管理员是否已登陆
                             if(array_key_exists($messageArr['unique'], self::$admins)){
@@ -97,15 +96,22 @@ class ChatsExtend
                                 if(array_key_exists('content', $messageArr) && array_key_exists('user', $messageArr)){
                                     $data = []; // 发送数据
                                     $data['content'] = $messageArr['content']; // 内容
-                                    $data['customer'] = $messageArr['unique']; // 客服名称
-                                    self::$users[$messageArr['user']]->send(json_encode(JsonExtend::success("客服回复:", $data)->original, JSON_UNESCAPED_UNICODE)); // 给用户发送消息
+                                    $data['customer'] = self::$admins[$messageArr['unique']]['info']['username']; // 客服名称
                                     $data['user'] = $messageArr['user']; // 用户名称
                                     $data['see'] = 1; // 是否查看
                                     self::$admins[$messageArr['unique']]['user_unique'][] = $messageArr['user']; // 绑定当前用户到接收消息的管理员
-                                    // 管理员提示
-                                    $connection->send(json_encode(JsonExtend::success("回复成功", $data)->original,JSON_UNESCAPED_UNICODE));
                                     // 插入数据库
-                                    /************************************************************************************************************/
+                                    $chatsRepository =  new ChatsRepository();
+                                    $bool = $chatsRepository::insert($data);
+                                    if($bool){
+                                        // 管理员提示 发送成功
+                                        $connection->send(json_encode(JsonExtend::success("回复成功", $data)->original,JSON_UNESCAPED_UNICODE));
+                                        // 给用户发送消息
+                                        self::$users[$messageArr['user']]->send(json_encode(JsonExtend::success("客服回复:", $data)->original, JSON_UNESCAPED_UNICODE));
+                                    }else{
+                                        // 管理员提示 发送失败
+                                        $connection->send(json_encode(JsonExtend::error("回复失败")->original,JSON_UNESCAPED_UNICODE));
+                                    }
                                 }else{  // 发送的数据不完整
                                     $connection->send(json_encode(JsonExtend::error("参数错误")->original, JSON_UNESCAPED_UNICODE));
                                 }
@@ -124,19 +130,25 @@ class ChatsExtend
                                     }
                                 }
                                 if(!$adminLoginStatus){
-//                                    $adminsRepository = new AdminsRepository(); // 实例化AdminsRepository类
-//                                    $adminInfo = $adminsRepository::message($adminId); // 获取管理员信息
-                                    $adminInfo = ['username'=>'csadmin'];
-                                    $admin['user_unique'] = []; // 正在聊天的用户
-                                    $admin['info'] = $adminInfo; // 管理员信息
-                                    $admin['admin_id'] = $adminId; // 管理员编号
-                                    $admin['connection'] = $connection; // $connection
-                                    self::$admins[$messageArr['unique']] = $admin; // 保存管理员
+                                    $adminsRepository = new AdminsRepository(); // 实例化AdminsRepository类
+                                    $adminStatus = $adminsRepository::message($adminId); // 获取管理员信息
+                                    if($adminStatus){
+                                        $adminInfo = $adminsRepository::returnData([]);
+                                        $admin['user_unique'] = []; // 正在聊天的用户
+                                        $admin['info'] = $adminInfo; // 管理员信息
+                                        $admin['admin_id'] = $adminId; // 管理员编号
+                                        $admin['connection'] = $connection; // $connection
+                                        self::$admins[$messageArr['unique']] = $admin; // 保存管理员
+                                        // 管理员登陆成功
+                                        $connection->send(json_encode(JsonExtend::success("客服验证成功", $admin['info'])->original, JSON_UNESCAPED_UNICODE));
+                                    }else{
+                                        $connection->send(json_encode(JsonExtend::error("客服不存在")->original, JSON_UNESCAPED_UNICODE));
+                                    }
                                 }else{
                                     $admin['info'] = array_merge($admin['info'], ['unique' => $adminLoginUnique]);
+                                    // 管理员登陆成功
+                                    $connection->send(json_encode(JsonExtend::success("客服验证成功", $admin['info'])->original, JSON_UNESCAPED_UNICODE));
                                 }
-                                // 管理员登陆成功
-                                $connection->send(json_encode(JsonExtend::success("客服验证成功", $admin['info'])->original, JSON_UNESCAPED_UNICODE));
                             }
                         }else{ // 验证失败
                             $connection->send(json_encode(JsonExtend::error("客服验证失败")->original, JSON_UNESCAPED_UNICODE));
