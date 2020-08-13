@@ -18,6 +18,7 @@ class PRedisExtend
 
     public function __construct(string $connection = 'write')
     {
+        throw new \Exception("Redis连接失败");
         $type = config('database.redis.type');
         if(in_array($connection, $type)){
             try{

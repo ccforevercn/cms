@@ -86,6 +86,7 @@ Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
             Route::get('/banners/banners', 'BannersController@banners')->name('bannersbanners'.$admin);// 轮播图
             Route::get('/chats/list', 'ChatsController@lst')->name('chatslist'.$admin);// 留言列表
             Route::get('/chats/message', 'ChatsController@message')->name('chatsmessage'.$admin);// 留言信息列表
+            Route::post('/chats/see', 'ChatsController@see')->name('chatssee'.$admin);// 留言状态修改
         });
     });
 });

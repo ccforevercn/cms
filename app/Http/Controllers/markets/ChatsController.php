@@ -10,6 +10,7 @@ use App\CcForever\extend\JsonExtend;
 use App\CcForever\traits\ControllerTrait;
 use App\Http\Requests\Chats\ChatsListRequest;
 use App\Http\Requests\Chats\ChatsRequest;
+use App\Http\Requests\Chats\ChatsSeeRequest;
 use App\Repositories\ChatsRepository;
 
 /**
@@ -91,8 +92,21 @@ class ChatsController extends BaseController
         dd(123);
     }
 
-    public function see()
+    /**
+     * 留言状态修改
+     *
+     * @param ChatsSeeRequest $chatsSeeRequest
+     * @param ChatsRepository $chatsRepository
+     * @return object
+     */
+    public function see(ChatsSeeRequest $chatsSeeRequest, ChatsRepository $chatsRepository): object
     {
-
+        $data = $chatsSeeRequest->all();
+        $customer = auth('login')->user()->username;
+        $bool = $chatsRepository::see($data['user'], $customer);
+        if($bool){
+            return JsonExtend::success($chatsRepository::returnMsg('获取成功'));
+        }
+        return JsonExtend::error($chatsRepository::returnMsg('获取失败'));
     }
 }

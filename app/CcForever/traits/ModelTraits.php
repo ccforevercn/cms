@@ -61,23 +61,25 @@ trait ModelTraits
     {
         $bool = false;
         try{
-            list($data, $id) = $parameter;
+            list($data, $value) = $parameter;
             $field  = 'id';
-            if(is_array($id)){
-                list($id, $field) = $id;
+            if(is_array($value)){
+                list($value, $field) = $value;
             }
             switch ($function){
                 case 'insert': // 插入
                     $bool = self::model_handle_insert($data);
                     break;
                 case 'update': // 修改
-                    $bool = self::model_handle_update($data, $id, $field);
+                    $bool = self::model_handle_update($data, $value, $field);
+                case 'updates': // 批量修改
+                    $bool = self::model_handle_updates($data, $value, $field);
                     break;
                 case 'delete': // 删除
-                    $bool = self::model_handle_delete($id, $field);
+                    $bool = self::model_handle_delete($value, $field);
                     break;
                 case 'check': // 验证编号
-                    $bool = self::model_handle_check($id, $field);
+                    $bool = self::model_handle_check($value, $field);
                     break;
                     // ...
                 default:;
@@ -101,13 +103,26 @@ trait ModelTraits
      * 修改
      *
      * @param array $data
-     * @param int $value
+     * @param string $value
      * @param string $field
      * @return bool
      */
-    private static function model_handle_update(array $data, int $value, string $field): bool
+    private static function model_handle_update(array $data, string $value, string $field): bool
     {
         return (bool)DB::table(self::$modelTable)->where($field, $value)->update($data);
+    }
+
+    /**
+     * 批量修改
+     *
+     * @param array $data
+     * @param string $value
+     * @param string $field
+     * @return bool
+     */
+    private static function model_handle_updates(array $data, string $value, string $field): bool
+    {
+        return (bool)DB::table(self::$modelTable)->whereIn($field, explode(',', $value))->update($data);
     }
 
     /**
@@ -125,11 +140,11 @@ trait ModelTraits
     /**
      * 验证编号是否存在 false 不存在  true 存在
      *
-     * @param int $value
+     * @param string $value
      * @param string $field
      * @return bool
      */
-    private static function model_handle_check(int $value, string $field): bool
+    private static function model_handle_check(string $value, string $field): bool
     {
         return (bool)DB::table(self::$modelTable)->where($field, $value)->where('is_del', 0)->count();
     }
