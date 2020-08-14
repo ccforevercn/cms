@@ -64,7 +64,7 @@ class BannersRepository implements RepositoryInterface
     {
         // TODO: Implement count() method.
         $where['type'] = array_key_exists('type', $where) && !is_null($where['type']) ? (int)$where['type'] : '';
-        $count = self::$model::count($where);//配置信息总数
+        $count = self::$model::count($where);//轮播图总数
         return self::setMsg('轮播图总数', true, [$count]);
     }
 
@@ -91,7 +91,7 @@ class BannersRepository implements RepositoryInterface
         if(strlen($banners['link'])){
             $bool = (bool)filter_var($banners['link'], FILTER_VALIDATE_URL);
             if(!$bool){
-                return self::setMsg('轮播图拦截地址错误', false);
+                return self::setMsg('轮播图链接地址错误', false);
             }
         }
         $banners['is_del'] = 0;
@@ -128,7 +128,7 @@ class BannersRepository implements RepositoryInterface
         if(strlen($banners['link'])){
             $bool = (bool)filter_var($banners['link'], FILTER_VALIDATE_URL);
             if(!$bool){
-                return self::setMsg('轮播图拦截地址错误', false);
+                return self::setMsg('轮播图链接地址错误', false);
             }
         }
         $message = self::$model::base_array('message', $id, array_keys($banners), []);
@@ -136,7 +136,7 @@ class BannersRepository implements RepositoryInterface
             return self::setMsg('修改成功', true);
         }
         $status = self::$model::base_bool('update', $banners, $id); // 修改数据
-        return self::setMsg($status ? '添加成功' : '添加失败', $status);
+        return self::setMsg($status ? '修改成功' : '修改失败', $status);
     }
 
     /**

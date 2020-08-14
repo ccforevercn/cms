@@ -91,6 +91,10 @@ Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
         });
         Route::namespace('seo')->group(function () use($admin) { // seo路由组
             Route::get('/links/list', 'LinksController@lst')->name('linkslist'.$admin);// 友情链接列表
+            Route::post('/links/insert', 'LinksController@insert')->name('linksinsert'.$admin);// 友情链接添加
+            Route::post('/links/update', 'LinksController@update')->name('linksupdate'.$admin);// 友情链接修改
+            Route::post('/links/delete', 'LinksController@delete')->name('linksdelete'.$admin);// 友情链接删除
+            Route::get('/links/message', 'LinksController@message')->name('linksmessage'.$admin);// 友情链接信息
 
         });
     });
