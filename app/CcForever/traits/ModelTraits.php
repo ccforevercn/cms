@@ -247,7 +247,7 @@ trait ModelTraits
     public static function model_handle_pluck(array $values, array $select, array $order): array
     {
         if(count($select) === 1){
-            $message = DB::table(self::$modelTable)->whereIn('id', $values)->where('is_del', 0)->pluck($select[0])->orderBy($order['select'], $order['value'])->toArray();
+            $message = DB::table(self::$modelTable)->whereIn('id', $values)->where('is_del', 0)->pluck($select[0])->toArray();
         }else{
             $message = DB::table(self::$modelTable)->whereIn('id', $values)->where('is_del', 0)->select($select)->orderBy($order['select'], $order['value'])->get();
             $message = is_null($message) ? [] : $message->toArray();

@@ -504,10 +504,7 @@ class AdminsRepository implements RepositoryInterface
             $rulesMenusStatus = $rulesRepository::menus($ruleId); // 获取规则菜单
             if($rulesMenusStatus){// 规则菜单存在
                 $menus = $rulesRepository::returnData([]); // 规则菜单
-                $menusIds = []; // 菜单编号
-                foreach ($menus as $key=>$value){
-                    $menusIds[] = $value['mid']; // 获取菜单编号
-                }
+                $menusIds = array_column($menus, 'mid'); // 获取菜单编号
                 // 查询规则菜单对应的路由 routes
                 $menusRepository = new MenusRepository(); // 实例化MenusRepository类
                 $routesList = $menusRepository::menusIdsRoutes($menusIds);// 路由地址列表
