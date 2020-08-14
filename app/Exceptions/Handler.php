@@ -2,8 +2,12 @@
 
 namespace App\Exceptions;
 
+use App\CcForever\extend\JsonExtend;
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\Debug\Exception\FlattenException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -40,7 +44,7 @@ class Handler extends ExceptionHandler
     }
 
     /**
-     * Render an exception into an HTTP response.
+     * 处理访问失败
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Exception  $exception
@@ -50,6 +54,27 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        $errorObject = FlattenException::create($exception);
+        $code = $errorObject->getStatusCode();
+        switch ($code){
+            case $code < 300 && $code >= 200:
+                $errorMessage = config('illegal.error_message_success');
+                break;
+            case $code < 400 && $code >= 300:
+                $errorMessage = config('illegal.error_message_redirect');
+                break;
+            case $code < 500 && $code >= 400:
+                $errorMessage = config('illegal.error_message_error');
+                break;
+            case $code < 600 && $code >= 500:
+                $errorMessage = config('illegal.error_message_inside_error');
+                break;
+            default:
+                $errorMessage = config('illegal.error_message_default');
+        }
+        if(strlen($errorMessage)){
+            return JsonExtend::error($errorMessage);
+        }
         return parent::render($request, $exception);
     }
 }
