@@ -174,19 +174,23 @@ class ChatsExtend
                         }
                     }
                     // 未发送状态
+                    $chatsRepository =  new ChatsRepository();
                     if(!$seed){
                         // 判断是否有管理员登陆
                         if(count(self::$admins)){
                             // 给全部管理员发送通知
+                            $api = $chatsRepository::GetModel()::GetSeeApi();
                             foreach (self::$admins as $value){
-                                $adminSendData[] = $value['connection'];
+                                $bool = LoginExtend::admin($value['admin_id'], $api); // 获取客服是否有权限
+                                if($bool){// 有权限访问
+                                    $adminSendData[] = $value['connection'];
+                                }
                             }
                         }
                         $data['customer'] = ''; // 客服名称
                         $data['see'] = 0; // 是否查看
                     }
                     // 插入数据库
-                    $chatsRepository =  new ChatsRepository();
                     $bool = $chatsRepository::insert($data);
                     if($bool){ // 添加数据库成功
                         $message  = count($adminSendData) == 1 ? "用户发送消息" : "客户消息";

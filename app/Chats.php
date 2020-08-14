@@ -52,6 +52,13 @@ class Chats extends BaseModel implements ModelInterface
      */
     private static $see = [0, 1];  // 0  未查看 1 已查看
 
+    /**
+     * 修改是否查看的接口
+     *
+     * @var string
+     */
+    private static $seeApi = '/chats/see';
+
 
     /**
      * 编号查询 唯一索引
@@ -155,5 +162,15 @@ class Chats extends BaseModel implements ModelInterface
     public static function GetSee(): array
     {
         return self::$see;
+    }
+
+    /**
+     * 获取是否查看的接口
+     *
+     * @return string
+     */
+    public static function GetSeeApi() :string
+    {
+        return self::$seeApi;
     }
 }
