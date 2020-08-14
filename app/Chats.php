@@ -9,6 +9,7 @@ namespace App;
 use App\CcForever\interfaces\ModelInterface;
 use App\CcForever\model\BaseModel;
 use App\CcForever\traits\ModelTraits;
+use Illuminate\Support\Facades\DB;
 
 /**
  * 留言Model
@@ -36,14 +37,14 @@ class Chats extends BaseModel implements ModelInterface
      *
      * @var array
      */
-    private static $select = ['id', 'customer', 'user', 'content', 'see', 'add_time', 'is_del'];
+    private static $select = ['id', 'customer', 'user', 'content', 'speak', 'see', 'add_time', 'is_del'];
 
     /**
      * 基本信息
      *
      * @var array
      */
-    private static $message = ['id', 'customer', 'user', 'content', 'see', 'add_time'];
+    private static $message = ['id', 'customer', 'user', 'content', 'speak', 'see', 'add_time'];
 
     /**
      * 是否查看
@@ -85,6 +86,39 @@ class Chats extends BaseModel implements ModelInterface
     }
 
     /**
+     * 客服名称 分组
+     *
+     * @param $query
+     * @return mixed
+     */
+    public static function scopeCustomerGroupBy($query)
+    {
+        return $query->groupBy(self::GetAlias().'customer');
+    }
+
+    /**
+     * 客服名称 去重
+     *
+     * @param $query
+     * @return mixed
+     */
+    public static function scopeCustomerDistinct($query)
+    {
+        return $query->distinct(self::GetAlias().'customer');
+    }
+
+    /**
+     * 用户名称 分组
+     *
+     * @param $query
+     * @return mixed
+     */
+    public static function scopeUserGroupBy($query)
+    {
+        return $query->groupBy(self::GetAlias().'user');
+    }
+
+    /**
      * 用户名称 普通索引
      *
      * @param $query
@@ -95,6 +129,19 @@ class Chats extends BaseModel implements ModelInterface
     {
         return $query->where(self::GetAlias().'user', $user);
     }
+
+
+    /**
+     * 用户名称 去重
+     *
+     * @param $query
+     * @return mixed
+     */
+    public static function scopeUserDistinct($query)
+    {
+        return $query->distinct(self::GetAlias().'user');
+    }
+
 
     /**
      * 是否查看 普通索引
@@ -130,17 +177,26 @@ class Chats extends BaseModel implements ModelInterface
      */
     public static function scopeListWhere($query, array $where)
     {
-        $query = strlen($where['see']) ? self::see($where['see']) : $query; // 留言是否查看
         return $query;
     }
 
+    /**
+     * 留言客服列表
+     *
+     * @param array $where
+     * @param int $offset
+     * @param int $limit
+     * @return array
+     */
     public static function lst(array $where, int $offset, int $limit): array
     {
         // TODO: Implement lst() method.
+        $select = [DB::raw('count(distinct(cc_chats.user)) as user_count'), DB::raw('(select real_name from cc_admins where username = cc_chats.customer) as admin_name'), DB::raw('(select id from cc_admins where username = cc_chats.customer) as admin_id'), 'customer'];
         $model = new self;
         $model = $model->listWhere($where);
         $model = $model->isDel(0);
-        $model = $model->select(self::GetMessage());
+        $model = $model->select($select);
+        $model = $model->customerGroupBy();
         $model = $model->offset($offset);
         $model = $model->limit($limit);
         $list = $model->get();
@@ -148,10 +204,85 @@ class Chats extends BaseModel implements ModelInterface
         return $list;
     }
 
+    /**
+     * 留言客服总数
+     *
+     * @param array $where
+     * @return int
+     */
     public static function count(array $where): int
     {
         // TODO: Implement count() method.
-        return self::listWhere($where)->isDel(0)->count();
+        return self::listWhere($where)->customerDistinct()->isDel(0)->count();
+    }
+
+    /**
+     * 留言用户列表
+     *
+     * @param string $customer
+     * @param int $offset
+     * @param int $limit
+     * @return array
+     */
+    public static function users(string $customer, int $offset, int $limit): array
+    {
+        $select = [DB::raw('count(cc_chats.content) as content_count'), DB::raw('min(cc_chats.add_time) as time'), 'user'];
+        $model = new self;
+        $model = $model->select($select);
+        $model = $model->isDel(0);
+        $model = $model->customer($customer);
+        $model = $model->userGroupBy();
+        $model = $model->offset($offset);
+        $model = $model->limit($limit);
+        $list = $model->get();
+        $list = is_null($list) ? [] : $list->toArray();
+        return $list;
+    }
+
+    /**
+     * 留言用户总数
+     *
+     * @param string $customer
+     * @return int
+     */
+    public static function usersCount(string $customer): int
+    {
+        return self::customer($customer)->userDistinct()->isDel(0)->count();
+    }
+
+    /**
+     * 留言客服和用户对话列表
+     *
+     * @param string $customer
+     * @param string $user
+     * @param int $offset
+     * @param int $limit
+     * @return array
+     */
+    public static function chats(string $customer, string $user, int $offset, int $limit): array
+    {
+        $model = new self;
+        $model = $model->select(self::GetMessage());
+        $model = $model->isDel(0);
+        $model = $model->customer($customer);
+        $model = $model->user($user);
+        $model = $model->offset($offset);
+        $model = $model->limit($limit);
+        $list = $model->get();
+        $list = is_null($list) ? [] : $list->toArray();
+        return $list;
+    }
+
+    /**
+     * 留言客服和用户对话总数
+     *
+     * @param string $customer
+     * @param string $user
+     * @return int
+     */
+    public static function chatsCount(string $customer, string $user): int
+    {
+        return self::customer($customer)->user($user)->isDel(0)->count();
     }
 
     /**

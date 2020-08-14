@@ -13,7 +13,7 @@ trait ModelTraits
     /**
      * 表别名
      *
-     * @param bool $alias
+     * @param bool $alias  false 表名. true 表名
      * @return string
      */
     public static function GetAlias(bool $alias = false): string

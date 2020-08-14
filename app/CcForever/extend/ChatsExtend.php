@@ -56,7 +56,7 @@ class ChatsExtend
      */
     public static function onWorkerStart($worker)
     {
-        var_dump("ChatsExtend onWorkerStart~");
+        var_dump("ChatsExtend onWorkerStart");
     }
 
     /**
@@ -97,6 +97,7 @@ class ChatsExtend
                                     $data = []; // 发送数据
                                     $data['content'] = $messageArr['content']; // 内容
                                     $data['customer'] = self::$admins[$messageArr['unique']]['info']['username']; // 客服名称
+                                    $data['speak'] = $data['customer']; // 发言者
                                     $data['user'] = $messageArr['user']; // 用户名称
                                     $data['see'] = 1; // 是否查看
                                     self::$admins[$messageArr['unique']]['user_unique'][] = $messageArr['user']; // 绑定当前用户到接收消息的管理员
@@ -162,6 +163,7 @@ class ChatsExtend
                     $adminSendData = []; // 发送数据的管理员
                     $data['content'] = $messageArr['content']; // 内容
                     $data['user'] = $messageArr['unique']; // 用户名称
+                    $data['speak'] = $messageArr['unique']; // 发言者
                     $seed = false;
                     foreach (self::$admins as $value){
                         // 有管理员对话状态
@@ -235,12 +237,34 @@ class ChatsExtend
                 unset(self::$admins[$key]);
             }
         }
+
         // 用户退出 清除用户
         foreach (self::$users as $key=>$user){
             if($connection == $user){
                 unset(self::$users[$key]);
+                $data = []; // 留言记录
+                $data['content'] = "我离开了:)"; // 内容
+                $data['user'] = $key; // 用户名称
+                $data['speak'] = $key; // 发言者
+                $data['customer'] = ''; // 管理员账号
+                $data['see'] = 0; // 是否查看
+                foreach (self::$admins as $admin){
+                    // 有管理员对话状态
+                    if(in_array($key, $admin['user_unique'])){
+                        // 给对应的管理员发送消息
+                        $data['customer'] = $admin['info']['username'];
+                        $data['see'] = 1;
+                        // 给管理员发送提示
+                        $admin['connection']->send(json_encode(JsonExtend::success("用户留言", $data)->original, JSON_UNESCAPED_UNICODE));
+                        // 删除管理员绑定的参数
+                        $userKey = array_keys($admin['user_unique'], $key); // 获取用户的键值
+                        unset($admin['user_unique'][$userKey[0]]); // 删除用户键值对应的元素
+                    }
+                }
+                // 存入数据库
+                $chatsRepository = new ChatsRepository();
+                $chatsRepository::insert($data);
             }
         }
-        var_dump("ChatsExtend onClose1");
     }
 }

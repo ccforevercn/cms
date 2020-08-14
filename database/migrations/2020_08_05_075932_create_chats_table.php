@@ -29,6 +29,7 @@ class CreateChatsTable extends Migration
             $table->char('customer', 16)->comment('客服名称');
             $table->char('user', 32)->comment('用户名称'); // md5(微秒+ip+5位随机数)
             $table->string('content', 512)->comment('内容');
+            $table->string('speak', 32)->comment('发言者');
             $table->integer('add_time')->comment('添加时间');
             $table->tinyInteger('see')->comment('是否查看(1是 0否)');
             $table->tinyInteger('is_del')->comment('是否删除(1是 0否)');

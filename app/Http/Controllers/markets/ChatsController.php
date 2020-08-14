@@ -8,9 +8,10 @@ namespace App\Http\Controllers\markets;
 use App\CcForever\controller\BaseController;
 use App\CcForever\extend\JsonExtend;
 use App\CcForever\traits\ControllerTrait;
+use App\Http\Requests\Chats\ChatsChatsRequest;
 use App\Http\Requests\Chats\ChatsListRequest;
-use App\Http\Requests\Chats\ChatsRequest;
 use App\Http\Requests\Chats\ChatsSeeRequest;
+use App\Http\Requests\Chats\ChatsUsersRequest;
 use App\Repositories\ChatsRepository;
 
 /**
@@ -82,14 +83,12 @@ class ChatsController extends BaseController
     /**
      * 留言信息列表
      *
-     * @param ChatsRequest $chatsRequest
-     * @param ChatsRepository $chatsRepository
      * @return object
      */
-    public function message(ChatsRequest $chatsRequest, ChatsRepository $chatsRepository): object
+    public function message(): object
     {
         // TODO: Implement message() method.
-        dd(123);
+        return JsonExtend::error('留言不支持查询留言信息');
     }
 
     /**
@@ -106,6 +105,40 @@ class ChatsController extends BaseController
         $bool = $chatsRepository::see($data['user'], $customer);
         if($bool){
             return JsonExtend::success($chatsRepository::returnMsg('获取成功'));
+        }
+        return JsonExtend::error($chatsRepository::returnMsg('获取失败'));
+    }
+
+    /**
+     * 留言用户列表
+     *
+     * @param ChatsUsersRequest $chatsUsersRequest
+     * @param ChatsRepository $chatsRepository
+     * @return object
+     */
+    public function users(ChatsUsersRequest $chatsUsersRequest, ChatsRepository $chatsRepository): object
+    {
+        $where = $chatsUsersRequest->all();
+        $bool = $chatsRepository::users($where['customer'], (int)$where['page'], (int)$where['limit']);
+        if($bool){
+            return JsonExtend::success($chatsRepository::returnMsg('获取成功'), $chatsRepository::returnData([]));
+        }
+        return JsonExtend::error($chatsRepository::returnMsg('获取失败'));
+    }
+
+    /**
+     * 留言客服和用户对话列表
+     *
+     * @param ChatsChatsRequest $chatsChatsRequest
+     * @param ChatsRepository $chatsRepository
+     * @return object
+     */
+    public function chats(ChatsChatsRequest $chatsChatsRequest, ChatsRepository $chatsRepository): object
+    {
+        $where = $chatsChatsRequest->all();
+        $bool = $chatsRepository::chats($where['customer'], $where['user'], (int)$where['page'], (int)$where['limit']);
+        if($bool){
+            return JsonExtend::success($chatsRepository::returnMsg('获取成功'), $chatsRepository::returnData([]));
         }
         return JsonExtend::error($chatsRepository::returnMsg('获取失败'));
     }

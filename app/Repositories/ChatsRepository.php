@@ -39,7 +39,7 @@ class ChatsRepository implements RepositoryInterface
     }
 
     /**
-     * 留言列表
+     * 留言客服列表
      *
      * @param array $where
      * @param int $page
@@ -49,17 +49,13 @@ class ChatsRepository implements RepositoryInterface
     public static function lst(array $where, int $page, int $limit): bool
     {
         // TODO: Implement lst() method.
-        $where['see'] = array_key_exists('see', $where) && !is_null($where['see']) ? (int)$where['see'] : '';
-        if(strlen($where['see']) && !in_array($where['see'], self::$model::GetSee())){
-            return self::setMsg('参数错误', false);
-        }
         $offset = page_to_offset($page, $limit); // 获取起始值
-        $list = self::$model::lst($where, $offset, $limit);//留言列表
-        return self::setMsg('留言列表', true, $list);
+        $list = self::$model::lst($where, $offset, $limit);//留言客服列表
+        return self::setMsg('留言客服列表', true, $list);
     }
 
     /**
-     * 留言总数
+     * 留言客服总数
      *
      * @param array $where
      * @return bool
@@ -67,12 +63,8 @@ class ChatsRepository implements RepositoryInterface
     public static function count(array $where): bool
     {
         // TODO: Implement count() method.
-        $where['see'] = array_key_exists('see', $where) && !is_null($where['see']) ? (int)$where['see'] : '';
-        if(strlen($where['see']) && !in_array($where['see'], self::$model::GetSee())){
-            return self::setMsg('参数错误', false);
-        }
-        $count = self::$model::count($where);//留言总数
-        return self::setMsg('留言总数', true, [$count]);
+        $count = self::$model::count($where);//留言客服总数
+        return self::setMsg('留言客服总数', true, [$count]);
     }
 
     /**
@@ -87,9 +79,10 @@ class ChatsRepository implements RepositoryInterface
         $chats = []; // 留言记录
         $chats['content'] = array_key_exists('content', $data) && !is_null($data['content']) ? $data['content'] : '';
         $chats['user'] = array_key_exists('user', $data) && !is_null($data['user']) ? $data['user'] : null;
+        $chats['speak'] = array_key_exists('speak', $data) && !is_null($data['speak']) ? $data['speak'] : null;
         $chats['customer'] = array_key_exists('customer', $data) && !is_null($data['customer']) ? $data['customer'] : '';
         $chats['see'] = array_key_exists('see', $data) && !is_null($data['see']) ? (int)$data['see'] : 0;
-        if(is_null($chats['user'])){
+        if(is_null($chats['user']) || is_null($chats['speak'])){
             return self::setMsg('用户不存在', false);
         }
         if(!in_array($chats['see'], self::$model::GetSee())){
@@ -111,13 +104,13 @@ class ChatsRepository implements RepositoryInterface
     public static function update(array $data, int $id): bool
     {
         // TODO: Implement update() method.
-        dd($data, $id);
+        return self::setMsg('留言不支持修改', false);
     }
 
     public static function message(int $id): bool
     {
         // TODO: Implement message() method.
-        dd($id);
+        return self::setMsg('不支持编号查询', false);
     }
 
     /**
@@ -186,5 +179,59 @@ class ChatsRepository implements RepositoryInterface
             }
             return self::setMsg('已有客服接入', false);
         }
+    }
+
+    /**
+     * 留言用户列表
+     *
+     * @param string $customer
+     * @param int $page
+     * @param int $limit
+     * @return bool
+     */
+    public static function users(string $customer, int $page, int $limit): bool
+    {
+        // 验证客服是否存在
+        $check = self::$model::base_bool('check', [], [$customer, 'customer']);
+        if(!$check){
+            return self::setMsg('客服不存在', false);
+        }
+        $offset = page_to_offset($page, $limit); // 获取起始值
+        $list = self::$model::users($customer, $offset, $limit); // 留言用户列表
+        if(!count($list)){
+            return self::setMsg('暂无留言用户', false);
+        }
+        $count = self::$model::usersCount($customer); // 留言用户总数
+        return self::setMsg('留言用户列表', true, compact('list', 'count'));
+    }
+
+    /**
+     * 留言客服和用户对话列表
+     *
+     * @param string $customer
+     * @param string $user
+     * @param int $page
+     * @param int $limit
+     * @return bool
+     */
+    public static function chats(string $customer, string $user, int $page, int $limit): bool
+    {
+        // 验证客服是否存在
+        $check = self::$model::base_bool('check', [], [$customer, 'customer']);
+        if(!$check){
+            return self::setMsg('客服不存在', false);
+        }
+        // 验证用户是否存在
+        $check = self::$model::base_bool('check', [], [$user, 'user']);
+        if(!$check){
+            return self::setMsg('用户不存在', false);
+        }
+        $offset = page_to_offset($page, $limit); // 获取起始值
+        $list = self::$model::chats($customer, $user, $offset, $limit); // 留言客服和用户对话列表
+        if(!count($list)){
+            return self::setMsg('暂无对话记录', false);
+        }
+        $count = self::$model::chatsCount($customer, $user); // 留言客服和用户对话总数
+        return self::setMsg('留言用户列表', true, compact('list', 'count'));
     }
 }
