@@ -208,27 +208,19 @@ class ChatsExtend
     }
 
     /**
-     *
-     *  ['seed' => '客户得消息']
-     *   //  客户端发送消息--》给正在登陆的管理员发送通知--》管理员收到消息后 在点击时加入队列 当队列数量到1时修改客户端发送的信息为已读，清除队列
-     *
+     * 连接聊天
      * var ws = new WebSocket('ws://192.168.99.100:2222')
-     *
-     * ws.send('{"type":"chats_user","unique":"107742c57242dc400a3b1593bab2d6b3","content":"客户发言"}')
-     *
-     * ws.send('{"type":"chats_admin","token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ","unique":"d7cd9714b7527b6d6997b2ff533d7dd3"}')
-     *
-     * ws.send('{"type":"chats_admin","token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ","unique":"2fffc8a300e4d61f4e82b437bd895f41"}')
-     *
-     * ws.send('{"type":"chats_admin","token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ","unique":"2fffc8a300e4d61f4e82b437bd895f41","user":"107742c57242dc400a3b1593bab2d6b3","content":"管理员发言"}')
-     *
-     *
-     *
+     * 用户发送消息
+     * ws.send('{"type":"chats_user","unique":"123123","content":"客户发言"}')
+     * 客服验证
+     * ws.send('{"type":"chats_admin","token":"123123","unique":"123123"}')
+     * 客服回复用户信息
+     * ws.send('{"type":"chats_admin","token":"123123","unique":"123123","user":"123123","content":"管理员发言"}')
      */
 
 
     /**
-     * 客户端连接与Workerman断开时触发
+     * 客户端连接与Worker断开时触发
      * @param $connection
      */
     public static function onClose($connection)
