@@ -58,14 +58,14 @@ class Admins extends  JWTModel
      *
      * @var array
      */
-    private static $select = ['id', 'username', 'password', 'real_name', 'status', 'found', 'parent_id', 'rule_id', 'add_time', 'add_ip', 'last_ip', 'last_time', 'login_count', 'is_del'];
+    private static $select = ['id', 'username', 'password', 'real_name', 'status', 'found', 'parent_id', 'rule_id', 'email', 'add_time', 'add_ip', 'last_ip', 'last_time', 'login_count', 'is_del'];
 
     /**
      * 基本信息
      *
      * @var array
      */
-    private static $message = ['id', 'username', 'real_name', 'status', 'found', 'parent_id', 'rule_id', 'add_time', 'add_ip', 'last_ip', 'last_time', 'login_count'];
+    private static $message = ['id', 'username', 'real_name', 'status', 'found', 'parent_id', 'rule_id', 'email', 'add_time', 'add_ip', 'last_ip', 'last_time', 'login_count'];
 
     /**
      * 所有管理员编号
@@ -120,7 +120,7 @@ class Admins extends  JWTModel
      *
      * @var array
      */
-    private static $noMenusRoute = ['/menus/button', '/menus/menus'];
+    private static $noMenusRoute = ['/menus/button', '/menus/menus', '/logout'];
 
     /**
      * 管理员编号 唯一索引

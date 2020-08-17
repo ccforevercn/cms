@@ -78,6 +78,22 @@ class AdminsRepository implements RepositoryInterface
     }
 
     /**
+     * 退出
+     *
+     * @param int $id
+     * @return bool
+     */
+    public static function logout(int $id):bool
+    {
+        $loginId = (int)auth('login')->id();
+        if($id !== $loginId){
+            return self::setMsg('退出失败', false);
+        }
+        auth('login')->logout(true);
+        return self::setMsg('退出成功', true, []);
+    }
+
+    /**
      * 菜单列表
      * @param array $where
      * @param int $page

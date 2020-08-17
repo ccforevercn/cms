@@ -122,7 +122,10 @@ class AdminsController extends BaseController
         // TODO: Implement message() method.
         $id = (int)$adminsRequest->input('id', 0);
         if(!$id){
-            return JsonExtend::error('参数错误');
+            // 获取当前登录管理员信息
+            $user = auth('login')->user()->toArray();
+            unset($user['password'], $user['is_del']);
+            return JsonExtend::success($adminsRepository::returnMsg('管理员信息'), $adminsRepository::returnData($user));
         }
         $bool = $adminsRepository::message($id);
         if($bool){

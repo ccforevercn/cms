@@ -51,7 +51,7 @@ trait RepositoryReturnMsgData
      */
     public static function returnData(array $data = []): array
     {
-        return count(self::$returnData) ? self::$returnData : $data;
+        return !is_null(self::$returnData) && count(self::$returnData) ? self::$returnData : $data;
     }
 
     public static function GetModel(): object

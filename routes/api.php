@@ -15,6 +15,7 @@ Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
     Route::post('/login', 'LoginController@login')->name('login'.$admin);// 登陆
     Route::get('/captcha', 'PublicController@captcha')->name('captcha'.$admin);// 验证码
     Route::group(['middleware'=> ['login']], function() use($admin) {// 需要登陆的api
+        Route::post('/logout', 'LoginController@logout')->name('logout'.$admin);// 退出
         Route::namespace('system')->group(function () use($admin) { // 系统路由组
             Route::get('/admins/list', 'AdminsController@lst')->name('adminslist'.$admin);// 管理员列表
             Route::post('/admins/insert', 'AdminsController@insert')->name('adminsinsert'.$admin);// 管理员添加

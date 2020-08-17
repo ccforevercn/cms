@@ -8,6 +8,7 @@ namespace App\Http\Controllers;
 
 use App\CcForever\controller\BaseController;
 use App\CcForever\extend\JsonExtend;
+use App\Http\Requests\Admins\AdminsRequest;
 use App\Http\Requests\LoginRequest;
 use App\Repositories\AdminsRepository;
 use App\Repositories\AdminsTokenRepository;
@@ -21,11 +22,12 @@ class LoginController extends BaseController
 {
     public function __construct()
     {
-        $this->middleware('auth:login', ['except' => ['login']]);
+        $this->middleware('auth:login', ['except' => ['login', 'logout']]);
     }
 
     /**
      * 登陆
+     *
      * @param LoginRequest $loginRequest
      * @param AdminsRepository $adminsRepository
      * @param AdminsTokenRepository $adminsTokenRepository
@@ -53,5 +55,23 @@ class LoginController extends BaseController
         $loginData['token_type'] = 'bearer';
         unset($loginData['id']);
         return JsonExtend::success($adminsTokenRepository::returnMsg('登陆成功'), $loginData);
+    }
+
+
+    /**
+     * 退出
+     *
+     * @param AdminsRequest $adminsRequest
+     * @param AdminsRepository $adminsRepository
+     * @return object
+     */
+    public function logout(AdminsRequest $adminsRequest, AdminsRepository $adminsRepository): object
+    {
+        $id = $adminsRequest->input('id');
+        $bool = $adminsRepository::logout($id);
+        if($bool){
+            return JsonExtend::success($adminsRepository::returnMsg('退出成功'), $adminsRepository::returnData([]));
+        }
+        return JsonExtend::error($adminsRepository::returnMsg("退出失败"));
     }
 }
