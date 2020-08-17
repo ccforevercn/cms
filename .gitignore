@@ -5,4 +5,5 @@
 /storage/logs
 /vendor
 /.idea
+/.env
 .env
