@@ -6,8 +6,6 @@ use App\CcForever\extend\JsonExtend;
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\Debug\Exception\FlattenException;
-use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -46,40 +44,23 @@ class Handler extends ExceptionHandler
     /**
      * 处理访问失败
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Exception  $exception
-     * @return \Symfony\Component\HttpFoundation\Response
-     *
-     * @throws \Exception
+     * @param \Illuminate\Http\Request $request
+     * @param Exception $exception
+     * @return object|\Symfony\Component\HttpFoundation\Response
      */
     public function render($request, Exception $exception)
     {
         $errorObject = FlattenException::create($exception);
         $code = $errorObject->getStatusCode(); // 获取状态码
+        $errorMessage = ''; // 提示信息
         $debug = config('app.debug', false); // 获取是否开启debug
         if($debug){ // 开启debug时，获取错误信息
             $errorMessage = $errorObject->getMessage();
-        }else{ // 获取自定义提示
-            switch ($code){
-                case $code < 300 && $code >= 200:
-                    $errorMessage = config('illegal.error_message_success');
-                    break;
-                case $code < 400 && $code >= 300:
-                    $errorMessage = config('illegal.error_message_redirect');
-                    break;
-                case $code < 500 && $code >= 400:
-                    $errorMessage = config('illegal.error_message_error');
-                    break;
-                case $code < 600 && $code >= 500:
-                    $errorMessage = config('illegal.error_message_inside_error');
-                    break;
-                default:
-                    $errorMessage = config('illegal.error_message_default');
-            }
         }
-        if(strlen($errorMessage)){
-            return JsonExtend::error($errorMessage);
+        if(!strlen($errorMessage)){ // 获取自定义信息
+            $errorMessage = exceptions_message($code);
         }
-        return parent::render($request, $exception);
+        return JsonExtend::error($errorMessage);
+//        return parent::render($request, $exception);
     }
 }
