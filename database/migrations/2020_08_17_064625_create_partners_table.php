@@ -26,7 +26,7 @@ class CreatePartnersTable extends Migration
             $table->charset = 'utf8';  //表默认字符集
             $table->collation = 'utf8_general_ci';  // 表默认的排序规则
             $table->bigIncrements('id')->comment('合作伙伴表');
-            $table->string('name', 128)->comment('合作伙伴');
+            $table->string('name', 128)->comment('合作伙伴名称');
             $table->string('link', 128)->comment('合作伙伴链接');
             $table->string('image', 128)->comment('合作伙伴图片');
             $table->integer('weight')->comment('合作伙伴权重');
