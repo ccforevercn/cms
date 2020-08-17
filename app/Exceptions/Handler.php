@@ -55,22 +55,27 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         $errorObject = FlattenException::create($exception);
-        $code = $errorObject->getStatusCode();
-        switch ($code){
-            case $code < 300 && $code >= 200:
-                $errorMessage = config('illegal.error_message_success');
-                break;
-            case $code < 400 && $code >= 300:
-                $errorMessage = config('illegal.error_message_redirect');
-                break;
-            case $code < 500 && $code >= 400:
-                $errorMessage = config('illegal.error_message_error');
-                break;
-            case $code < 600 && $code >= 500:
-                $errorMessage = config('illegal.error_message_inside_error');
-                break;
-            default:
-                $errorMessage = config('illegal.error_message_default');
+        $code = $errorObject->getStatusCode(); // 获取状态码
+        $debug = config('app.debug', false); // 获取是否开启debug
+        if($debug){ // 开启debug时，获取错误信息
+            $errorMessage = $errorObject->getMessage();
+        }else{ // 获取自定义提示
+            switch ($code){
+                case $code < 300 && $code >= 200:
+                    $errorMessage = config('illegal.error_message_success');
+                    break;
+                case $code < 400 && $code >= 300:
+                    $errorMessage = config('illegal.error_message_redirect');
+                    break;
+                case $code < 500 && $code >= 400:
+                    $errorMessage = config('illegal.error_message_error');
+                    break;
+                case $code < 600 && $code >= 500:
+                    $errorMessage = config('illegal.error_message_inside_error');
+                    break;
+                default:
+                    $errorMessage = config('illegal.error_message_default');
+            }
         }
         if(strlen($errorMessage)){
             return JsonExtend::error($errorMessage);
