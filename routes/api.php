@@ -95,7 +95,6 @@ Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
             Route::post('/links/update', 'LinksController@update')->name('linksupdate'.$admin);// 友情链接修改
             Route::post('/links/delete', 'LinksController@delete')->name('linksdelete'.$admin);// 友情链接删除
             Route::get('/links/message', 'LinksController@message')->name('linksmessage'.$admin);// 友情链接信息
-
             Route::get('/partners/list', 'PartnersController@lst')->name('partnerslist'.$admin);// 合作伙伴列表
             Route::post('/partners/insert', 'PartnersController@insert')->name('partnersinsert'.$admin);// 合作伙伴添加
             Route::post('/partners/update', 'PartnersController@update')->name('partnersupdate'.$admin);// 合作伙伴修改
