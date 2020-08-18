@@ -15,6 +15,8 @@ return [
 
     'default' => env('DB_CONNECTION', 'mysql'),
 
+    'db_prefix' => env('DB_PREFIX', 'cc_'),
+
     /*
     |--------------------------------------------------------------------------
     | Database Connections

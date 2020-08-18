@@ -13,12 +13,14 @@ trait ModelTraits
     /**
      * 表别名
      *
-     * @param bool $alias  false 表名. true 表名
+     * @param bool $alias false 表名. true 表名
+     * @param bool $prefix false 不加前缀 true 加前缀
      * @return string
      */
-    public static function GetAlias(bool $alias = false): string
+    public static function GetAlias(bool $alias = false, bool $prefix = false): string
     {
-        return $alias ? self::$modelTable : self::$modelTable.'.';
+        $prefix = $prefix ? config('database.db_prefix') : '';
+        return $alias ? $prefix.self::$modelTable : $prefix.self::$modelTable.'.';
     }
 
     /**

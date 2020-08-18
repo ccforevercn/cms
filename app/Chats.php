@@ -191,7 +191,7 @@ class Chats extends BaseModel implements ModelInterface
     public static function lst(array $where, int $offset, int $limit): array
     {
         // TODO: Implement lst() method.
-        $select = [DB::raw('count(distinct(cc_chats.user)) as user_count'), DB::raw('(select real_name from cc_admins where username = cc_chats.customer) as admin_name'), DB::raw('(select id from cc_admins where username = cc_chats.customer) as admin_id'), 'customer'];
+        $select = [DB::raw('count(distinct('.self::GetAlias(true, true).'.user)) as user_count'), DB::raw('(select real_name from '.Admins::GetAlias(true, true).' where username = '.self::GetAlias(true, true).'.customer) as admin_name'), DB::raw('(select id from '.Admins::GetAlias(true, true).' where username = '.self::GetAlias(true, true).'.customer) as admin_id'), 'customer'];
         $model = new self;
         $model = $model->listWhere($where);
         $model = $model->isDel(0);
@@ -226,7 +226,7 @@ class Chats extends BaseModel implements ModelInterface
      */
     public static function users(string $customer, int $offset, int $limit): array
     {
-        $select = [DB::raw('count(cc_chats.content) as content_count'), DB::raw('min(cc_chats.add_time) as time'), 'user'];
+        $select = [DB::raw('count('.self::GetAlias(true, true).'.content) as content_count'), DB::raw('min('.self::GetAlias(true, true).'.add_time) as time'), 'user'];
         $model = new self;
         $model = $model->select($select);
         $model = $model->isDel(0);

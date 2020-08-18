@@ -8,6 +8,7 @@ namespace App;
 
 use App\CcForever\model\JWTModel;
 use App\CcForever\traits\ModelTraits;
+use Illuminate\Support\Facades\DB;
 
 /**
  * 管理员Model
@@ -190,11 +191,13 @@ class Admins extends  JWTModel
     public static function lst(array $where, int $offset, int $limit): array
     {
         // TODO: Implement lst() method.
+
+        $select = [self::GetAlias().'real_name', self::GetAlias().'username', self::GetAlias().'rule_id', self::GetAlias().'email', self::GetAlias().'status', self::GetAlias().'add_time', self::GetAlias().'last_time', self::GetAlias().'id', DB::raw('(select name from '.Rules::GetAlias(true, true).' where id = '.self::GetAlias(true, true).'.rule_id) as rulename')];  // 查询的字段
         $model = new self;
         $model = $model->listWhere($where);
         $model = $model->isDel(0);
         $model = $model->offset($offset);
-        $model = $model->select(self::GetMessage());
+        $model = $model->select($select);
         $model = $model->limit($limit);
         $list = $model->get();
         $list = is_null($list) ? [] : $list->toArray();

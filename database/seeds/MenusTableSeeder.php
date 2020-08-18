@@ -711,7 +711,7 @@ class MenusTableSeeder extends Seeder
                 'parent_id' => 0,
                 'routes' => '/markets',
                 'page' => '/market',
-                'icon' => 'message',
+                'icon' => 'eye',
                 'menu' => 1,
                 'is_del' => 0,
                 'add_time' => time(),
