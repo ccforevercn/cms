@@ -85,12 +85,24 @@ class AdminsRepository implements RepositoryInterface
      */
     public static function logout(int $id):bool
     {
-        $loginId = (int)auth('login')->id();
-        if($id !== $loginId){
+        $loginId = (int)auth('login')->id(); // 获取登录管理员编号
+        if($id !== $loginId){ // 登录管理员和用户提交的编号不一致
             return self::setMsg('退出失败', false);
         }
-        auth('login')->logout(true);
-        return self::setMsg('退出成功', true, []);
+        $token = (string)auth('login')->getToken();// 获取登录token
+        // 修改admin_tokens表的记录时间为当前时间
+        $adminsTokenRepository = new AdminsTokenRepository(); // 实例化AdminsTokenRepository类
+        // 获取token编号
+        $id = $adminsTokenRepository::tokenToId($token);
+        $adminsToken = []; // 修改的数据
+        $adminsToken['stop_time'] = time(); // 结束时间
+        $bool = $adminsTokenRepository::update($adminsToken, $id); // 修改结束时间
+        if($bool){ // 修改成功
+            auth('login')->logout(true);
+            return self::setMsg('退出成功', true, []);
+        }
+        // 修改失败
+        return self::setMsg('退出失败', false);
     }
 
     /**

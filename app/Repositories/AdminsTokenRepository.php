@@ -62,8 +62,18 @@ class AdminsTokenRepository implements RepositoryInterface
      */
     public static function checkToken(string $token):int
     {
-        $adminId = self::$model::tokenSelectAdminId($token);
-        return (int)$adminId;
+        return self::$model::tokenSelectAdminId($token);
+    }
+
+    /**
+     * 获取编号
+     *
+     * @param string $token
+     * @return int
+     */
+    public static function tokenToId(string $token): int
+    {
+        return self::$model::tokenSelectId($token);
     }
 
     public static function lst(array $where, int $page, int $limit): bool
@@ -81,9 +91,19 @@ class AdminsTokenRepository implements RepositoryInterface
         // TODO: Implement insert() method.
     }
 
+    /**
+     * 修改token过期时间
+     *
+     * @param array $data
+     * @param int $id
+     * @return bool
+     */
     public static function update(array $data, int $id): bool
     {
         // TODO: Implement update() method.
+        $time = array_key_exists('time', $data) ? $data['time'] : time();
+        $status = self::$model::time($id, $time);
+        return self::setMsg($status ? '修改成功' : '修改失败', $status, []);
     }
 
     public static function delete(int $id): bool
