@@ -263,11 +263,49 @@ class RulesRepository implements RepositoryInterface
             return self::setMsg('规则不存在', false);
         }
         $unique = self::$model::base_string('select', $id, 'unique');  // 查询规则信息
-        $menus = self::$model::menus($unique);
-        $status = count($menus);
-        return self::setMsg($status ? '规则菜单列表' : '获取失败', $status, $menus);
+        if(strlen($unique)){
+            $menus = self::$model::menus($unique);
+            $status = count($menus);
+        }else{
+            $menusRepository = new MenusRepository();
+            $order = [];
+            $order['select'] = 'id';
+            $order['value'] = 'DESC';
+            $menus = $menusRepository::GetModel()::base_array('all', [], ['id as mid', 'name as mname', 'parent_id'], $order);
+            $status = true;
+        }
+        $ids = array_map(function ($menu){
+            return $menu['mid'];
+        }, $menus); // 获取菜单编号
+        $menus = self::formatMenus([], $menus, 0);
+        return self::setMsg($status ? '规则菜单列表' : '获取失败', $status, compact('menus', 'ids'));
     }
 
+    /**
+     * 格式化菜单
+     *
+     * @param array $formatMenus
+     * @param array $menus
+     * @param int $parentId
+     * @return array
+     */
+    public static function formatMenus(array $formatMenus, array $menus,int $parentId): array
+    {
+        $loop = 0;
+        foreach ($menus as $menu){
+            if($menu['parent_id'] == $parentId){
+                $formatMenus[$loop]['id'] = $menu['mid'];
+                $formatMenus[$loop]['label'] = $menu['mname'];
+                $formatMenus[$loop]['children'] = self::formatMenus($formatMenus, $menus, $menu['mid']);
+                if(!count($formatMenus[$loop]['children'])){
+                    unset($formatMenus[$loop]['children']);
+                }
+                $loop++;
+            }
+        }
+        if(!$loop) $formatMenus= [];
+        return $formatMenus;
+    }
     /**
      * 规则列表信息
      *
