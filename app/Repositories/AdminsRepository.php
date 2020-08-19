@@ -285,6 +285,28 @@ class AdminsRepository implements RepositoryInterface
     }
 
     /**
+     * 管理员信息
+     *
+     * @param int $id
+     * @return bool
+     */
+    public static function message(int $id): bool
+    {
+        // TODO: Implement message() method.
+        $check = self::$model::base_bool('check', [], $id);
+        if(!$check){// 编号不存在
+            return self::setMsg('数据不存在', false);
+        }// 判断当前管理员是否有删除管理员的权限
+        $checkAdminHandleStatus = self::checkAdminHandle($id, auth('login')->id());
+        if(!$checkAdminHandleStatus){
+            return self::setMsg('没有权限查看', false);
+        }
+        $message = self::$model::base_array('message', $id, self::$model::GetMessage(), []);
+        return self::setMsg('信息', true, $message);
+
+    }
+
+    /**
      * 判断管理员是否有操作的权限
      * @param int $id         被修改的管理员编号
      * @param int $adminId   当前登陆的管理员编号
