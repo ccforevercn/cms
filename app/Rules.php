@@ -140,4 +140,20 @@ class Rules extends BaseModel implements ModelInterface
         }
         return $menus;
     }
+
+    /**
+     * 规则列表信息
+     *
+     * @param array $adminIds
+     * @return array
+     */
+    public static function rules(array $adminIds): array
+    {
+        $model = new self;
+        $model = $model->listWhere(['admin_id' => $adminIds]);
+        $model = $model->isDel(0);
+        $model = $model->select('name', 'id');
+        $list = $model->get();
+        return is_null($list) ? [] : $list->toArray();  // 转为数组
+    }
 }

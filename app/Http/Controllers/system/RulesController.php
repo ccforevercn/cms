@@ -136,4 +136,20 @@ class RulesController extends BaseController
         }
         return JsonExtend::error($rulesRepository::returnMsg('规则菜单不存在'));
     }
+
+    /**
+     * 规则列表
+     *
+     * @param RulesRepository $rulesRepository
+     * @return object
+     */
+    public function rules(RulesRepository $rulesRepository): object
+    {
+        $adminId = auth('login')->id();
+        $bool = $rulesRepository::rules($adminId);
+        if($bool){
+            return JsonExtend::success($rulesRepository::returnMsg('规则列表'), $rulesRepository::returnData([]));
+        }
+        return JsonExtend::error($rulesRepository::returnMsg('暂无规则'));
+    }
 }

@@ -267,4 +267,23 @@ class RulesRepository implements RepositoryInterface
         $status = count($menus);
         return self::setMsg($status ? '规则菜单列表' : '获取失败', $status, $menus);
     }
+
+    /**
+     * 规则列表信息
+     *
+     * @param int $adminId
+     * @return bool
+     */
+    public static function rules(int $adminId): bool
+    {
+        $rules = []; // 规则列表信息
+        $adminsRepository = new AdminsRepository();
+        $adminsRepository::subordinateIds($adminId); // 获取当前管理员编号和下级管理员编号+
+        $subordinateIds = $adminsRepository::returnData([]);
+        if(count($subordinateIds)){ // 规则列表信息
+            $rules = self::$model::rules($subordinateIds);
+        }
+        $status = count($rules);
+        return self::setMsg($status ? '规则列表信息' : '规则列表信息', $status, $rules);
+    }
 }

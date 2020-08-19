@@ -35,6 +35,7 @@ Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
             Route::post('/rules/delete', 'RulesController@delete')->name('rulesdelete'.$admin);// 规则删除
             Route::get('/rules/message', 'RulesController@message')->name('rulesmessage'.$admin);// 规则信息
             Route::get('/rules/menus', 'RulesController@menus')->name('rulesmenus'.$admin);// 规则菜单
+            Route::get('/rules/rules', 'RulesController@rules')->name('rulesrules'.$admin);// 规则列表信息
         });
         Route::namespace('message')->group(function () use($admin) { // 信息路由组
             Route::get('/columns/list', 'ColumnsController@lst')->name('columnslist'.$admin);// 栏目列表

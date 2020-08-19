@@ -389,7 +389,7 @@ class AdminsRepository implements RepositoryInterface
      * 获取当前管理员和下级管理员+
      *
      * @param int $id
-     * @return array
+     * @return bool
      */
     public static function subordinateIds(int $id): bool
     {

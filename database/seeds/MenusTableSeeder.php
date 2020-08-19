@@ -969,6 +969,18 @@ class MenusTableSeeder extends Seeder
                 'add_time' => time(),
                 'sort' => 1,
             ],
+            [
+                'id' => 80,
+                'name' => '规则列表信息',
+                'parent_id' => 1,
+                'routes' => '/rules/rules',
+                'page' => '',
+                'icon' => '',
+                'menu' => 0,
+                'is_del' => 0,
+                'add_time' => time(),
+                'sort' => 1,
+            ],
         ]);
     }
 }
