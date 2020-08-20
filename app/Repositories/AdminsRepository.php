@@ -583,14 +583,14 @@ class AdminsRepository implements RepositoryInterface
             $adminRuleMenusRoutes = json_decode($adminRuleMenusRoutes, true);
             // 权限判断
             if(in_array($routes, $adminRuleMenusRoutes)){ return self::setMsg("可以访问", true); }
-            else { return self::setMsg("权限不足", false); }
+            else { return self::setMsg("暂无权限操作", false); }
         }catch (\Exception $exception){// redis 没有开
             $adminRuleMenusRoutes = self::adminRuleMenusRoutes($id); // 获取管理员可以访问的菜单
             if(count($adminRuleMenusRoutes)){ // 菜单路由判断
                 if(in_array($routes, $adminRuleMenusRoutes)){ return self::setMsg("可以访问", true); }
-                else { return self::setMsg("权限不足", false); }
+                else { return self::setMsg("暂无权限操作", false); }
             }else{
-                return self::setMsg('权限不足', false);
+                return self::setMsg('暂无权限操作', false);
             }
         }
     }

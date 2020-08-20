@@ -34,12 +34,12 @@ class LoginMiddleware
             $role = auth('login')->parseToken()->getClaim('role');// 获取登录管理员规则
             if(is_null($role)){ return JsonExtend::login('请先登陆'); }// 规则不存在时重新登陆
             $adminsRepository = new AdminsRepository(); // 实例化AdminsRepository类
-            if($role !== $adminsRepository::loginRole()){ return JsonExtend::error('权限不足'); } // 规则不符 没有权限访问
+            if($role !== $adminsRepository::loginRole()){ return JsonExtend::error('暂无权限操作'); } // 规则不符 没有权限访问
             $path = app('request')->path(); // 获取当前请求的路由
             $route = app('request')->route()->getPrefix(); // 获取路由前缀
             $api = str_replace($route, '', $path); // 接口 对应菜单表的url字段
             $bool = LoginExtend::admin($id, $api); // 获取管理员是否有权限
-            if(!$bool){ return JsonExtend::error($adminsRepository::returnMsg('权限不足')); } // 没有权限访问
+            if(!$bool){ return JsonExtend::error($adminsRepository::returnMsg('暂无权限操作')); } // 没有权限访问
             return $next($request);
         } catch (JWTException $e) { return JsonExtend::error('请先登录'); }
     }
