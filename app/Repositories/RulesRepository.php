@@ -337,7 +337,6 @@ class RulesRepository implements RepositoryInterface
         if(in_array($id, self::$model::GetSuperRuleIds())){
             // 如果是超级权限编号 判断当前登录的管理员是否是超级管理员
             $adminId = auth('login')->id();
-            $adminId = 2;
             $adminsRepository = new AdminsRepository();
             if(!in_array($adminId, $adminsRepository::superAdministratorIds())){
                 return self::setMsg(power_message(), false);
