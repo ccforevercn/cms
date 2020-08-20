@@ -286,6 +286,31 @@ class RulesRepository implements RepositoryInterface
     }
 
     /**
+     * 规则权限验证  登陆时验证
+     *
+     * @param int $id
+     * @return bool
+     */
+    public static function power(int $id): bool
+    {
+        $check = self::$model::base_bool('check', [], $id); // 验证编号
+        if(!$check){
+            return self::setMsg('规则不存在', false);
+        }
+        $menusRepository = new MenusRepository(); // 实例化MenusRepository类
+        $menusTotalList = $menusRepository::menusTotalList();  // 获取所有菜单
+        $unique = self::$model::base_string('select', $id, 'unique');  // 查询规则信息
+        if(strlen($unique)){
+            $menus = self::$model::menus($unique);
+            $status = count($menus);
+        }else{
+            $menus = $menusTotalList;
+            $status = true;
+        }
+        return self::setMsg($status ? '规则菜单列表' : '获取失败', $status, $menus);
+    }
+
+    /**
      * 规则菜单
      * @param int $id
      * @return bool

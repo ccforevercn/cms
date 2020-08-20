@@ -551,7 +551,7 @@ class AdminsRepository implements RepositoryInterface
         if(strlen($ruleId)){ // 管理员信息存在
             $rulesRepository = new RulesRepository();// 实例化RulesRepository类
             $ruleId = (int)$ruleId;
-            $rulesMenusStatus = $rulesRepository::menus($ruleId); // 获取规则菜单
+            $rulesMenusStatus = $rulesRepository::power($ruleId); // 获取规则菜单
             if($rulesMenusStatus){// 规则菜单存在
                 $menus = $rulesRepository::returnData([]); // 规则菜单
                 $menusIds = array_column($menus, 'mid'); // 获取菜单编号
