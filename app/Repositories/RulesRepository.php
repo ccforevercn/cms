@@ -156,6 +156,11 @@ class RulesRepository implements RepositoryInterface
         if(!$check){
             return self::setMsg('参数错误', false);
         }
+        // 判断是否是超级权限编号
+        if(in_array($id, self::$model::GetSuperRuleIds())){
+            // 超级权限编号不支持修改
+            return self::setMsg('暂无权限操作', false);
+        }
         // 验证菜单编号是否存在
         $menuIdsStr = array_key_exists('menus_id', $data) ? $data['menus_id'] : null;
         // 验证不存在时
@@ -227,6 +232,11 @@ class RulesRepository implements RepositoryInterface
         $check = self::$model::base_bool('check', [], $id);
         // 编号不存在
         if(!$check){ return self::setMsg('参数错误', false); }
+        // 判断是否是超级权限编号
+        if(in_array($id, self::$model::GetSuperRuleIds())){
+            // 超级权限编号不支持修改
+            return self::setMsg('暂无权限操作', false);
+        }
         // 获取规则信息  规则创建者和唯一值
         $ruleMessage = self::$model::base_array('message', $id, ['admin_id', 'unique'], []);
         // 实例化AdminsRepository类
@@ -323,13 +333,24 @@ class RulesRepository implements RepositoryInterface
         }
         $menusRepository = new MenusRepository(); // 实例化MenusRepository类
         $menusTotalList = $menusRepository::menusTotalList();  // 获取所有菜单
-        $unique = self::$model::base_string('select', $id, 'unique');  // 查询规则信息
-        if(strlen($unique)){
-            $menus = self::$model::menus($unique);
-            $status = count($menus);
-        }else{
+        // 判断是否是超级权限编号
+        if(in_array($id, self::$model::GetSuperRuleIds())){
+            // 如果是超级权限编号 判断当前登录的管理员是否是超级管理员
+            $adminId = auth('login')->id();
+            $adminsRepository = new AdminsRepository();
+            if(!in_array($adminId, $adminsRepository::superAdministratorIds())){
+                return self::setMsg( '暂无查看权限', false);
+            }
             $menus = $menusTotalList;
             $status = true;
+        }else{
+            $unique = self::$model::base_string('select', $id, 'unique');  // 查询规则信息
+            if(strlen($unique)){
+                $menus = self::$model::menus($unique);
+                $status = count($menus);
+            }else{
+                return self::setMsg( '获取失败', false);
+            }
         }
         $ids = array_map(function ($menu){
             return $menu['mid'];

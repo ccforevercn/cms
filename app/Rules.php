@@ -46,6 +46,13 @@ class Rules extends BaseModel implements ModelInterface
     private static $message = ['id', 'name', 'unique', 'admin_id', 'add_time'];
 
     /**
+     * 超级权限 不支持修改和删除
+     *
+     * @var array
+     */
+    private static $superRuleIds = [1];
+
+    /**
      * 规则编号查询 唯一索引
      * @param $query
      * @param int $id
@@ -155,5 +162,15 @@ class Rules extends BaseModel implements ModelInterface
         $model = $model->select('name', 'id');
         $list = $model->get();
         return is_null($list) ? [] : $list->toArray();  // 转为数组
+    }
+
+    /**
+     * 获取超级权限编号
+     *
+     * @return array
+     */
+    public static function GetSuperRuleIds(): array
+    {
+        return self::$superRuleIds;
     }
 }
