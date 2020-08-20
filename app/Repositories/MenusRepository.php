@@ -248,7 +248,7 @@ class MenusRepository implements RepositoryInterface
         // 格式化菜单按钮
         $bottomList = self::formatMenus($menusMessageBottomList, 0);
         // 格式化菜单按钮总数
-        $status = count($bottomList);
+        $status = true;
         return self::setMsg($status ? '按钮列表' : '获取失败', $status, $bottomList);
     }
 
@@ -279,10 +279,10 @@ class MenusRepository implements RepositoryInterface
                 $data['meta']['title'] = $item['name'];
                 $data['meta']['icon'] = $item['icon'];
                 $data['children'] = self::formatMenus($menusMessageList,$item['id']);
-                if($data['children'] == null){
-                    $data['children'] = [];
+                if(count($data['children']) || !$data['top']){
+                    // 子菜单存储或者当前菜单不是顶级菜单
+                    $menusFormatList[] = $data;
                 }
-                $menusFormatList[] = $data;
             }
         }
         return $menusFormatList;
