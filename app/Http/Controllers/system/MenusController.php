@@ -137,7 +137,7 @@ class MenusController extends BaseController
     }
 
     /**
-     * 所有菜单
+     * 所有菜单(当前管理员)
      *
      * @param MenusRequest $menusRequest
      * @param MenusRepository $menusRepository

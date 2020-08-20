@@ -289,7 +289,7 @@ class MenusRepository implements RepositoryInterface
     }
 
     /**
-     * 所有菜单
+     * 所有菜单(当前管理员)
      *
      * @param int $adminId
      * @param int $ruleId
@@ -330,5 +330,18 @@ class MenusRepository implements RepositoryInterface
         $menusList = self::$model::base_array('all', $menusIds, ['id', 'parent_id', 'name'], $order);
         $status = (bool)count($menusList);
         return self::setMsg($status ? '菜单列表' : '获取失败', $status, $menusList);
+    }
+
+    /**
+     * 数据库所有菜单
+     *
+     * @return array
+     */
+    public static function menusTotalList(): array
+    {
+        $order = [];
+        $order['select'] = 'id';
+        $order['value'] = 'DESC';
+        return self::$model::base_array('all', [], ['id as mid', 'name as mname', 'parent_id'], $order);
     }
 }

@@ -119,6 +119,9 @@ class RulesRepository implements RepositoryInterface
         $rule['admin_id'] = array_key_exists('admin_id', $data) ? $data['admin_id'] : null;
         $rule['add_time'] = $time;
         $rule['is_del'] = 0;
+        if(!check_null($rule['name'], $rule['admin_id'])){
+            return self::setMsg('参数错误', false);
+        }
         $ruleMenu = []; // 规则菜单数据
         $ruleMenuCount = 0;
         foreach ($menuIds as $menuId){
@@ -159,12 +162,20 @@ class RulesRepository implements RepositoryInterface
         if(is_null($menuIdsStr)){ return self::setMsg('菜单不存在', false); }
         // 格式化菜单编号
         $menuIds = explode(',', $menuIdsStr);
+        // 去除重复菜单并修改菜单编号为整数
+        $menuIds = array_flip(array_flip($menuIds));
         // 获取实际存在的菜单编号个数
-        $messagesRepository = new MessagesRepository();
-        $messagesRepositoryModel = $messagesRepository::GetModel();
-        $count = $messagesRepositoryModel::checkIds($menuIds);
+        $menusRepository = new MenusRepository();
+        $menusRepositoryModel = $menusRepository::GetModel();
+        $count = $menusRepositoryModel::checkIds($menuIds);
         // 实际存在的菜单个数 和 用户提交的数据不一致
         if($count !== count($menuIds)){ return self::setMsg('菜单不存在', false); }
+        // 验证父级菜单是否存在 如果不存在则添加父级菜单
+        $menusRepository = new MenusRepository(); // 实例化MenusRepository类
+        $menusTotalList = $menusRepository::menusTotalList();  // 获取所有菜单
+        foreach ($menuIds as $menuId){
+            $menuIds = self::addMenusParentIds($menuId, $menuIds, $menusTotalList);
+        }
         $rule = []; // 规则修改信息
         // 验证规则名称是否存在
         $rule['name'] = array_key_exists('name', $data) ? $data['name'] : null;
@@ -188,7 +199,7 @@ class RulesRepository implements RepositoryInterface
         $ruleMenuCount = 0;
         foreach ($menuIds as $menuId){
             $ruleMenu[$ruleMenuCount]['unique'] = $unique;  // 唯一值 和规则表一致
-            $ruleMenu[$ruleMenuCount]['menu_id'] = (int)$menuId; // 菜单编号
+            $ruleMenu[$ruleMenuCount]['menu_id'] = $menuId; // 菜单编号
             $ruleMenu[$ruleMenuCount]['add_time'] = $time;  // 添加时间
             $ruleMenu[$ruleMenuCount]['clear_time'] = $time;  // 默认 清除时间和添加时间一致
             $ruleMenu[$ruleMenuCount]['is_del'] = 0;  // 是否删除  1  是  0 否
@@ -252,6 +263,29 @@ class RulesRepository implements RepositoryInterface
     }
 
     /**
+     * 添加父级菜单
+     *
+     * @param int $menuId
+     * @param array $menuIds
+     * @param array $menusIdsTotal
+     * @return array
+     */
+    private static function addMenusParentIds(int $menuId, array $menuIds, array $menusIdsTotal): array
+    {
+        foreach ($menusIdsTotal as $menu){
+            if($menu['mid'] == $menuId){
+                if($menu['parent_id']){
+                    if(!in_array($menu['parent_id'], $menuIds)){
+                        array_push($menuIds, $menu['parent_id']);
+                    }
+                    return self::addMenusParentIds($menu['parent_id'], $menuIds, $menusIdsTotal);
+                }
+            }
+        }
+        return $menuIds;
+    }
+
+    /**
      * 规则菜单
      * @param int $id
      * @return bool
@@ -262,23 +296,70 @@ class RulesRepository implements RepositoryInterface
         if(!$check){
             return self::setMsg('规则不存在', false);
         }
+        $menusRepository = new MenusRepository(); // 实例化MenusRepository类
+        $menusTotalList = $menusRepository::menusTotalList();  // 获取所有菜单
         $unique = self::$model::base_string('select', $id, 'unique');  // 查询规则信息
         if(strlen($unique)){
             $menus = self::$model::menus($unique);
             $status = count($menus);
         }else{
-            $menusRepository = new MenusRepository();
-            $order = [];
-            $order['select'] = 'id';
-            $order['value'] = 'DESC';
-            $menus = $menusRepository::GetModel()::base_array('all', [], ['id as mid', 'name as mname', 'parent_id'], $order);
+            $menus = $menusTotalList;
             $status = true;
         }
         $ids = array_map(function ($menu){
             return $menu['mid'];
         }, $menus); // 获取菜单编号
-        $menus = self::formatMenus([], $menus, 0);
+        // 删除菜单父级(个别子菜单)
+        $ids = self::unsetMenuParentIds($ids, $menus, $menusTotalList, $ids[0], 0);
+        $menus = self::formatMenus([], $menus, 0); // 格式化菜单
         return self::setMsg($status ? '规则菜单列表' : '获取失败', $status, compact('menus', 'ids'));
+    }
+
+    /**
+     * 删除菜单父级(个别子菜单)
+     * $menus 筛选的菜单编号
+     * $menusList 筛选的菜单
+     * $menusTotalList 全部菜单
+     * $parentId 父级编号(筛选的菜单编号中的编号)
+     * $key 键值(筛选的菜单编号数组的键值)
+     *
+     * @param array $menus
+     * @param array $menusList
+     * @param array $menusTotalList
+     * @param int $parentId
+     * @param int $key
+     * @return array
+     */
+    public static function unsetMenuParentIds(array $menus, array $menusList, array $menusTotalList, int $parentId, int $key): array
+    {
+        $menusListCount = 0; // 当前菜单的子菜单总数
+        $menusTotalListCount = 0; // 所有菜单的子菜单总数
+        foreach ($menusList as $menu){
+            if($menu['parent_id'] == $parentId){
+                // 获取当前菜单的子菜单总数
+                $menusListCount++;
+            }
+        }
+        foreach ($menusTotalList as $menu){
+            if($menu['parent_id'] == $parentId){
+                // 获取所有菜单的子菜单总数
+                $menusTotalListCount++;
+            }
+        }
+        if($menusListCount !== $menusTotalListCount){
+            // 判断当前菜单的子菜单总数和所有菜单的子菜单总数不一致时删除父级菜单
+            unset($menus[$key]);
+            $menus = array_values($menus);
+            $key--;
+        }
+        $key = (int)bcadd($key, 1, 0);  // 获取下一个元素的键值
+        $menusCount = (int)bcsub(count($menus), 1, 0); // 获取当前菜单的总数
+        if($key > $menusCount){
+            // 下一个元素的键值大于当前菜单的总数时，删除完成返回删除后的菜单编号
+            return $menus;
+        }
+        // 重新调用删除菜单父级(个别子菜单)函数
+        return self::unsetMenuParentIds($menus, $menusList, $menusTotalList, $menus[$key], $key);
     }
 
     /**
@@ -291,19 +372,20 @@ class RulesRepository implements RepositoryInterface
      */
     public static function formatMenus(array $formatMenus, array $menus,int $parentId): array
     {
-        $loop = 0;
+        $loop = 0; // 循环次数
+        $formatMenusChildren = []; // 子集菜单清空
         foreach ($menus as $menu){
-            if($menu['parent_id'] == $parentId){
+            if($menu['parent_id'] === $parentId){
                 $formatMenus[$loop]['id'] = $menu['mid'];
                 $formatMenus[$loop]['label'] = $menu['mname'];
-                $formatMenus[$loop]['children'] = self::formatMenus($formatMenus, $menus, $menu['mid']);
+                $formatMenus[$loop]['children'] = self::formatMenus($formatMenusChildren, $menus, $menu['mid']);
                 if(!count($formatMenus[$loop]['children'])){
                     unset($formatMenus[$loop]['children']);
                 }
                 $loop++;
             }
         }
-        if(!$loop) $formatMenus= [];
+        if(!$loop) return [];
         return $formatMenus;
     }
     /**

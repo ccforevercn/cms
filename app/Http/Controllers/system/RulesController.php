@@ -52,7 +52,7 @@ class RulesController extends BaseController
      * @param RulesRepository $rulesRepository
      * @return object
      */
-    public function  insert(RulesInsertRequest $rulesAddRequest, RulesRepository $rulesRepository): object
+    public function insert(RulesInsertRequest $rulesAddRequest, RulesRepository $rulesRepository): object
     {
         // TODO: Implement insert() method.
         $data = $rulesAddRequest->all();
