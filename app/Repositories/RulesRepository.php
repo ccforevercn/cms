@@ -159,7 +159,7 @@ class RulesRepository implements RepositoryInterface
         // 判断是否是超级权限编号
         if(in_array($id, self::$model::GetSuperRuleIds())){
             // 超级权限编号不支持修改
-            return self::setMsg('暂无权限操作', false);
+            return self::setMsg(power_message(), false);
         }
         // 验证菜单编号是否存在
         $menuIdsStr = array_key_exists('menus_id', $data) ? $data['menus_id'] : null;
@@ -235,7 +235,7 @@ class RulesRepository implements RepositoryInterface
         // 判断是否是超级权限编号
         if(in_array($id, self::$model::GetSuperRuleIds())){
             // 超级权限编号不支持修改
-            return self::setMsg('暂无权限操作', false);
+            return self::setMsg(power_message(), false);
         }
         // 获取规则信息  规则创建者和唯一值
         $ruleMessage = self::$model::base_array('message', $id, ['admin_id', 'unique'], []);
@@ -337,9 +337,10 @@ class RulesRepository implements RepositoryInterface
         if(in_array($id, self::$model::GetSuperRuleIds())){
             // 如果是超级权限编号 判断当前登录的管理员是否是超级管理员
             $adminId = auth('login')->id();
+            $adminId = 2;
             $adminsRepository = new AdminsRepository();
             if(!in_array($adminId, $adminsRepository::superAdministratorIds())){
-                return self::setMsg( '暂无查看权限', false);
+                return self::setMsg(power_message(), false);
             }
             $menus = $menusTotalList;
             $status = true;
