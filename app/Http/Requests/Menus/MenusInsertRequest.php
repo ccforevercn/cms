@@ -7,6 +7,7 @@
 namespace App\Http\Requests\Menus;
 
 use App\Http\Requests\Request;
+use App\Rules\MenusInsertPageRule;
 
 /**
  * 菜单添加
@@ -36,7 +37,7 @@ class MenusInsertRequest extends Request
             'name' =>  'bail|required|max:20',
             'parent_id' => 'bail|required|integer|min:0',
             'routes' =>  'bail|required|max:64',
-            'page' =>  'bail|required|max:64',
+            'page' =>  ['bail', 'required', new MenusInsertPageRule(), 'max:64'],
             'icon' => 'bail|filled|max:16',
             'sort' => 'bail|filled|integer',
             'menu' => 'bail|filled|min:0|max:1',

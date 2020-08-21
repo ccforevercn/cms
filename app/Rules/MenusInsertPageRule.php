@@ -1,20 +1,33 @@
 <?php
 /**
  * @author: cc_forever<1253705861@qq.com>
- * @day: 2020/7/21
+ * @day: 2020/8/21
  */
-
 namespace App\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
 
 /**
- * 手机号验证
- * Class PhoneRule
+ * 菜单添加页面规则
+ *
+ * Class MenusInsertPageRule
  * @package App\Rules
  */
-class PhoneRule implements Rule
+class MenusInsertPageRule implements Rule
 {
+    /**
+     * 验证数据
+     *
+     * @var string
+     */
+    private $value = '';
+
+    /**
+     * 存在页面
+     *
+     * @var array
+     */
+    private $page = ['/administrators'];
     /**
      * Create a new rule instance.
      *
@@ -34,7 +47,10 @@ class PhoneRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        return check_phone($value);
+        if(in_array($value, $this->page)){
+            $this->value = $value;
+            return false;
+        }
     }
 
     /**
@@ -44,6 +60,6 @@ class PhoneRule implements Rule
      */
     public function message()
     {
-        return '手机号格式错误';
+        return $this->value.'已存在，请重新添加页面链接';
     }
 }
