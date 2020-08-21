@@ -53,6 +53,7 @@ class LoginController extends BaseController
             return JsonExtend::error($adminsTokenRepository::returnMsg("登陆失败"));
         }
         $loginData['token_type'] = 'bearer';
+        $loginData['unique'] = $loginData['id'];
         unset($loginData['id']);
         return JsonExtend::success($adminsTokenRepository::returnMsg('登陆成功'), $loginData);
     }
