@@ -42,6 +42,7 @@
             "app/CcForever/functions/array.php",
             "app/CcForever/functions/rule.php",
             "app/CcForever/functions/message.php",
+            "app/CcForever/functions/time.php",
             "app/CcForever/functions/encode.php"
         ],
         "classmap": [

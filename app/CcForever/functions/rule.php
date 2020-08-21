@@ -4,7 +4,6 @@
  * @day: 2020/7/20
  */
 
-
 /**
  * 规则处理函数
  */
@@ -82,19 +81,6 @@ if(!function_exists('reduce_status')){
     }
 }
 
-if(!function_exists('create_millisecond')){
-    /**
-     * 毫秒
-     * @return int
-     */
-    function create_millisecond(): int
-    {
-        list($milli, $second) = explode(' ', microtime());// 获取毫秒(单位是秒)$milli 秒$second
-        $millisecond = (int)sprintf('%.0f', (floatval($milli) + floatval($second)) * 1000); // 获取格式化后的毫秒
-        return $millisecond;
-    }
-}
-
 if(!function_exists('check_null')){
     /**
      * 验证多个字段是否为空值
@@ -140,33 +126,5 @@ if(!function_exists('format_config_message_type_value')){
             }
         }
         return $format;
-    }
-}
-if(!function_exists('exceptions_message')){
-    /**
-     * 错误码对应的提示信息获取
-     *
-     * @param int $code
-     * @return string
-     */
-    function exceptions_message(int $code): string
-    {
-        switch ($code){
-            case $code < 300 && $code >= 200:
-                $errorMessage = config('illegal.error_message_success');
-                break;
-            case $code < 400 && $code >= 300:
-                $errorMessage = config('illegal.error_message_redirect');
-                break;
-            case $code < 500 && $code >= 400:
-                $errorMessage = config('illegal.error_message_error');
-                break;
-            case $code < 600 && $code >= 500:
-                $errorMessage = config('illegal.error_message_inside_error');
-                break;
-            default:
-                $errorMessage = config('illegal.error_message_default');
-        }
-        return $errorMessage;
     }
 }

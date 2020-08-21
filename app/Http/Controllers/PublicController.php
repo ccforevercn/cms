@@ -3,9 +3,7 @@
  * @author: cc_forever<1253705861@qq.com>
  * @day: 2020/7/20
  */
-
 namespace App\Http\Controllers;
-
 
 use App\CcForever\controller\BaseController;
 use App\CcForever\extend\JsonExtend;

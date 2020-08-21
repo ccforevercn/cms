@@ -87,7 +87,7 @@ trait ModelTraits
                     // ...
                 default:;
             }
-        }catch (\Exception $exception){ dump($exception->getMessage()); }
+        }catch (\Exception $exception){ }
         return $bool;
     }
 
