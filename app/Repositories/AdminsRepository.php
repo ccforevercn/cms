@@ -257,7 +257,7 @@ class AdminsRepository implements RepositoryInterface
         // 判断当前管理员是否有修改管理员的权限
         $checkAdminHandleStatus = self::checkAdminHandle($id, $data['parent_id']);
         if(!$checkAdminHandleStatus){
-            return self::setMsg('没有权限修改', false);
+            return self::setMsg(power_message(), false);
         }
         $status = self::$model::base_bool('update', $admin, $id); // 修改数据
         return self::setMsg($status ? '修改成功' : '修改失败', $status);

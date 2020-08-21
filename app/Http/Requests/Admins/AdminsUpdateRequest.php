@@ -37,7 +37,7 @@ class AdminsUpdateRequest extends Request
             'real_name' =>  'bail|required|max:20',  // 管理员昵称
             'status' => 'bail|required|integer|min:0|max:1', // 管理员状态
             'found' => 'bail|required|integer|min:0|max:1', // 创建管理员权限
-            'rule_id' =>  'bail|required|integer|min:2', // 规则编号
+            'rule_id' =>  'bail|required|integer|min:1', // 规则编号
             'email' =>  'bail|required|email:rfc,filter', // 管理员邮箱
         ];
     }

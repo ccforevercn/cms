@@ -193,7 +193,7 @@ class RulesRepository implements RepositoryInterface
         // 判断当前管理员是否有修改规则的权限
         $checkAdminHandleStatus = $adminsRepository::checkAdminHandle($adminId, auth('login')->id());
         // 没有权限修改
-        if(!$checkAdminHandleStatus){ return self::setMsg('没有权限修改', false); }
+        if(!$checkAdminHandleStatus){ return self::setMsg(power_message(), false); }
         // 重置唯一值
         $unique = create_admin_password(create_millisecond(), $data['username'].$data['admin_id']);
         $rule = []; // 规则数据
@@ -244,7 +244,7 @@ class RulesRepository implements RepositoryInterface
         // 判断当前管理员是否有修改规则的权限
         $checkAdminHandleStatus = $adminsRepository::checkAdminHandle($ruleMessage['admin_id'], auth('login')->id());
         // 没有权限修改
-        if(!$checkAdminHandleStatus){ return self::setMsg('没有权限修改', false); }
+        if(!$checkAdminHandleStatus){ return self::setMsg(power_message(), false); }
         self::$model::beginTransaction(); // 开启事务
         $ruleStatus = self::$model::base_bool('delete', [] , $id); // 删除规则
         self::$model::SetModelTable('rules_menus');

@@ -36,10 +36,6 @@ class LoginController extends BaseController
     public function login(LoginRequest $loginRequest, AdminsRepository $adminsRepository, AdminsTokenRepository $adminsTokenRepository)
     {
         $login = $loginRequest->all(); // 登陆请求数据
-//        $login['username'] = 'ccforever';
-//        $login['password'] = '688888886';
-//        $login['captcha'] = '9epm';
-//        $login['key'] = '$2y$10$Y6rM171zMdAy/B1almMLSOHrYu5e/moR9wfKEL1EI8WYdtU0GTY8y';
         if(!captcha_api_check($login['captcha'], $login['key'])){ // 验证码验证
             return JsonExtend::error('验证码错误');
         }

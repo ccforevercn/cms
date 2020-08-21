@@ -81,7 +81,7 @@ class AdminsController extends BaseController
         $id = (int)$data['id'];
         $user = auth('login')->user();
         if(!$user->found){
-            return JsonExtend::error('没有权限修改管理员');
+            return JsonExtend::error(power_message());
         }
         $data['parent_id'] = $user->id;
         $bool = $adminsRepository::update($data, $id);
