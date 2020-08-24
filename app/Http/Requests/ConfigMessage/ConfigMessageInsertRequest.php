@@ -6,6 +6,7 @@
 namespace App\Http\Requests\ConfigMessage;
 
 use App\Http\Requests\Request;
+use App\Rules\ConfigMessageSelectRule;
 
 /**
  * 配置信息添加验证
@@ -35,7 +36,7 @@ class ConfigMessageInsertRequest extends Request
         return [
             'name' =>  'bail|required|max:20',
             'description' =>  'bail|required|max:80',
-            'select' =>  'bail|required|max:32',
+            'select' =>  ['bail', 'required', new ConfigMessageSelectRule(), 'max:32'],
             'category_id' =>  'bail|required|integer|min:1',
             'type' =>  'bail|required|integer|min:1|max:5',
             'type_value' =>  'bail|present',

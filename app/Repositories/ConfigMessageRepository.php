@@ -94,7 +94,13 @@ class ConfigMessageRepository implements RepositoryInterface
         if(!check_null($configMessage['name'], $configMessage['select'], $configMessage['category_id'], $configMessage['type'])){
             return self::setMsg('参数错误', false);
         }
-        // 验证select唯一值
+        // 静态配置名称
+        $staticConfigName = self::$model::GetStaticConfigName();
+        // 验证select唯一值(静态配置)
+        if(in_array($configMessage['select'], $staticConfigName)){
+            return self::setMsg('唯一值已存在', false);
+        }
+        // 验证select唯一值(数据库)
         $equal = self::$model::base_array('equal', ['select' => $configMessage['select']], ['select'], []);
         if(count($equal)){
             return self::setMsg('唯一值已存在', false);
@@ -199,5 +205,32 @@ class ConfigMessageRepository implements RepositoryInterface
         }
         $status = self::$model::base_bool('update', $configMessage, $id); // 修改数据
         return self::setMsg($status ? '修改成功' : '修改失败', $status);
+    }
+
+    /**
+     * 获取配置信息
+     *
+     * @param string $select
+     * @return bool
+     */
+    public static function config(string $select): bool
+    {
+        // 不可见配置信息
+        $notViewableSelect = self::$model::GetNotViewableSelect();
+        // 验证是否在不可见配置信息字段中
+        if(in_array($select, $notViewableSelect)){
+            return self::setMsg(power_message(), false);
+        }
+        // 静态配置名称
+        $staticConfigName = self::$model::GetStaticConfigName();
+        // 验证是否获取静态配置
+        if(in_array($select, $staticConfigName)){
+            // 获取静态配置
+            $value = self::$model::GetStaticConfigValue($select);
+        }else{
+            // 获取数据库配置信息
+            $value = self::$model::base_string('select', ['select', $select], 'value');
+        }
+        return self::setMsg($select.'配置信息', true, [$value]);
     }
 }

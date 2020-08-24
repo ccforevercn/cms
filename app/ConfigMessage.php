@@ -45,6 +45,27 @@ class ConfigMessage extends BaseModel implements ModelInterface
     private static $message = ['id', 'name', 'description', 'select', 'type', 'type_value', 'value', 'category_id', 'add_time'];
 
     /**
+     * 不可见配置信息
+     *
+     * @var array
+     */
+    private static $notViewableSelect = ['token'];
+
+    /**
+     * 静态配置名称
+     *
+     * @var array
+     */
+    private static $staticConfigName = ['label_prefix'];
+
+    /**
+     * 静态配置值
+     *
+     * @var array
+     */
+    private static $staticConfigValue = ['label_prefix' => 'ccforever.prefix.label'];
+
+    /**
      * 编号查询 唯一索引
      *
      * @param $query
@@ -123,5 +144,36 @@ class ConfigMessage extends BaseModel implements ModelInterface
     {
         // TODO: Implement count() method.
         return self::listWhere($where)->isDel(0)->count();
+    }
+
+    /**
+     * 不可见配置信息
+     *
+     * @return array
+     */
+    public static function GetNotViewableSelect(): array
+    {
+        return self::$notViewableSelect;
+    }
+
+    /**
+     * 静态配置名称
+     *
+     * @return array
+     */
+    public static function GetStaticConfigName(): array
+    {
+        return self::$staticConfigName;
+    }
+
+    /**
+     * 静态配置值
+     *
+     * @param string $key
+     * @return string
+     */
+    public static function GetStaticConfigValue(string $key): string
+    {
+        return self::$staticConfigValue[$key];
     }
 }

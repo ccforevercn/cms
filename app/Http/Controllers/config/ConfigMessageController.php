@@ -11,6 +11,7 @@ use App\CcForever\traits\ControllerTrait;
 use App\Http\Requests\ConfigMessage\ConfigMessageInsertRequest;
 use App\Http\Requests\ConfigMessage\ConfigMessageListRequest;
 use App\Http\Requests\ConfigMessage\ConfigMessageRequest;
+use App\Http\Requests\ConfigMessage\ConfigMessageSelectRequest;
 use App\Http\Requests\ConfigMessage\ConfigMessageUpdateRequest;
 use App\Repositories\ConfigMessageRepository;
 
@@ -115,6 +116,24 @@ class ConfigMessageController extends BaseController
         $bool = $configMessageRepository::message($id);
         if($bool){
             return JsonExtend::success($configMessageRepository::returnMsg('配置分类信息'), $configMessageRepository::returnData([]));
+        }
+        return JsonExtend::error($configMessageRepository::returnMsg('数据不存在'));
+    }
+
+    /**
+     * 获取配置信息
+     *
+     * @param ConfigMessageSelectRequest $configMessageSelectRequest
+     * @param ConfigMessageRepository $configMessageRepository
+     * @return object
+     */
+    public function config(ConfigMessageSelectRequest $configMessageSelectRequest, ConfigMessageRepository $configMessageRepository): object
+    {
+        $select = $configMessageSelectRequest->input('select');
+        $bool = $configMessageRepository::config($select);
+        if($bool){
+            list($data) = $configMessageRepository::returnData([]);
+            return JsonExtend::success($configMessageRepository::returnMsg('配置信息'), $data);
         }
         return JsonExtend::error($configMessageRepository::returnMsg('数据不存在'));
     }
