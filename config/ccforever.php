@@ -5,5 +5,8 @@
  */
 
 return [
-    'admin_prefix' => env('ADMIN_PREFIX', 'ccforever'),
+    'prefix' => [
+        'admin' => env('ADMIN_PREFIX', 'ccforever'),
+        'label' => env('LABEL_PREFIX', 'cc_cms')
+    ]
 ];
