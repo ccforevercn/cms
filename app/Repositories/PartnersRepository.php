@@ -47,6 +47,8 @@ class PartnersRepository implements RepositoryInterface
     public static function lst(array $where, int $page, int $limit): bool
     {
         // TODO: Implement lst() method.
+        // 是否传递权重
+        $where['follow'] = array_key_exists('follow', $where) && !is_null($where['follow']) ? (int)$where['follow'] : '';
         $offset = page_to_offset($page, $limit); // 获取起始值
         $list = self::$model::lst($where, $offset, $limit);//合作伙伴列表
         return self::setMsg('合作伙伴列表', true, $list);
@@ -61,6 +63,8 @@ class PartnersRepository implements RepositoryInterface
     public static function count(array $where): bool
     {
         // TODO: Implement count() method.
+        // 是否传递权重
+        $where['follow'] = array_key_exists('follow', $where) && !is_null($where['follow']) ? (int)$where['follow'] : '';
         $count = self::$model::count($where);//合作伙伴总数
         return self::setMsg('合作伙伴总数', true, [$count]);
     }
@@ -79,6 +83,7 @@ class PartnersRepository implements RepositoryInterface
         $partners['link'] = array_key_exists('link', $data) ? $data['link'] : null;// 链接
         $partners['image'] = array_key_exists('image', $data)&& !is_null($data['image']) ? $data['image'] : '';// 图片
         $partners['weight'] = array_key_exists('weight', $data) ? (int)$data['weight'] : 1;// 权重
+        $partners['follow'] = array_key_exists('follow', $data) ? (int)$data['follow'] : 1;// 是否传递权重 1是 0否
         // 名称、链接
         if(!check_null($partners['name'], $partners['link'])){
             return self::setMsg('参数错误', false);
@@ -115,6 +120,7 @@ class PartnersRepository implements RepositoryInterface
         $partners['link'] = array_key_exists('link', $data) ? $data['link'] : null;// 链接
         $partners['image'] = array_key_exists('image', $data)&& !is_null($data['image']) ? $data['image'] : '';// 图片
         $partners['weight'] = array_key_exists('weight', $data) ? (int)$data['weight'] : 1;// 权重
+        $partners['follow'] = array_key_exists('follow', $data) ? (int)$data['follow'] : 1;// 是否传递权重 1是 0否
         // 名称、链接
         if(!check_null($partners['name'], $partners['link'])){
             return self::setMsg('参数错误', false);

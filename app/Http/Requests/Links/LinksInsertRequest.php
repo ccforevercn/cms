@@ -37,6 +37,7 @@ class LinksInsertRequest extends Request
             'link' =>  'bail|required|max:128',
             'image' =>  'bail|present',
             'weight' =>  'bail|required|integer|min:1',
+            'follow' =>  'bail|required|integer|min:0',
         ];
     }
 
@@ -55,6 +56,9 @@ class LinksInsertRequest extends Request
             'weight.required' => '请输入权重',
             'weight.integer' => '权重类型错误',
             'weight.min' => '权重错误，请重新输入',
+            'follow.required' => '请输入网站权重传递状态',
+            'follow.integer' => '网站权重传递状态类型错误',
+            'follow.min' => '网站权重传递状态错误，请重新输入',
         ];
     }
 }

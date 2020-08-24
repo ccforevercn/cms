@@ -48,6 +48,8 @@ class LinksRepository implements RepositoryInterface
     public static function lst(array $where, int $page, int $limit): bool
     {
         // TODO: Implement lst() method.
+        // 是否传递权重
+        $where['follow'] = array_key_exists('follow', $where) && !is_null($where['follow']) ? (int)$where['follow'] : '';
         $offset = page_to_offset($page, $limit); // 获取起始值
         $list = self::$model::lst($where, $offset, $limit);//友情链接列表
         return self::setMsg('友情链接列表', true, $list);
@@ -62,6 +64,8 @@ class LinksRepository implements RepositoryInterface
     public static function count(array $where): bool
     {
         // TODO: Implement count() method.
+        // 是否传递权重
+        $where['follow'] = array_key_exists('follow', $where) && !is_null($where['follow']) ? (int)$where['follow'] : '';
         $count = self::$model::count($where);//友情链接总数
         return self::setMsg('友情链接总数', true, [$count]);
     }
@@ -80,6 +84,7 @@ class LinksRepository implements RepositoryInterface
         $links['link'] = array_key_exists('link', $data) ? $data['link'] : null;// 友情链接
         $links['image'] = array_key_exists('image', $data)&& !is_null($data['image']) ? $data['image'] : '';// 友情链接图片
         $links['weight'] = array_key_exists('weight', $data) ? (int)$data['weight'] : 1;// 友情链接权重
+        $links['follow'] = array_key_exists('follow', $data) ? (int)$data['follow'] : 1;// 是否传递权重 1是 0否
         // 友情链接名称、友情链接
         if(!check_null($links['name'], $links['link'])){
             return self::setMsg('参数错误', false);
@@ -116,6 +121,7 @@ class LinksRepository implements RepositoryInterface
         $links['link'] = array_key_exists('link', $data) ? $data['link'] : null;// 友情链接
         $links['image'] = array_key_exists('image', $data)&& !is_null($data['image']) ? $data['image'] : '';// 友情链接图片
         $links['weight'] = array_key_exists('weight', $data) ? (int)$data['weight'] : 1;// 友情链接权重
+        $links['follow'] = array_key_exists('follow', $data) ? (int)$data['follow'] : 1;// 是否传递权重 1是 0否
         // 友情链接名称、友情链接
         if(!check_null($links['name'], $links['link'])){
             return self::setMsg('参数错误', false);

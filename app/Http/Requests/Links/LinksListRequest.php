@@ -35,6 +35,7 @@ class LinksListRequest extends Request
         return [
             'page' => 'bail|required|integer|min:1',  // 页数
             'limit' => 'bail|required|integer|min:1', // 每页条数
+            'follow' =>  'bail|present',  // 是否权重传递 1是 0否
         ];
     }
 
@@ -51,6 +52,7 @@ class LinksListRequest extends Request
             'limit.required' => '请选择条数',
             'limit.integer' => '条数类型错误',
             'limit.min' => '条数不能小于1',
+            'follow.present' => '参数错误',
         ];
     }
 }

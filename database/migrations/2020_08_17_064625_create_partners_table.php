@@ -30,7 +30,7 @@ class CreatePartnersTable extends Migration
             $table->string('link', 128)->comment('合作伙伴链接');
             $table->string('image', 128)->comment('合作伙伴图片');
             $table->integer('weight')->comment('合作伙伴权重');
-            $table->tinyInteger('follow')->comment('是否权重传递 1 是 0 否');
+            $table->tinyInteger('follow')->comment('是否权重传递 1是 0否');
             $table->integer('add_time')->comment('添加时间');
             $table->tinyInteger('is_del')->comment('是否删除(1是 0否)');
             $table->unique('id'); // 编号唯一索引

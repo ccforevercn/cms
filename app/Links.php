@@ -37,14 +37,14 @@ class Links extends BaseModel implements ModelInterface
      *
      * @var array
      */
-    private static $select = ['id', 'name', 'link', 'image', 'weight', 'add_time', 'is_del'];
+    private static $select = ['id', 'name', 'link', 'image', 'weight', 'follow', 'add_time', 'is_del'];
 
     /**
      * 基本信息
      *
      * @var array
      */
-    private static $message = ['id', 'name', 'link', 'image', 'weight', 'add_time'];
+    private static $message = ['id', 'name', 'link', 'image', 'weight', 'follow', 'add_time'];
 
     /**
      * 编号查询 唯一索引
@@ -56,6 +56,18 @@ class Links extends BaseModel implements ModelInterface
     public static function scopeId($query, int $id)
     {
         return $query->where(self::GetAlias().'id', $id);
+    }
+
+    /**
+     * 是否权重传递 普通索引
+     *
+     * @param $query
+     * @param int $follow
+     * @return mixed
+     */
+    public static function scopeFollow($query, int $follow)
+    {
+        return $query->where(self::GetAlias().'follow', $follow);
     }
 
     /**
@@ -71,6 +83,19 @@ class Links extends BaseModel implements ModelInterface
     }
 
     /**
+     * 查询条件
+     *
+     * @param $query
+     * @param array $where
+     * @return mixed
+     */
+    public static function scopeListWhere($query, array $where)
+    {
+        $query = strlen($where['follow']) ? self::follow($where['follow']) : $query; // 是否权重传递
+        return $query;
+    }
+
+    /**
      * 友情链接列表
      *
      * @param array $where
@@ -82,6 +107,7 @@ class Links extends BaseModel implements ModelInterface
     {
         // TODO: Implement lst() method.
         $model = new self;
+        $model = $model->listWhere($where);
         $model = $model->isDel(0);
         $model = $model->select(self::GetMessage());
         $model = $model->offset($offset);
@@ -100,6 +126,6 @@ class Links extends BaseModel implements ModelInterface
     public static function count(array $where): int
     {
         // TODO: Implement count() method.
-        return self::isDel(0)->count();
+        return self::listWhere($where)->isDel(0)->count();
     }
 }
