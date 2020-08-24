@@ -78,6 +78,7 @@ Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
             Route::post('/config/message/update', 'ConfigMessageController@update')->name('configmessageupdate'.$admin);// 配置信息修改
             Route::post('/config/message/delete', 'ConfigMessageController@delete')->name('configmessagedelete'.$admin);// 配置信息删除
             Route::get('/config/message/message', 'ConfigMessageController@message')->name('configmessagemessage'.$admin);// 配置信息信息
+            Route::get('/config/message/config', 'ConfigMessageController@config')->name('configmessageconfig'.$admin);// 配置信息获取
         });
         Route::namespace('markets')->group(function () use($admin) { // 营销路由组
             Route::get('/banners/list', 'BannersController@lst')->name('bannerslist'.$admin);// 轮播图列表

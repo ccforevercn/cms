@@ -981,6 +981,18 @@ class MenusTableSeeder extends Seeder
                 'add_time' => time(),
                 'sort' => 1,
             ],
+            [
+                'id' => 81,
+                'name' => '配置信息(单个)',
+                'parent_id' => 46,
+                'routes' => '/config/message/config',
+                'page' => '',
+                'icon' => '',
+                'menu' => 0,
+                'is_del' => 0,
+                'add_time' => time(),
+                'sort' => 1,
+            ],
         ]);
     }
 }
