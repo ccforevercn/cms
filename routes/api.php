@@ -10,7 +10,7 @@
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-$admin = config('ccforever.admin_prefix', 'ccforever'); // 后台路由前缀
+$admin = config('ccforever.prefix.admin', 'ccforever'); // 后台路由前缀
 Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
     Route::post('/login', 'LoginController@login')->name('login'.$admin);// 登陆
     Route::get('/captcha', 'PublicController@captcha')->name('captcha'.$admin);// 验证码
