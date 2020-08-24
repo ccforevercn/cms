@@ -126,7 +126,6 @@ class ConfigCategoryRepository implements RepositoryInterface
         $order['select'] = 'id'; // 排序字段
         $order['value'] = 'ASC'; // 排序方式 DESC 降序 ASC 升序
         $category = self::$model::base_array('all', [], ['id', 'name'], $order);
-        $status = (bool)count($category);
-        return self::setMsg($status ? '配置分类列表' : '配置分类列表', $status, $category);
+        return self::setMsg('配置分类列表', true, $category);
     }
 }
