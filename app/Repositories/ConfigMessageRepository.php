@@ -227,6 +227,7 @@ class ConfigMessageRepository implements RepositoryInterface
         if(in_array($select, $staticConfigName)){
             // 获取静态配置
             $value = self::$model::GetStaticConfigValue($select);
+            $value = config($value);
         }else{
             // 获取数据库配置信息
             $value = self::$model::base_string('select', ['select', $select], 'value');

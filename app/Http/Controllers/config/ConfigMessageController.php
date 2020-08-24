@@ -133,7 +133,7 @@ class ConfigMessageController extends BaseController
         $bool = $configMessageRepository::config($select);
         if($bool){
             list($data) = $configMessageRepository::returnData([]);
-            return JsonExtend::success($configMessageRepository::returnMsg('配置信息'), $data);
+            return JsonExtend::success($configMessageRepository::returnMsg('配置信息'), compact('data'));
         }
         return JsonExtend::error($configMessageRepository::returnMsg('数据不存在'));
     }
