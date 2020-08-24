@@ -6,4 +6,5 @@
 /vendor
 /.idea
 /.env
+/public/upload
 .env
