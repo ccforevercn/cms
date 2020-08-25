@@ -57,6 +57,8 @@ class ChatsExtend
 
     const SEND_TYPE_CONNECT_NOTICE = 'connect_notice'; // 链接通知
 
+    const SEND_TYPE_HEARTBEAT = 'heartbeat'; // 链接通知
+
     /**
      * 格式化数据并发送
      *
@@ -118,9 +120,12 @@ class ChatsExtend
         $messageArr = json_decode($message, true);
         if($messageArr && array_key_exists('type', $messageArr)){ // 参数解析成功
             switch ($messageArr['type']){
+                case 'heartbeat':
+                    self::formatDataSend($connection, self::SEND_TYPE_HEARTBEAT, '心跳', []);
+                    break;
                 case 'chats_admin': // 聊天管理员
                     // 管理员验证   验证token和unique是否存在
-                    if(array_key_exists('token', $messageArr) && array_key_exists('unique', $messageArr)) {
+                    if(array_key_exists('token', $messageArr) && array_key_exists('unique', $messageArr) && $messageArr['unique'] !== 'undefined') {
                         try{
                             // 验证token
                             auth('login')->setToken($messageArr['token']);
@@ -150,7 +155,7 @@ class ChatsExtend
                                             self::formatDataSend($connection, self::SEND_TYPE_ADMIN_NOTICE_ERROR, '回复失败', []);
                                         }
                                     }else{  // 发送的数据不完整
-                                        self::formatDataSend($connection, self::SEND_TYPE_ADMIN_NOTICE_ERROR, '参数错误', []);
+                                        self::formatDataSend($connection, self::SEND_TYPE_ADMIN_CHECK, '连接成功', []);
                                     }
                                 }else{ // 未登录状态
                                     $adminLoginStatus = false; // 登陆状态
@@ -176,9 +181,9 @@ class ChatsExtend
                                             $admin['admin_id'] = $adminId; // 管理员编号
                                             $admin['connection'] = $connection; // $connection
                                             self::$admins[$messageArr['unique']] = $admin; // 保存管理员
-                                            self::formatDataSend($connection, self::SEND_TYPE_ADMIN_NOTICE_SUCCESS, '连接成功', []);
+                                            self::formatDataSend($connection, self::SEND_TYPE_ADMIN_CHECK, '连接成功', []);
                                         }else{
-                                            self::formatDataSend($connection, self::SEND_TYPE_ADMIN_NOTICE_ERROR, '连接失败', []);
+                                            self::formatDataSend($connection, self::SEND_TYPE_ADMIN_CHECK, '连接失败', []);
                                         }
                                     }else{
                                         // 客服已存在重新验证
@@ -186,13 +191,13 @@ class ChatsExtend
                                     }
                                 }
                             }else{ // 验证失败
-                                self::formatDataSend($connection, self::SEND_TYPE_ADMIN_NOTICE_ERROR, '连接失败', []);
+                                self::formatDataSend($connection, self::SEND_TYPE_ADMIN_CHECK, '连接失败', []);
                             }
                         }catch (\Exception $exception){
-                            self::formatDataSend($connection, self::SEND_TYPE_ADMIN_NOTICE_ERROR, '连接失败', []);
+                            self::formatDataSend($connection, self::SEND_TYPE_ADMIN_CHECK, '连接失败', []);
                         }
                     }else{
-                        self::formatDataSend($connection, self::SEND_TYPE_ADMIN_NOTICE_ERROR, '连接失败', []);
+                        self::formatDataSend($connection, self::SEND_TYPE_ADMIN_CHECK, '连接失败', []);
                     }
                     break;
                 case 'chats_user': // 聊天用户
@@ -234,7 +239,10 @@ class ChatsExtend
                     if($bool){ // 添加数据库成功
                         $message  = count($adminSendData) == 1 ? "用户发送消息" : "客户消息";
                         foreach ($adminSendData as $value){
-                            self::formatDataSend($value, self::SEND_TYPE_ADMIN_MESSAGE, $message, $data);
+                            self::formatDataSend($value, self::SEND_TYPE_ADMIN_NOTICE_MESSAGE, $message, $data);
+                            if($seed){
+                                self::formatDataSend($value, self::SEND_TYPE_ADMIN_MESSAGE, $message, $data);
+                            }
                         }
                         // 给客户提示发送成功
                         self::formatDataSend($connection, self::SEND_TYPE_USER_NOTICE, '发送成功', []);
