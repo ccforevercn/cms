@@ -232,6 +232,7 @@ class Chats extends BaseModel implements ModelInterface
         $model = $model->isDel(0);
         $model = $model->customer($customer);
         $model = $model->userGroupBy();
+        $model = $model->orderBy(self::GetAlias().'add_time', 'DESC');
         $model = $model->offset($offset);
         $model = $model->limit($limit);
         $list = $model->get();
@@ -265,6 +266,7 @@ class Chats extends BaseModel implements ModelInterface
         $model = $model->select(self::GetMessage());
         $model = $model->isDel(0);
         $model = $model->customer($customer);
+        $model = $model->orderBy(self::GetAlias().'add_time', 'DESC');
         $model = $model->user($user);
         $model = $model->offset($offset);
         $model = $model->limit($limit);
