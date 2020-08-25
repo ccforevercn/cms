@@ -65,6 +65,8 @@ class ChatsExtend
 
     const SEND_TYPE_ADMIN_SHUT_USER = 'admin_shut_user'; // 未接入用户
 
+    const SEND_TYPE_ADMIN_SHUT_CHECK = 'admin_user_check'; // 验证当前用户是否在线
+
     const SEND_TYPE_USER_CHECK = 'user_check'; // 用户验证
 
     const SEND_TYPE_USER_MESSAGE = 'user_message'; // 用户消息
@@ -137,6 +139,24 @@ class ChatsExtend
         $messageArr = json_decode($message, true);
         if($messageArr && array_key_exists('type', $messageArr)){ // 参数解析成功
             switch ($messageArr['type']){
+                case 'user_check': // 验证用户是否在线
+                    // 管理员验证   验证token和unique是否存在
+                    if(array_key_exists('token', $messageArr) && array_key_exists('unique', $messageArr) && array_key_exists('check', $messageArr) &&$messageArr['unique'] !== 'undefined') {
+                        try{
+                            // 验证token
+                            auth('login')->setToken($messageArr['token']);
+                            $adminId = auth('login')->id();
+                            if($adminId){ // 管理员访问
+                                // 验证用户是否在线
+                                if(in_array($messageArr['check'], self::$usersUnique)){
+                                    self::formatDataSend($connection, self::SEND_TYPE_ADMIN_SHUT_CHECK, '用户在线', ['status' => true]);
+                                    break;
+                                }
+                            }
+                        }catch (\Exception $exception){}
+                    }
+                    self::formatDataSend($connection, self::SEND_TYPE_ADMIN_SHUT_CHECK, '用户下线', ['status' => false]);
+                    break;
                 case 'heartbeat': // 心跳和重置未接入的用户
                     // 管理员验证   验证token和unique是否存在
                     if(array_key_exists('token', $messageArr) && array_key_exists('unique', $messageArr) && $messageArr['unique'] !== 'undefined') {
@@ -164,6 +184,7 @@ class ChatsExtend
                     if(array_key_exists('token', $messageArr) && array_key_exists('unique', $messageArr) && $messageArr['unique'] !== 'undefined') {
                         try{
                             // 验证token
+
                             auth('login')->setToken($messageArr['token']);
                             $adminId = auth('login')->id();
                             if($adminId){ // 管理员访问
