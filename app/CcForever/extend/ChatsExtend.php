@@ -7,7 +7,6 @@
 namespace App\CcForever\extend;
 
 use App\Repositories\AdminsRepository;
-use App\Repositories\AdminsTokenRepository;
 use App\Repositories\ChatsRepository;
 
 /**
@@ -38,6 +37,43 @@ class ChatsExtend
      */
     private static $users = [];
 
+    const SEND_TYPE_CONNECT = 'connect'; // 连接成功
+
+    const SEND_TYPE_ADMIN_CHECK = 'admin_check'; // 管理员验证
+
+    const SEND_TYPE_ADMIN_MESSAGE = 'admin_message'; // 管理员消息
+
+    const SEND_TYPE_ADMIN_NOTICE_MESSAGE = 'admin_notice_message';  // 管理员新消息
+
+    const SEND_TYPE_ADMIN_NOTICE_SUCCESS = 'admin_notice_success';  // 管理员成功通知
+
+    const SEND_TYPE_ADMIN_NOTICE_ERROR = 'admin_notice_error';  // 管理员鼠标通知
+
+    const SEND_TYPE_USER_CHECK = 'user_check'; // 用户验证
+
+    const SEND_TYPE_USER_MESSAGE = 'user_message'; // 用户消息
+
+    const SEND_TYPE_USER_NOTICE = 'user_notice'; // 用户员通知
+
+    const SEND_TYPE_CONNECT_NOTICE = 'connect_notice'; // 链接通知
+
+    /**
+     * 格式化数据并发送
+     *
+     * @param object $connection
+     * @param string $sendType
+     * @param string $message
+     * @param array $data
+     */
+    private static function formatDataSend(object $connection, string $sendType, string $message, array $data = []): void
+    {
+        $seed = [];
+        $seed['type'] = $sendType;  // 发送类型
+        $seed['message'] = $message; // 提示信息
+        $seed['data'] = $data; // 发送数据
+        $connection->send(json_encode($seed, JSON_UNESCAPED_UNICODE));
+    }
+
     /**
      *
      * ManagesExtend constructor.
@@ -65,11 +101,9 @@ class ChatsExtend
      */
     public static function onConnect($connection)
     {
-        $id = md5(implode(',', app('request')->getClientIps()).create_millisecond().mt_rand(10000, 99999));
-        $message = [];
-        $message['unique'] = $id;
-        self::$users[$id] = $connection;
-        $connection->send(json_encode(JsonExtend::success("信息", $message)->original, JSON_UNESCAPED_UNICODE));
+        $unique = md5(implode(',', app('request')->getClientIps()).create_millisecond().mt_rand(10000, 99999));
+        self::$users[$unique] = $connection;
+        self::formatDataSend($connection, self::SEND_TYPE_CONNECT, '基本信息', compact('unique'));
     }
 
     /**
@@ -87,75 +121,78 @@ class ChatsExtend
                 case 'chats_admin': // 聊天管理员
                     // 管理员验证   验证token和unique是否存在
                     if(array_key_exists('token', $messageArr) && array_key_exists('unique', $messageArr)) {
-                        $adminsTokenRepository = new AdminsTokenRepository();// 实例化AdminsTokenRepository类
-                        $adminId = $adminsTokenRepository::checkToken($messageArr['token']); // 验证Token获取管理员编号
-                        if($adminId){ // 管理员访问
-                            // 验证管理员是否已登陆
-                            if(array_key_exists($messageArr['unique'], self::$admins)){
-                                // 验证  发送内容是否存在 接收的用户是否存在
-                                if(array_key_exists('content', $messageArr) && array_key_exists('user', $messageArr)){
-                                    $data = []; // 发送数据
-                                    $data['content'] = $messageArr['content']; // 内容
-                                    $data['customer'] = self::$admins[$messageArr['unique']]['info']['username']; // 客服名称
-                                    $data['speak'] = $data['customer']; // 发言者
-                                    $data['user'] = $messageArr['user']; // 用户名称
-                                    $data['see'] = 1; // 是否查看
-                                    self::$admins[$messageArr['unique']]['user_unique'][] = $messageArr['user']; // 绑定当前用户到接收消息的管理员
-                                    // 插入数据库
-                                    $chatsRepository =  new ChatsRepository();
-                                    $bool = $chatsRepository::insert($data);
-                                    if($bool){
-                                        // 管理员提示 发送成功
-                                        $connection->send(json_encode(JsonExtend::success("回复成功", $data)->original,JSON_UNESCAPED_UNICODE));
-                                        // 给用户发送消息
-                                        self::$users[$messageArr['user']]->send(json_encode(JsonExtend::success("客服回复:", $data)->original, JSON_UNESCAPED_UNICODE));
-                                    }else{
-                                        // 管理员提示 发送失败
-                                        $connection->send(json_encode(JsonExtend::error("回复失败")->original,JSON_UNESCAPED_UNICODE));
+                        try{
+                            // 验证token
+                            auth('login')->setToken($messageArr['token']);
+                            $adminId = auth('login')->id();
+                            if($adminId){ // 管理员访问
+                                // 验证管理员是否已登陆
+                                if(array_key_exists($messageArr['unique'], self::$admins)){
+                                    // 验证  发送内容是否存在 接收的用户是否存在
+                                    if(array_key_exists('content', $messageArr) && array_key_exists('user', $messageArr)){
+                                        $data = []; // 发送数据
+                                        $data['content'] = $messageArr['content']; // 内容
+                                        $data['customer'] = self::$admins[$messageArr['unique']]['info']['username']; // 客服名称
+                                        $data['speak'] = $data['customer']; // 发言者
+                                        $data['user'] = $messageArr['user']; // 用户名称
+                                        $data['see'] = 1; // 是否查看
+                                        self::$admins[$messageArr['unique']]['user_unique'][] = $messageArr['user']; // 绑定当前用户到接收消息的管理员
+                                        // 插入数据库
+                                        $chatsRepository =  new ChatsRepository();
+                                        $bool = $chatsRepository::insert($data);
+                                        if($bool){
+                                            // 管理员提示 发送成功
+                                            self::formatDataSend($connection, self::SEND_TYPE_ADMIN_NOTICE_SUCCESS, '回复成功', $data);
+                                            // 给用户发送消息
+                                            self::formatDataSend(self::$users[$messageArr['user']], self::SEND_TYPE_USER_MESSAGE, '客服回复', $data);
+                                        }else{
+                                            // 管理员提示 发送失败
+                                            self::formatDataSend($connection, self::SEND_TYPE_ADMIN_NOTICE_ERROR, '回复失败', []);
+                                        }
+                                    }else{  // 发送的数据不完整
+                                        self::formatDataSend($connection, self::SEND_TYPE_ADMIN_NOTICE_ERROR, '参数错误', []);
                                     }
-                                }else{  // 发送的数据不完整
-                                    $connection->send(json_encode(JsonExtend::error("参数错误")->original, JSON_UNESCAPED_UNICODE));
-                                }
-                            }else{ // 未登录状态
-                                $adminLoginStatus = false; // 登陆状态
-                                $adminLoginUnique = ''; // 登陆唯一值
-                                $admin = []; // 管理员信息
-                                if(count(self::$admins)){
-                                    // 查看管理员是否已登陆
-                                    foreach (self::$admins as $key=>$value){
-                                        if($adminId == $value['admin_id']){
-                                            $adminLoginStatus = true;
-                                            $adminLoginUnique = $key;
-                                            $admin = $value;
+                                }else{ // 未登录状态
+                                    $adminLoginStatus = false; // 登陆状态
+                                    $unique = ''; // 登陆唯一值
+                                    $admin = []; // 管理员信息
+                                    if(count(self::$admins)){
+                                        // 查看管理员是否已登陆
+                                        foreach (self::$admins as $key=>$value){
+                                            if($adminId == $value['admin_id']){
+                                                $adminLoginStatus = true;
+                                                $unique = $key;
+                                                $admin = $value;
+                                            }
                                         }
                                     }
-                                }
-                                if(!$adminLoginStatus){
-                                    $adminsRepository = new AdminsRepository(); // 实例化AdminsRepository类
-                                    $adminStatus = $adminsRepository::message($adminId); // 获取管理员信息
-                                    if($adminStatus){
-                                        $adminInfo = $adminsRepository::returnData([]);
-                                        $admin['user_unique'] = []; // 正在聊天的用户
-                                        $admin['info'] = $adminInfo; // 管理员信息
-                                        $admin['admin_id'] = $adminId; // 管理员编号
-                                        $admin['connection'] = $connection; // $connection
-                                        self::$admins[$messageArr['unique']] = $admin; // 保存管理员
-                                        // 管理员登陆成功
-                                        $connection->send(json_encode(JsonExtend::success("客服验证成功", $admin['info'])->original, JSON_UNESCAPED_UNICODE));
+                                    if(!$adminLoginStatus){
+                                        $adminsRepository = new AdminsRepository(); // 实例化AdminsRepository类
+                                        $adminStatus = $adminsRepository::message($adminId); // 获取管理员信息
+                                        if($adminStatus){
+                                            $adminInfo = $adminsRepository::returnData([]);
+                                            $admin['user_unique'] = []; // 正在聊天的用户
+                                            $admin['info'] = $adminInfo; // 管理员信息
+                                            $admin['admin_id'] = $adminId; // 管理员编号
+                                            $admin['connection'] = $connection; // $connection
+                                            self::$admins[$messageArr['unique']] = $admin; // 保存管理员
+                                            self::formatDataSend($connection, self::SEND_TYPE_ADMIN_NOTICE_SUCCESS, '连接成功', []);
+                                        }else{
+                                            self::formatDataSend($connection, self::SEND_TYPE_ADMIN_NOTICE_ERROR, '连接失败', []);
+                                        }
                                     }else{
-                                        $connection->send(json_encode(JsonExtend::error("客服不存在")->original, JSON_UNESCAPED_UNICODE));
+                                        // 客服已存在重新验证
+                                        self::formatDataSend($connection, self::SEND_TYPE_CONNECT, '基本信息', compact('unique'));
                                     }
-                                }else{
-                                    $admin['info'] = array_merge($admin['info'], ['unique' => $adminLoginUnique]);
-                                    // 管理员登陆成功
-                                    $connection->send(json_encode(JsonExtend::success("客服验证成功", $admin['info'])->original, JSON_UNESCAPED_UNICODE));
                                 }
+                            }else{ // 验证失败
+                                self::formatDataSend($connection, self::SEND_TYPE_ADMIN_NOTICE_ERROR, '连接失败', []);
                             }
-                        }else{ // 验证失败
-                            $connection->send(json_encode(JsonExtend::error("客服验证失败")->original, JSON_UNESCAPED_UNICODE));
+                        }catch (\Exception $exception){
+                            self::formatDataSend($connection, self::SEND_TYPE_ADMIN_NOTICE_ERROR, '连接失败', []);
                         }
                     }else{
-                        $connection->send(json_encode(JsonExtend::error("非法请求")->original, JSON_UNESCAPED_UNICODE));
+                        self::formatDataSend($connection, self::SEND_TYPE_ADMIN_NOTICE_ERROR, '连接失败', []);
                     }
                     break;
                 case 'chats_user': // 聊天用户
@@ -197,19 +234,19 @@ class ChatsExtend
                     if($bool){ // 添加数据库成功
                         $message  = count($adminSendData) == 1 ? "用户发送消息" : "客户消息";
                         foreach ($adminSendData as $value){
-                            $value->send(json_encode(JsonExtend::success($message, $data)->original, JSON_UNESCAPED_UNICODE));
+                            self::formatDataSend($value, self::SEND_TYPE_ADMIN_MESSAGE, $message, $data);
                         }
                         // 给客户提示发送成功
-                        $connection->send(json_encode(JsonExtend::success("发送成功", [])->original, JSON_UNESCAPED_UNICODE));
+                        self::formatDataSend($connection, self::SEND_TYPE_USER_NOTICE, '发送成功', []);
                     }else{ // 添加数据库失败
-                        $connection->send(json_encode(JsonExtend::error("发送失败")->original, JSON_UNESCAPED_UNICODE));
+                        self::formatDataSend($connection, self::SEND_TYPE_USER_NOTICE, '发送失败"', []);
                     }
                     break;
                 default:
-                    $connection->send(json_encode(JsonExtend::error("非法请求")->original, JSON_UNESCAPED_UNICODE));
+                    self::formatDataSend($connection, self::SEND_TYPE_CONNECT_NOTICE, '连接失败', []);
             }
         }else{
-            $connection->send(json_encode(JsonExtend::error("非法请求")->original, JSON_UNESCAPED_UNICODE));
+            self::formatDataSend($connection, self::SEND_TYPE_CONNECT_NOTICE, '连接失败', []);
         }
     }
 
@@ -237,7 +274,6 @@ class ChatsExtend
                 unset(self::$admins[$key]);
             }
         }
-
         // 用户退出 清除用户
         foreach (self::$users as $key=>$user){
             if($connection == $user){
@@ -255,7 +291,7 @@ class ChatsExtend
                         $data['customer'] = $admin['info']['username'];
                         $data['see'] = 1;
                         // 给管理员发送提示
-                        $admin['connection']->send(json_encode(JsonExtend::success("用户留言", $data)->original, JSON_UNESCAPED_UNICODE));
+                        self::formatDataSend($admin['connection'], self::SEND_TYPE_USER_MESSAGE, '用户留言"', $data);
                         // 删除管理员绑定的参数
                         $userKey = array_keys($admin['user_unique'], $key); // 获取用户的键值
                         unset($admin['user_unique'][$userKey[0]]); // 删除用户键值对应的元素

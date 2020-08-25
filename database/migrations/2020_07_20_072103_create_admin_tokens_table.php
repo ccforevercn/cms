@@ -28,11 +28,9 @@ class CreateAdminTokensTable extends Migration
             $table->char('username', 16)->comment('管理员账号');
             $table->integer('admin_id')->comment('管理员编号');
             $table->string('token', 512)->comment('管理员登陆token');
-            $table->char('token_encode', 32)->comment('管理员登陆token加密');
             $table->integer('start_time')->comment('管理员登陆token添加时间');
             $table->integer('stop_time')->comment('管理员登陆token过期时间');
             $table->unique('id'); // 编号 唯一索引
-            $table->unique('token_encode'); //管理员登陆token加密 唯一索引
             $table->index('admin_id'); //  管理员编号 普通索引
         });
     }
