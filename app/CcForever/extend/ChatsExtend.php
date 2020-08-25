@@ -37,6 +37,20 @@ class ChatsExtend
      */
     private static $users = [];
 
+    /**
+     * 已查看用户
+     *
+     * @var array
+     */
+    private static $speak = [];
+
+    /**
+     * 已接入用户的 唯一值
+     *
+     * @var array
+     */
+    private static $usersUnique = [];
+
     const SEND_TYPE_CONNECT = 'connect'; // 连接成功
 
     const SEND_TYPE_ADMIN_CHECK = 'admin_check'; // 管理员验证
@@ -48,6 +62,8 @@ class ChatsExtend
     const SEND_TYPE_ADMIN_NOTICE_SUCCESS = 'admin_notice_success';  // 管理员成功通知
 
     const SEND_TYPE_ADMIN_NOTICE_ERROR = 'admin_notice_error';  // 管理员鼠标通知
+
+    const SEND_TYPE_ADMIN_SHUT_USER = 'admin_shut_user'; // 未接入用户
 
     const SEND_TYPE_USER_CHECK = 'user_check'; // 用户验证
 
@@ -104,6 +120,7 @@ class ChatsExtend
     public static function onConnect($connection)
     {
         $unique = md5(implode(',', app('request')->getClientIps()).create_millisecond().mt_rand(10000, 99999));
+        self::$usersUnique[$unique] = $unique;
         self::$users[$unique] = $connection;
         self::formatDataSend($connection, self::SEND_TYPE_CONNECT, '基本信息', compact('unique'));
     }
@@ -120,7 +137,26 @@ class ChatsExtend
         $messageArr = json_decode($message, true);
         if($messageArr && array_key_exists('type', $messageArr)){ // 参数解析成功
             switch ($messageArr['type']){
-                case 'heartbeat':
+                case 'heartbeat': // 心跳和重置未接入的用户
+                    // 管理员验证   验证token和unique是否存在
+                    if(array_key_exists('token', $messageArr) && array_key_exists('unique', $messageArr) && $messageArr['unique'] !== 'undefined') {
+                        try{
+                            // 验证token
+                            auth('login')->setToken($messageArr['token']);
+                            $adminId = auth('login')->id();
+                            if($adminId){ // 管理员访问
+                                // 验证管理员是否已登陆
+                                if(array_key_exists($messageArr['unique'], self::$admins)){
+                                    // 检测未读取的用户发送给客服
+                                    $shut = array_diff(self::$usersUnique, self::$speak);
+                                    if(count($shut)){
+                                        $shut = array_values($shut);
+                                        self::formatDataSend($connection, self::SEND_TYPE_ADMIN_SHUT_USER, '未接入用户', $shut);
+                                    }
+                                }
+                            }
+                        }catch (\Exception $exception){}
+                    }
                     self::formatDataSend($connection, self::SEND_TYPE_HEARTBEAT, '心跳', []);
                     break;
                 case 'chats_admin': // 聊天管理员
@@ -131,10 +167,15 @@ class ChatsExtend
                             auth('login')->setToken($messageArr['token']);
                             $adminId = auth('login')->id();
                             if($adminId){ // 管理员访问
+                                self::$speak[$messageArr['unique']] = $messageArr['unique']; // 添加客服
+                                if(array_key_exists('newunique', $messageArr)) {
+                                    self::$speak[$messageArr['newunique']] = $messageArr['newunique']; // 添加重复客服
+                                }
                                 // 验证管理员是否已登陆
                                 if(array_key_exists($messageArr['unique'], self::$admins)){
                                     // 验证  发送内容是否存在 接收的用户是否存在
                                     if(array_key_exists('content', $messageArr) && array_key_exists('user', $messageArr)){
+                                        self::$speak[$messageArr['user']] = $messageArr['user']; // 添加已查看用户
                                         $data = []; // 发送数据
                                         $data['content'] = $messageArr['content']; // 内容
                                         $data['customer'] = self::$admins[$messageArr['unique']]['info']['username']; // 客服名称
@@ -286,6 +327,8 @@ class ChatsExtend
         foreach (self::$users as $key=>$user){
             if($connection == $user){
                 unset(self::$users[$key]);
+                unset(self::$speak[$key]);
+                unset(self::$usersUnique[$key]);
                 $data = []; // 留言记录
                 $data['content'] = "我离开了:)"; // 内容
                 $data['user'] = $key; // 用户名称
