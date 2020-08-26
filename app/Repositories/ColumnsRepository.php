@@ -79,18 +79,18 @@ class ColumnsRepository implements RepositoryInterface
         // TODO: Implement insert() method.
         $columns = [];
         $columns['name'] = array_key_exists('name', $data) ? $data['name'] : null;// 栏目名称
-        $columns['name_alias'] = array_key_exists('name_alias', $data) ? $data['name_alias'] : null;// 栏目别名
+        $columns['name_alias'] = array_key_exists('name_alias', $data) && !is_null($data['name_alias']) ? $data['name_alias'] : $columns['name'];// 栏目别名
         $columns['parent_id'] = array_key_exists('parent_id', $data) ? (int)$data['parent_id'] : null;// 栏目父级
-        $columns['image'] = array_key_exists('image', $data) ? $data['image'] : '';// 栏目图片
-        $columns['banner_image'] = array_key_exists('banner_image', $data) ? $data['banner_image'] : '';// 栏目轮播
-        $columns['keywords'] = array_key_exists('keywords', $data) ? $data['keywords'] : $columns['name'];// 栏目关键字
-        $columns['description'] = array_key_exists('description', $data) ? $data['description'] : $columns['name'];// 栏目描述
-        $columns['weight'] = array_key_exists('weight', $data) ? (int)$data['weight'] : 1;// 栏目权重
-        $columns['sort'] = array_key_exists('sort', $data) ? (int)$data['sort'] : 2;// 栏目排序
-        $columns['navigation'] = array_key_exists('navigation', $data) ? (int)$data['navigation'] : 1;// 栏目导航状态
-        $columns['render'] = array_key_exists('render', $data) ? (int)$data['render'] : 0;// 栏目渲染类型
+        $columns['image'] = array_key_exists('image', $data) && !is_null($data['image']) ? $data['image'] : '';// 栏目图片
+        $columns['banner_image'] = array_key_exists('banner_image', $data) && !is_null($data['banner_image']) ? $data['banner_image'] : '';// 栏目轮播
+        $columns['keywords'] = array_key_exists('keywords', $data) && !is_null($data['keywords']) ? $data['keywords'] : $columns['name'];// 栏目关键字
+        $columns['description'] = array_key_exists('description', $data) && !is_null($data['description']) ? $data['description'] : $columns['name'];// 栏目描述
+        $columns['weight'] = array_key_exists('weight', $data) && !is_null($data['weight']) ? (int)$data['weight'] : 1;// 栏目权重
+        $columns['sort'] = array_key_exists('sort', $data) && !is_null($data['sort']) ? (int)$data['sort'] : 2;// 栏目排序
+        $columns['navigation'] = array_key_exists('navigation', $data) && !is_null($data['navigation']) ? (int)$data['navigation'] : 1;// 栏目导航状态
+        $columns['render'] = array_key_exists('render', $data) ? (int)$data['render'] : null;// 栏目渲染类型
         $columns['page'] = array_key_exists('page', $data) ? $data['page'] : null;// 栏目页面
-        if(!check_null($columns['name'], $columns['name_alias'], $columns['parent_id'], $columns['page'])){
+        if(!check_null($columns['name'], $columns['parent_id'], $columns['render'], $columns['page'])){
             return self::setMsg('参数错误', false);
         }
         $columns['is_del'] = 0;
@@ -115,18 +115,18 @@ class ColumnsRepository implements RepositoryInterface
         }
         $columns = [];
         $columns['name'] = array_key_exists('name', $data) ? $data['name'] : null;// 栏目名称
-        $columns['name_alias'] = array_key_exists('name_alias', $data) ? $data['name_alias'] : null;// 栏目别名
+        $columns['name_alias'] = array_key_exists('name_alias', $data) && !is_null($data['name_alias']) ? $data['name_alias'] : $columns['name'];// 栏目别名
         $columns['parent_id'] = array_key_exists('parent_id', $data) ? (int)$data['parent_id'] : null;// 栏目父级
-        $columns['image'] = array_key_exists('image', $data) ? $data['image'] : '';// 栏目图片
-        $columns['banner_image'] = array_key_exists('banner_image', $data) ? $data['banner_image'] : '';// 栏目轮播
-        $columns['keywords'] = array_key_exists('keywords', $data) ? $data['keywords'] : $columns['name'];// 栏目关键字
-        $columns['description'] = array_key_exists('description', $data) ? $data['description'] : $columns['name'];// 栏目描述
-        $columns['weight'] = array_key_exists('weight', $data) ? (int)$data['weight'] : 1;// 栏目权重
-        $columns['sort'] = array_key_exists('sort', $data) ? (int)$data['sort'] : 2;// 栏目排序
-        $columns['navigation'] = array_key_exists('navigation', $data) ? (int)$data['navigation'] : 1;// 栏目导航状态
-        $columns['render'] = array_key_exists('render', $data) ? (int)$data['render'] : 0;// 栏目渲染类型
+        $columns['image'] = array_key_exists('image', $data) && !is_null($data['image']) ? $data['image'] : '';// 栏目图片
+        $columns['banner_image'] = array_key_exists('banner_image', $data) && !is_null($data['banner_image']) ? $data['banner_image'] : '';// 栏目轮播
+        $columns['keywords'] = array_key_exists('keywords', $data) && !is_null($data['keywords']) ? $data['keywords'] : $columns['name'];// 栏目关键字
+        $columns['description'] = array_key_exists('description', $data) && !is_null($data['description']) ? $data['description'] : $columns['name'];// 栏目描述
+        $columns['weight'] = array_key_exists('weight', $data) && !is_null($data['weight']) ? (int)$data['weight'] : 1;// 栏目权重
+        $columns['sort'] = array_key_exists('sort', $data) && !is_null($data['sort']) ? (int)$data['sort'] : 2;// 栏目排序
+        $columns['navigation'] = array_key_exists('navigation', $data) && !is_null($data['navigation']) ? (int)$data['navigation'] : 1;// 栏目导航状态
+        $columns['render'] = array_key_exists('render', $data) ? (int)$data['render'] : null;// 栏目渲染类型
         $columns['page'] = array_key_exists('page', $data) ? $data['page'] : null;// 栏目页面
-        if(!check_null($columns['name'], $columns['name_alias'], $columns['parent_id'], $columns['page'])){
+        if(!check_null($columns['name'], $columns['parent_id'], $columns['render'], $columns['page'])){
             return self::setMsg('参数错误', false);
         }
         $message = self::$model::base_array('message', $id, array_keys($columns), []);
@@ -203,7 +203,6 @@ class ColumnsRepository implements RepositoryInterface
     public static function columns(): bool
     {
         $columns = self::$model::base_array('equal', [], ['id', 'name'], []);
-        $status = (bool)count($columns);
-        return self::setMsg($status ? '栏目视图列表' : '获取失败', $status, $columns);
+        return self::setMsg('栏目视图列表', true, $columns);
     }
 }
