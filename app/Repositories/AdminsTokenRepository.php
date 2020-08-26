@@ -51,6 +51,6 @@ class AdminsTokenRepository
             return self::setMsg('参数错误', false);
         }
         $status = self::$model::login($username, $token, $admin_id, $start_time, $stop_time);
-        return self::setMsg("登陆成功", $status);
+        return self::setMsg($status ? '登陆成功' : '登陆失败', $status);
     }
 }
