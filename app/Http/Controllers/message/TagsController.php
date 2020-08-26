@@ -120,4 +120,19 @@ class TagsController extends  BaseController
         return JsonExtend::error($tagsRepository::returnMsg('数据不存在'));
     }
 
+    /**
+     * 标签列表(全部)
+     *
+     * @param TagsRepository $tagsRepository
+     * @return object
+     */
+    public function tags(TagsRepository $tagsRepository):object
+    {
+        $bool = $tagsRepository::tags();
+        if($bool){
+            return JsonExtend::success($tagsRepository::returnMsg('标签列表(全部)'), $tagsRepository::returnData([]));
+        }
+        return JsonExtend::error($tagsRepository::returnMsg('标签列表(全部)'));
+    }
+
 }

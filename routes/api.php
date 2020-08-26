@@ -61,6 +61,7 @@ Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
             Route::post('/tags/update', 'TagsController@update')->name('tagsupdate'.$admin);// 标签修改
             Route::post('/tags/delete', 'TagsController@delete')->name('tagsdelete'.$admin);// 标签删除
             Route::get('/tags/message', 'TagsController@message')->name('tagsmessage'.$admin);// 标签信息
+            Route::get('/tags/tags', 'TagsController@tags')->name('tagstags'.$admin);// 标签列表(全部)
             Route::get('/views/list', 'ViewsController@lst')->name('viewslist'.$admin);// 视图列表
             Route::post('/views/insert', 'ViewsController@insert')->name('viewsinsert'.$admin);// 视图添加
             Route::post('/views/update', 'ViewsController@update')->name('viewsupdate'.$admin);// 视图修改

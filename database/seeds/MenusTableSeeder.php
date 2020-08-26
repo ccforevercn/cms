@@ -1005,6 +1005,18 @@ class MenusTableSeeder extends Seeder
                 'add_time' => time(),
                 'sort' => 1,
             ],
+            [
+                'id' => 83,
+                'name' => '标签列表(全部)',
+                'parent_id' => 17,
+                'routes' => '/tags/tags',
+                'page' => '',
+                'icon' => '',
+                'menu' => 0,
+                'is_del' => 0,
+                'add_time' => time(),
+                'sort' => 1,
+            ],
         ]);
     }
 }

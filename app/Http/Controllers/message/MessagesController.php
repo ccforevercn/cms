@@ -43,7 +43,7 @@ class MessagesController extends BaseController
         if($result){ $list = $messagesRepository::returnData($list); }
         $result = $messagesRepository::count($where);
         if($result){ list($count) = $messagesRepository::returnData([0]); }
-        return JsonExtend::success('栏目列表', compact('list', 'count'));
+        return JsonExtend::success('信息列表', compact('list', 'count'));
     }
 
     /**
