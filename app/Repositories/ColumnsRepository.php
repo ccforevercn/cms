@@ -194,4 +194,16 @@ class ColumnsRepository implements RepositoryInterface
         $status = (bool)count($viewsColumns);
         return self::setMsg($status ? '栏目视图列表' : '获取失败', $status, $viewsColumns);
     }
+
+    /**
+     * 栏目列表(全部)
+     *
+     * @return bool
+     */
+    public static function columns(): bool
+    {
+        $columns = self::$model::base_array('equal', [], ['id', 'name'], []);
+        $status = (bool)count($columns);
+        return self::setMsg($status ? '栏目视图列表' : '获取失败', $status, $columns);
+    }
 }

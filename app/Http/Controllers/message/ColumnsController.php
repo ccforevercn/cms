@@ -155,4 +155,19 @@ class ColumnsController extends BaseController
         }
         return JsonExtend::error($columnsRepository::returnMsg('栏目视图列表'));
     }
+
+    /**
+     * 栏目列表(全部)
+     *
+     * @param ColumnsRepository $columnsRepository
+     * @return object
+     */
+    public function columns(ColumnsRepository $columnsRepository): object
+    {
+        $bool = $columnsRepository::columns();
+        if($bool){
+            return JsonExtend::success($columnsRepository::returnMsg('栏目视图列表'), $columnsRepository::returnData([]));
+        }
+        return JsonExtend::error($columnsRepository::returnMsg('栏目视图列表'));
+    }
 }
