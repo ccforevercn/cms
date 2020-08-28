@@ -245,6 +245,9 @@ class MessagesRepository implements RepositoryInterface
             if($check){
                 $returnData = self::$model::base_array('message', $id, ['content', 'markdown', 'images'], []);
             }
+            if(!count($returnData)){
+                $returnData = ['content' => '', 'markdown' => '', 'images' => ''];
+            }
         }else{ // 添加/修改
             $messages = []; // 信息内容数据
             $messages['content'] = $content; // 信息内容
