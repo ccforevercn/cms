@@ -65,10 +65,10 @@ class MessagesRepository implements RepositoryInterface
     public static function count(array $where): bool
     {
         // TODO: Implement count() method.
-        $where['columns_id'] = array_key_exists('columns_id', $where) ? $where['columns_id'] : '';// 信息栏目是否存在
-        $where['index'] = array_key_exists('index', $where) ? $where['index'] : '';// 首页推荐
-        $where['hot'] = array_key_exists('hot', $where) ? $where['hot'] : '';// 热门推荐
-        $where['release'] = array_key_exists('release', $where) ? $where['release'] : '';// 发布状态
+        $where['columns_id'] = array_key_exists('columns_id', $where) && !is_null($where['columns_id']) ? $where['columns_id'] : '';// 信息栏目是否存在
+        $where['index'] = array_key_exists('index', $where) && !is_null($where['index']) ? $where['index'] : '';// 首页推荐
+        $where['hot'] = array_key_exists('hot', $where) && !is_null($where['hot']) ? $where['hot'] : '';// 热门推荐
+        $where['release'] = array_key_exists('release', $where) && !is_null($where['release']) ? $where['release'] : '';// 发布状态
         $count = self::$model::count($where);// 信息总数
         return self::setMsg('信息总数', true, [$count]);
     }
