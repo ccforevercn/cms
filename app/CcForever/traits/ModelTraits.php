@@ -205,6 +205,8 @@ trait ModelTraits
         $array = [];
         try{
             list($where, $select, $order) = $parameter;
+            // 排序为空时，默认编号升序
+            if(!count($order)){$order = ['select' => 'id', 'value' => 'DESC'];}
             switch ($function){
                 case 'message': // 信息
                     $array = self::model_handle_message($where, $select);
@@ -213,11 +215,11 @@ trait ModelTraits
                     $array = self::model_handle_pluck($where, $select, $order);
                     break;
                 case 'equal':// 获取where相同的值
-                    $array = self::model_handle_equal($where, $select);
+                    $array = self::model_handle_equal($where, $select, $order);
                     break;
                 case 'equal_in':// 获取where相同的值
                     list($field, $value) = $where;
-                    $array = self::model_handle_equal_in($field, $value, $select);
+                    $array = self::model_handle_equal_in($field, $value, $select, $order);
                     break;
                 case 'all': // 批量获取指定字段值
                     $array = self::model_handle_all($select, $order);
@@ -269,11 +271,12 @@ trait ModelTraits
      *
      * @param array $where
      * @param array $select
+     * @param array $order
      * @return array
      */
-    public static function model_handle_equal(array $where, array $select):array
+    public static function model_handle_equal(array $where, array $select, array $order):array
     {
-        $message = DB::table(self::$modelTable)->where($where)->where('is_del', 0)->select($select)->get();
+        $message = DB::table(self::$modelTable)->where($where)->where('is_del', 0)->select($select)->orderBy($order['select'], $order['value'])->get();
         $message = is_null($message) ? [] : $message->toArray();
         foreach ($message as $key=>$value){
             $message[$key] = (array)$value;
@@ -287,11 +290,12 @@ trait ModelTraits
      * @param string $field
      * @param array $value
      * @param array $select
+     * @param array $order
      * @return array
      */
-    public static function model_handle_equal_in(string $field, array $value, array $select):array
+    public static function model_handle_equal_in(string $field, array $value, array $select, array $order):array
     {
-        $message = DB::table(self::$modelTable)->whereIn($field, $value)->where('is_del', 0)->select($select)->get();
+        $message = DB::table(self::$modelTable)->whereIn($field, $value)->where('is_del', 0)->select($select)->orderBy($order['select'], $order['value'])->get();
         $message = is_null($message) ? [] : $message->toArray();
         foreach ($message as $key=>$value){
             $message[$key] = (array)$value;

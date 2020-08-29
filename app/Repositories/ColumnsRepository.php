@@ -205,4 +205,43 @@ class ColumnsRepository implements RepositoryInterface
         $columns = self::$model::base_array('equal', [], ['id', 'name'], []);
         return self::setMsg('栏目视图列表', true, $columns);
     }
+
+    /**
+     * 导航
+     *
+     * @return array
+     */
+    public static function navigation(): array
+    {
+        $order = [];
+        $order['select'] = 'weight';
+        $order['value'] = 'ASC';
+        $columns = self::$model::base_array('equal', ['navigation' => '1'], ['id', 'name', 'name_alias', 'parent_id'], $order);
+        $formatNavigation =  self::formatNavigation($columns, 0);
+        return $formatNavigation;
+    }
+
+
+    /**
+     * 格式化导航
+     *
+     * @param array $columnsList
+     * @param int $parentId
+     * @return array
+     */
+    private static function formatNavigation(array $columnsList, int $parentId): array
+    {
+        $columnsFormatList = [];
+        foreach($columnsList as &$item){
+            $data = [];
+            if($item['parent_id'] == $parentId){
+                $data['id'] = $item['id'];
+                $data['name'] = $item['name'];
+                $data['name_alias'] = $item['name_alias'];
+                $data['children'] = self::formatNavigation($columnsList,$item['id']);
+                $columnsFormatList[] = $data;
+            }
+        }
+        return $columnsFormatList;
+    }
 }

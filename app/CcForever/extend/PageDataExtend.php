@@ -6,6 +6,7 @@
 
 namespace App\CcForever\extend;
 
+use App\Repositories\ColumnsRepository;
 use App\Repositories\ConfigMessageRepository;
 
 /**
@@ -69,11 +70,12 @@ class PageDataExtend
         foreach ($configs as $key=>$config){
             $publicConfigs[strtolower($labelPrefix.$configs[$key]['select'])] = $configs[$key]['value'];
         }
-        dump($publicConfigs);
         // 导航
-
+        $columnsRepository = new ColumnsRepository();
+        $publicNavigation = $columnsRepository::navigation(); // 获取导航
+        dd($publicNavigation);
         // 轮播图
 
-        return compact('publicConfigs');
+        return compact('publicConfigs', 'publicNavigation');
     }
 }
