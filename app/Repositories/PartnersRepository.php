@@ -139,4 +139,17 @@ class PartnersRepository implements RepositoryInterface
         $status = self::$model::base_bool('update', $partners, $id); // 修改数据
         return self::setMsg($status ? '修改成功' : '修改失败', $status);
     }
+
+    /**
+     * 合作伙伴
+     *
+     * @return array
+     */
+    public static function partners(): array
+    {
+        $order = [];
+        $order['select'] = 'weight';
+        $order['value'] = 'ASC';
+        return self::$model::base_array('all', [], ['name', 'link', 'image', 'follow'], $order);
+    }
 }

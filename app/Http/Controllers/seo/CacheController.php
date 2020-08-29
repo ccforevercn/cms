@@ -24,7 +24,8 @@ class CacheController extends BaseController
      */
     public function index():object
     {
-        PageDataExtend::pageIndex();
+        $index = PageDataExtend::pageIndex();
+        dd($index);
 
 //        $id = 0;
 //        $string = view('index/default/index', compact('id'))->__toString();

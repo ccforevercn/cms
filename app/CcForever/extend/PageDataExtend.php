@@ -10,6 +10,7 @@ use App\Repositories\BannersRepository;
 use App\Repositories\ColumnsRepository;
 use App\Repositories\ConfigMessageRepository;
 use App\Repositories\LinksRepository;
+use App\Repositories\PartnersRepository;
 
 /**
  * 页面数据
@@ -27,14 +28,18 @@ class PageDataExtend
     public static function pageIndex(): array
     {
         // 公共配置
-        $pagePublic = self::pagePublic();
+        $public = self::pagePublic();
         // 友情链接
         $linksRepository = new LinksRepository();
         $links = $linksRepository::links();
         // 合作伙伴
+        $partnersRepository = new PartnersRepository();
+        $partners = $partnersRepository::partners();
         // 分站
-
-        dd($pagePublic, $links);
+        $substation = [];
+        // 导航编号
+        $navigationId = 0;
+        return compact('public', 'links', 'partners', 'substation', 'navigationId');
     }
 
     /**
