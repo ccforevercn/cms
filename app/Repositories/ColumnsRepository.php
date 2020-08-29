@@ -216,7 +216,7 @@ class ColumnsRepository implements RepositoryInterface
         $order = [];
         $order['select'] = 'weight';
         $order['value'] = 'ASC';
-        $columns = self::$model::base_array('equal', ['navigation' => '1'], ['id', 'name', 'name_alias', 'parent_id'], $order);
+        $columns = self::$model::base_array('equal', ['navigation' => '1'], ['id', 'name', 'name_alias', 'parent_id', 'render', 'page'], $order);
         $formatNavigation =  self::formatNavigation($columns, 0);
         return $formatNavigation;
     }
@@ -237,6 +237,13 @@ class ColumnsRepository implements RepositoryInterface
             if($item['parent_id'] == $parentId){
                 $data['id'] = $item['id'];
                 $data['name'] = $item['name'];
+                if($item['render']){
+                    // 超链
+                    $data['url'] = $item['page'];
+                }else{
+                    // 页面
+                    $data['url'] = $item['page'].'/'.$item['id'].'html';
+                }
                 $data['name_alias'] = $item['name_alias'];
                 $data['children'] = self::formatNavigation($columnsList,$item['id']);
                 $columnsFormatList[] = $data;

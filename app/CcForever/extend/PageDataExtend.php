@@ -76,7 +76,7 @@ class PageDataExtend
         // 公共配置
         $configMessageRepository = new ConfigMessageRepository();
         // 获取公共配置
-        $configList = $configMessageRepository::batch(['webname', 'website']);
+        $configList = $configMessageRepository::batch(['webname', 'website', 'weblogopc']);
         // 获取公共配置前缀
         $labelPrefixBool = $configMessageRepository::config('label_prefix');
         $labelPrefix = ''; // 公共配置前缀
