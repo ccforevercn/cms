@@ -6,6 +6,7 @@
 
 namespace App\CcForever\extend;
 
+use App\Repositories\BannersRepository;
 use App\Repositories\ColumnsRepository;
 use App\Repositories\ConfigMessageRepository;
 
@@ -24,7 +25,12 @@ class PageDataExtend
      */
     public static function pageIndex(): array
     {
-        self::pagePublic();
+        // 公共配置
+       $pagePublic = self::pagePublic();
+        dd($pagePublic);
+       // 友情链接
+        // 合作伙伴
+        // 分站
     }
 
     /**
@@ -61,21 +67,21 @@ class PageDataExtend
         // 公共配置
         $configMessageRepository = new ConfigMessageRepository();
         // 获取公共配置
-        $configs = $configMessageRepository::batch(['webname', 'website']);
+        $configList = $configMessageRepository::batch(['webname', 'website']);
         // 获取公共配置前缀
         $labelPrefixBool = $configMessageRepository::config('label_prefix');
         $labelPrefix = ''; // 公共配置前缀
         if($labelPrefixBool) list($labelPrefix) = $configMessageRepository::returnData(['']);
-        $publicConfigs = []; // 公共配置
-        foreach ($configs as $key=>$config){
-            $publicConfigs[strtolower($labelPrefix.$configs[$key]['select'])] = $configs[$key]['value'];
+        $configs = []; // 配置
+        foreach ($configList as &$config){
+            $configs[strtolower($labelPrefix.$config['select'])] = $config['value'];
         }
         // 导航
         $columnsRepository = new ColumnsRepository();
-        $publicNavigation = $columnsRepository::navigation(); // 获取导航
-        dd($publicNavigation);
+        $navigation = $columnsRepository::navigation(); // 获取导航
         // 轮播图
-
-        return compact('publicConfigs', 'publicNavigation');
+        $bannersRepository = new BannersRepository();
+        $banners = $bannersRepository::banners(1);
+        return compact('configs', 'navigation', 'banners');
     }
 }

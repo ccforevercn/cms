@@ -129,11 +129,7 @@ class BannersController extends BaseController
     public function banners(BannersRequest $bannersRequest, BannersRepository $bannersRepository): object
     {
         $type = (int)$bannersRequest->input('type', 0);
-        $bool = $bannersRepository::banners($type);
-        if($bool){
-            return JsonExtend::success($bannersRepository::returnMsg('轮播图'), $bannersRepository::returnData([]));
-        }
-        return JsonExtend::error($bannersRepository::returnMsg('数据不存在'));
-
+        $banners = $bannersRepository::banners($type);
+        return JsonExtend::success('轮播图', $banners);
     }
 }

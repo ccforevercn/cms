@@ -140,23 +140,19 @@ class BannersRepository implements RepositoryInterface
     }
 
     /**
-     * 轮播图
+     * 轮播图  $type 1 PC 2 WAP
      *
      * @param int $type
-     * @return bool
+     * @return array
      */
-    public static function banners(int $type): bool
+    public static function banners(int $type): array
     {
-        if(!in_array($type, self::$model::GetType())){
-            return self::setMsg('轮播图类型错误', false);
-        }
+        if(!in_array($type, self::$model::GetType())){ return []; }
         $where = [];
         $where['type'] = $type;
         $order = [];
         $order['select'] = 'weight';
         $order['value'] = 'ASC';
-        $banners = self::$model::base_array('all', $where, ['name', 'image', 'link'], $order);
-        $status = (bool)count($banners);
-        return self::setMsg($status ? '轮播图' : '获取失败', $status, $banners);
+        return self::$model::base_array('all', $where, ['name', 'image', 'link'], $order);
     }
 }
