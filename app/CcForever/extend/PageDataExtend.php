@@ -9,6 +9,7 @@ namespace App\CcForever\extend;
 use App\Repositories\BannersRepository;
 use App\Repositories\ColumnsRepository;
 use App\Repositories\ConfigMessageRepository;
+use App\Repositories\LinksRepository;
 
 /**
  * 页面数据
@@ -26,11 +27,14 @@ class PageDataExtend
     public static function pageIndex(): array
     {
         // 公共配置
-       $pagePublic = self::pagePublic();
-        dd($pagePublic);
-       // 友情链接
+        $pagePublic = self::pagePublic();
+        // 友情链接
+        $linksRepository = new LinksRepository();
+        $links = $linksRepository::links();
         // 合作伙伴
         // 分站
+
+        dd($pagePublic, $links);
     }
 
     /**

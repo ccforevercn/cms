@@ -140,4 +140,17 @@ class LinksRepository implements RepositoryInterface
         $status = self::$model::base_bool('update', $links, $id); // 修改数据
         return self::setMsg($status ? '修改成功' : '修改失败', $status);
     }
+
+    /**
+     * 友情链接
+     *
+     * @return array
+     */
+    public static function links(): array
+    {
+        $order = [];
+        $order['select'] = 'weight';
+        $order['value'] = 'ASC';
+        return self::$model::base_array('all', [], ['name', 'link', 'image', 'follow'], $order);
+    }
 }
