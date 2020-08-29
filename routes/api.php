@@ -105,6 +105,7 @@ Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
             Route::post('/partners/update', 'PartnersController@update')->name('partnersupdate'.$admin);// 合作伙伴修改
             Route::post('/partners/delete', 'PartnersController@delete')->name('partnersdelete'.$admin);// 合作伙伴删除
             Route::get('/partners/message', 'PartnersController@message')->name('partnersmessage'.$admin);// 合作伙伴信息
+            Route::get('/cache/index', 'CacheController@index')->name('cacheindex'.$admin);// 缓存首页
 
         });
         Route::namespace('upload')->group(function () use($admin) { // 上传文件路由组

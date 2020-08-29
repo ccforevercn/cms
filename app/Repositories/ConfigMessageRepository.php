@@ -234,4 +234,17 @@ class ConfigMessageRepository implements RepositoryInterface
         }
         return self::setMsg($select.'配置信息', true, [$value]);
     }
+
+    /**
+     * 获取批量配置
+     *
+     * @param array $select
+     * @return array
+     */
+    public static function batch(array $select): array
+    {
+        // 配置为空
+        if(!count($select)){ return []; }
+        return self::$model::base_array('equal_in', ['select', $select], ['select', 'value'], []);
+    }
 }

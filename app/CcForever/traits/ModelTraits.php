@@ -215,6 +215,10 @@ trait ModelTraits
                 case 'equal':// 获取where相同的值
                     $array = self::model_handle_equal($where, $select);
                     break;
+                case 'equal_in':// 获取where相同的值
+                    list($field, $value) = $where;
+                    $array = self::model_handle_equal_in($field, $value, $select);
+                    break;
                 case 'all': // 批量获取指定字段值
                     $array = self::model_handle_all($select, $order);
                     break;
@@ -261,7 +265,8 @@ trait ModelTraits
     }
 
     /**
-     * 相同值
+     * 相同值(单个)
+     *
      * @param array $where
      * @param array $select
      * @return array
@@ -275,6 +280,25 @@ trait ModelTraits
         }
         return $message;
     }
+
+    /**
+     * 相同值(多个)
+     *
+     * @param string $field
+     * @param array $value
+     * @param array $select
+     * @return array
+     */
+    public static function model_handle_equal_in(string $field, array $value, array $select):array
+    {
+        $message = DB::table(self::$modelTable)->whereIn($field, $value)->where('is_del', 0)->select($select)->get();
+        $message = is_null($message) ? [] : $message->toArray();
+        foreach ($message as $key=>$value){
+            $message[$key] = (array)$value;
+        }
+        return $message;
+    }
+
 
     /**
      * 批量获取指定字段值

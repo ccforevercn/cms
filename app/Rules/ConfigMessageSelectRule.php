@@ -51,13 +51,13 @@ class ConfigMessageSelectRule implements Rule
             $ascii = ord($item); // 获取每个字符串的ascii值
             switch ($ascii){
                 // 0-9的阿拉伯数字字符
-                case $ascii >= 48 && $ascii <= 57:
-                    $status = true;
-                    break;
+//                case $ascii >= 48 && $ascii <= 57:
+//                    $status = true;
+//                    break;
                 // A-Z英文字母字符
-                case $ascii >= 65 && $ascii <= 90:
-                    $status = true;
-                    break;
+//                case $ascii >= 65 && $ascii <= 90:
+//                    $status = true;
+//                    break;
                 // _ 下划线字符
                 case $ascii === 95: // _
                     $status = true;
@@ -82,6 +82,6 @@ class ConfigMessageSelectRule implements Rule
      */
     public function message()
     {
-        return '唯一值[' . $this->value . ']格数错误，格式为：0-9、A-Z、a-z、下划线字符(_)';
+        return '唯一值[' . $this->value . ']格数错误，格式为：a-z、下划线字符(_)';
     }
 }
