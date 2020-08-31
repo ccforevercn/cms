@@ -87,7 +87,7 @@ trait ModelTraits
                     // ...
                 default:;
             }
-        }catch (\Exception $exception){ }
+        }catch (\Exception $exception){ dd(encode_change($exception->getMessage(), 'utf-8')); }
         return $bool;
     }
 

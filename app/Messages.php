@@ -231,4 +231,55 @@ class Messages extends BaseModel implements ModelInterface
         }
         return $tags;
     }
+
+    /**
+     * 信息列表
+     *
+     * @param array $columnId
+     * @param array $order
+     * @param int $offset
+     * @param int $limit
+     * @param int $type
+     * @return array
+     */
+    public static function messages(array $columnId, array $order, int $offset, int $limit, int $type): array
+    {
+        $select[] = Columns::GetAlias().'name as cname';
+        $select[] = Columns::GetAlias().'name_alias as cname_alias';
+        $select[] = Columns::GetAlias().'id as cid';
+        $select[] = self::GetAlias().'name';
+        $select[] = self::GetAlias().'id';
+        $select[] = self::GetAlias().'image';
+        $select[] = self::GetAlias().'writer';
+        $select[] = self::GetAlias().'click';
+        $select[] = self::GetAlias().'keywords';
+        $select[] = self::GetAlias().'unique';
+        $select[] = self::GetAlias().'description';
+        $select[] = self::GetAlias().'update_time';
+        $select[] = self::GetAlias().'page';
+        $model = new self;
+        $model = $model->select($select);
+        // 栏目表
+        $model = $model->leftJoin(Columns::GetAlias(true), self::GetAlias().'columns_id', '=', Columns::GetAlias().'id');
+        $model = $model->where(self::GetAlias().'is_del', 0);
+        $model = $model->whereIn(self::GetAlias().'columns_id', $columnId);
+        switch ($type){
+            case 1:
+                $model = $model->where(self::GetAlias().'index', 1);
+                break;
+            case 2:
+                $model = $model->where(self::GetAlias().'hot', 1);
+                break;
+            default:;
+        }
+        $model = $model->offset($offset);
+        $model = $model->limit($limit);
+        $model = $model->orderBy(self::GetAlias().$order['select'], $order['value']);
+        return $model->get()->each(function ($item){
+            $tags = array_map(function ($tag){
+                return $tag['tname'];
+            }, self::tags($item->unique));
+            $item['tag'] = implode(',', $tags);
+        })->toArray();
+    }
 }

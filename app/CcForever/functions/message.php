@@ -44,3 +44,15 @@ if(!function_exists('exceptions_message')){
         return $errorMessage;
     }
 }
+
+if (! function_exists('page_suffix_message')){
+    /**
+     * 页面后缀
+     *
+     * @return string
+     */
+    function page_suffix_message(): string
+    {
+        return config('ccforever.suffix.page');
+    }
+}

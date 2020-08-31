@@ -292,4 +292,41 @@ class ColumnsRepository implements RepositoryInterface
         $columns = self::$model::base_array('equal_in', ['id', $ids], self::$model::GetMessage(), $order);
         return self::setMsg('栏目列表', (bool)count($columns), $columns);
     }
+
+    /**
+     * 栏目子集+
+     *
+     * @param int $id
+     * @return bool
+     */
+    public static function subsets(int $id): bool
+    {
+        $check = self::$model::base_bool('check', [], $id); // 验证编号
+        if(!$check){ return self::setMsg('参数错误', false); }
+        $order['select'] = 'weight';
+        $order['value'] = 'ASC';
+        $columns = self::$model::base_array('equal', [], self::$model::GetMessage(), $order);
+        $subsets = self::formatSubsets($columns, $id, []);
+        return self::setMsg('栏目列表', (bool)count($subsets), $subsets);
+    }
+
+    /**
+     * 格式化栏目子集+
+     *
+     * @param array $columns
+     * @param int $parentId
+     * @param array $subsets
+     * @return array
+     */
+    private static function formatSubsets(array $columns, int $parentId, array $subsets): array
+    {
+        foreach ($columns as $column){
+            if($parentId == $column['parent_id']){
+                $subsets[] = $column;
+                self::formatSubsets($columns, $column['id'], $subsets);
+            }
+        }
+        return $subsets;
+    }
+
 }

@@ -128,3 +128,49 @@ if(!function_exists('format_config_message_type_value')){
         return $format;
     }
 }
+
+if(!function_exists('check_message_order')){
+
+    /**
+     * 验证信息排序
+     *
+     * @param int $type
+     * @return array
+     */
+    function check_message_order(int $type): array
+    {
+        // 0 默认编号倒叙 1 修改时间升序 2 修改时间倒叙 3 权重升序 4 权重倒叙 5 点击量升序 6 点击量降序
+        $order = [];
+        switch ($type) {
+            case 1:
+                $order['select'] = 'update_time';
+                $order['value'] = 'ASC';
+                break;
+            case 2:
+                $order['select'] = 'update_time';
+                $order['value'] = 'DESC';
+                break;
+            case 3:
+                $order['select'] = 'weight';
+                $order['value'] = 'ASC';
+                break;
+            case 4:
+                $order['select'] = 'weight';
+                $order['value'] = 'DESC';
+                break;
+            case 5:
+                $order['select'] = 'click';
+                $order['value'] = 'ASC';
+                break;
+            case 6:
+                $order['select'] = 'click';
+                $order['value'] = 'DESC';
+                break;
+            case 0:
+            default:
+                $order['select'] = 'id';
+                $order['value'] = 'DESC';
+        }
+        return $order;
+    }
+}

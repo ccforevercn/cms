@@ -53,7 +53,7 @@ class ColumnsExtend
             $result['url'] = $column['page'];
         }else{
             // 页面
-            $result['url'] = $column['page'].'/'.$column['id'].config('ccforever.suffix.page');
+            $result['url'] = $column['page'].'/'.$column['id'].page_suffix_message();
         }
         return $result;
     }
@@ -89,7 +89,7 @@ class ColumnsExtend
                 $result[$key]['url'] = $column['page'];
             }else{
                 // 页面
-                $result[$key]['url'] = $column['page'].'/'.$column['id'].config('ccforever.suffix.page');
+                $result[$key]['url'] = $column['page'].'/'.$column['id'].page_suffix_message();
             }
         }
         return $result;
@@ -126,7 +126,7 @@ class ColumnsExtend
                 $result[$key]['url'] = $column['page'];
             }else{
                 // 页面
-                $result[$key]['url'] = $column['page'].'/'.$column['id'].config('ccforever.suffix.page');
+                $result[$key]['url'] = $column['page'].'/'.$column['id'].page_suffix_message();
             }
         }
         return $result;
