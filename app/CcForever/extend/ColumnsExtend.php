@@ -94,4 +94,41 @@ class ColumnsExtend
         }
         return $result;
     }
+
+    /**
+     * 栏目列表
+     *
+     * $ids 指定栏目编号
+     *
+     * @param array $ids
+     * @return array
+     */
+    public static function appointed(array $ids): array
+    {
+        $result = [];
+        // 指定的栏目编号为空
+        if(!count($ids)) return $result;
+        $columnsRepository = new ColumnsRepository();
+        $bool = $columnsRepository::appointed($ids);
+        // 栏目为空时
+        if(!$bool){ return $result; }
+        $columns = $columnsRepository::returnData([]);
+        foreach ($columns as $key=>&$column){
+            $result[$key]['unique'] = $column['id'];
+            $result[$key]['name'] = $column['name'];
+            $result[$key]['name_alias'] = $column['name_alias'];
+            $result[$key]['image'] = $column['image'];
+            $result[$key]['banner_image'] = $column['banner_image'];
+            $result[$key]['keywords'] = $column['keywords'];
+            $result[$key]['description'] = $column['description'];
+            if($column['render']){
+                // 外链
+                $result[$key]['url'] = $column['page'];
+            }else{
+                // 页面
+                $result[$key]['url'] = $column['page'].'/'.$column['id'].config('ccforever.suffix.page');
+            }
+        }
+        return $result;
+    }
 }

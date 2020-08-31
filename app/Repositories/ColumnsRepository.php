@@ -275,4 +275,21 @@ class ColumnsRepository implements RepositoryInterface
         }
         return self::setMsg('栏目列表', (bool)count($columns), $columns);
     }
+
+    /**
+     * 栏目列表
+     *
+     * $ids 指定栏目编号
+     *
+     * @param array $ids
+     * @return bool
+     */
+    public static function appointed(array $ids): bool
+    {
+        $order = [];
+        $order['select'] = 'weight';
+        $order['value'] = 'ASC';
+        $columns = self::$model::base_array('equal_in', ['id', $ids], self::$model::GetMessage(), $order);
+        return self::setMsg('栏目列表', (bool)count($columns), $columns);
+    }
 }
