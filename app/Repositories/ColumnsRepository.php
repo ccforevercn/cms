@@ -245,7 +245,7 @@ class ColumnsRepository implements RepositoryInterface
                     $data['url'] = $item['page'];
                 }else{
                     // 页面
-                    $data['url'] = $item['page'].'/'.$item['id'].'html';
+                    $data['url'] = $item['page'].'/'.$item['id'].page_suffix_message();
                 }
                 $data['name_alias'] = $item['name_alias'];
                 $data['children'] = self::formatNavigation($columnsList,$item['id']);
