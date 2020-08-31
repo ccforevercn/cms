@@ -62,7 +62,7 @@ class ColumnsExtend
      * 栏目子集
      *
      * $id  父级栏目
-     * $limit  栏目子集条数
+     * $limit  栏目子集条数  0 为全部
      *
      * @param int $id
      * @param int $limit
@@ -71,7 +71,6 @@ class ColumnsExtend
     public static function children(int $id, int $limit): array
     {
         $result = [];
-        if($limit < 1) return $result;
         $columnsRepository = new ColumnsRepository();
         $bool = $columnsRepository::children($id, $limit);
         if(!$bool) return $result;

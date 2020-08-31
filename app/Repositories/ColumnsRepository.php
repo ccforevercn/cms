@@ -270,7 +270,7 @@ class ColumnsRepository implements RepositoryInterface
         $order['select'] = 'weight';
         $order['value'] = 'ASC';
         $columns = self::$model::base_array('equal', ['parent_id' => $id], self::$model::GetMessage(), $order);
-        if(count($columns) > $limit){
+        if($limit && count($columns) > $limit){
             return self::setMsg('栏目列表', true, array_slice($columns, 0, $limit, true));
         }
         return self::setMsg('栏目列表', (bool)count($columns), $columns);

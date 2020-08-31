@@ -52,7 +52,17 @@ class PageDataExtend
      */
     public static function pageColumns(int $id, int $page, int $limit): array
     {
-
+        // 公共配置
+        $public = self::pagePublic();
+        // 获取栏目信息
+        $column = ColumnsExtend::column($id, true);
+        // 子栏目信息
+        $children  = ColumnsExtend::children($id, 0);
+        // 栏目文章
+        $offset = page_to_offset($page, $limit); // 获取起始值
+        $messages = MessagesExtend::messages($id, true, $offset, $limit, 3);
+        $navigationId = $id;
+        return compact('public', 'column', 'children', 'messages', 'navigationId');
     }
 
     /**
