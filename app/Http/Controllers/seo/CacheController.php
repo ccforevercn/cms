@@ -7,9 +7,7 @@
 namespace App\Http\Controllers\seo;
 
 use App\CcForever\controller\BaseController;
-use App\CcForever\extend\ColumnsExtend;
 use App\CcForever\extend\JsonExtend;
-use App\CcForever\extend\MessagesExtend;
 use App\CcForever\extend\PageDataExtend;
 
 /**
