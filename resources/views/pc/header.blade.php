@@ -61,24 +61,26 @@
 <div class="v2_banner">
     <div id="slidershow" class="carousel slide">
         <ol class="carousel-indicators">
-            <li class="active" data-target="#slidershow" data-slide-to="0"></li>
-            <li class="" data-target="#slidershow" data-slide-to="1"></li>
-            <li class="" data-target="#slidershow" data-slide-to="2"></li>
+            @foreach($public['banners'] as $banner)
+                @if($loop->first)
+                    <li class="active" data-target="#slidershow" data-slide-to="{{ $loop->index }}"></li>
+                @else
+                    <li class="" data-target="#slidershow" data-slide-to="{{ $loop->index }}"></li>
+                @endif
+            @endforeach
         </ol>
         <div class="carousel-inner">
             @foreach($public['banners'] as $banner)
                 @if($loop->first)
-                    <div class="item">
-                        <a href="{{ $banner['link'] }}" title="{{ $banner['name'] }}"><img src="{{ $banner['image'] }}" alt="{{ $banner['name'] }}" /></a>
+                    <div class="item active">
+                        <a href="{{ $banner['link'] }}" title="{{ $banner['name'] }}"><img src="{{ $banner['image'] }}" alt="{{ $banner['name'] }}" width="100%" /></a>
                     </div>
                 @else
-                    <div class="item active">
-                        <a href="{{ $banner['link'] }}" title="{{ $banner['name'] }}"><img src="{{ $banner['image'] }}" alt="{{ $banner['name'] }}" /></a>
+                    <div class="item">
+                        <a href="{{ $banner['link'] }}" title="{{ $banner['name'] }}"><img src="{{ $banner['image'] }}" alt="{{ $banner['name'] }}" width="100%" /></a>
                     </div>
                 @endif
             @endforeach
         </div>
-        <a class="left carousel-control" href="javascript:void(0);" role="button"> <span class="glyphicon glyphicon-chevron-left"></span> </a>
-        <a class="right carousel-control" href="javascript:void(0);" role="button"> <span class="glyphicon glyphicon-chevron-right"></span> </a>
     </div>
 </div>

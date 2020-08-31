@@ -153,6 +153,6 @@ class BannersRepository implements RepositoryInterface
         $order = [];
         $order['select'] = 'weight';
         $order['value'] = 'ASC';
-        return self::$model::base_array('all', $where, ['name', 'image', 'link'], $order);
+        return self::$model::base_array('equal', $where, ['name', 'image', 'link'], $order);
     }
 }
