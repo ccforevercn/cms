@@ -158,6 +158,9 @@ class ColumnsRepository implements RepositoryInterface
             if($check){
                 $returnData = self::$model::base_array('message', $id, ['content', 'markdown'], []);
             }
+            if(!count($returnData)){
+                $returnData = ['content' => '', 'markdown' => ''];
+            }
         }else{ // 添加/修改
             $columns = []; // 栏目内容数据
             $columns['content'] = $content; // 栏目内容
@@ -250,5 +253,26 @@ class ColumnsRepository implements RepositoryInterface
             }
         }
         return $columnsFormatList;
+    }
+
+    /**
+     * 子栏目列表
+     *
+     * @param int $id
+     * @param int $limit
+     * @return bool
+     */
+    public static function children(int $id, int $limit): bool
+    {
+        $check = self::$model::base_bool('check', [], $id); // 验证编号
+        if(!$check){ return self::setMsg('参数错误', false); }
+        $order = [];
+        $order['select'] = 'weight';
+        $order['value'] = 'ASC';
+        $columns = self::$model::base_array('equal', ['parent_id' => $id], self::$model::GetMessage(), $order);
+        if(count($columns) > $limit){
+            return self::setMsg('栏目列表', true, array_slice($columns, 0, $limit, true));
+        }
+        return self::setMsg('栏目列表', (bool)count($columns), $columns);
     }
 }

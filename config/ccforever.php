@@ -8,5 +8,8 @@ return [
     'prefix' => [
         'admin' => env('ADMIN_PREFIX', 'ccforever'),
         'label' => env('LABEL_PREFIX', 'cc_cms')
+    ],
+    'suffix' => [
+        'page' => env('PAGE_SUFFIX', '.html'),
     ]
 ];
