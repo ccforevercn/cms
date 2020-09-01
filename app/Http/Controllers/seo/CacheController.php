@@ -50,19 +50,49 @@ class CacheController extends BaseController
         $limit = (int)app('request')->input('limit', 10);
         // 栏目编号为0 缓存所有栏目页面
         if($id > 0){
+            // 缓存单个栏目
             $columns = PageDataExtend::pageColumns($id, $page, $limit);
             // 栏目存在
             if(count($columns['column'])){
-                $page = explode('/', $columns['column']['url'])[0];
-                $path = 'pc/'.$page;// 需要生成的页面地址
-                $string = view($path, $columns)->__toString(); // 获取生成后的页面字符串
-                $page = $columns['column']['url']; // 生成后的页面地址
-                if(file_put_contents($page, $string)){
-                    return JsonExtend::success('缓存成功', compact('path'));
+                // 获取栏目模板文件
+                $pages = explode('/', $columns['column']['url']);
+                $sourcePath = 'pc/'; // 源文件
+                $resourcesPath = ''; // 生成后的文件
+                $fileName = ''; // 生成后的文件名
+                foreach ($pages as $key=>&$page){
+                    if((int)$key !== (int)bcsub(count($pages), 1, 0)){
+                        // 获取文件目录
+                        $sourcePath .= $page.'/';
+                        $resourcesPath .= $page.'/';
+                        if(!is_dir($resourcesPath)){
+                            mkdir($resourcesPath, 0755);
+                        }
+                    }else{
+                        // 获取文件名称
+                        $fileName = $page;
+                    }
                 }
+
+                // 截取源文件后面/
+                $sourcePath = substr($sourcePath, 0 , bcsub(strlen($sourcePath), 1, 0));
+                // 获取生成后的页面字符串
+                $string = view($sourcePath, $columns)->__toString();
+                // 生成静态文件
+                // 打开文件，如果没有就创建
+                $file = fopen($resourcesPath.$fileName, 'w+');
+                // 写入页面
+                fwrite($file, $string);
+                // 关闭文件
+                fclose($file);
+                return JsonExtend::success('缓存成功', compact('path'));
             }
+            return JsonExtend::error('栏目不存在');
+        }else{
+            // 全部栏目缓存
+
+
+            return JsonExtend::error('栏目不存在');
         }
-        dd($id);
     }
 
     /**
