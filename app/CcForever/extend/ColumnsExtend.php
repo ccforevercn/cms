@@ -39,7 +39,14 @@ class ColumnsExtend
             // 获取栏目内容
             $bool = $columnsRepository::content(['type' => true, 'id' => $id, 'content' => ''] , true);
             $result['content'] = '';
-            if($bool){ $result['content'] = $columnsRepository::returnData([])['content']; }
+            if($bool){
+                // 获取栏目内容
+                $result['content'] = $columnsRepository::returnData([])['content'];
+                // 获取域名
+                $url = config('app.url');
+                // 替换域名信息
+                $result['content'] = str_replace($url.'/upload', '/upload', $result['content']);
+            }
         }
         $result['unique'] = $column['id'];
         $result['name'] = $column['name'];
