@@ -47,6 +47,7 @@ class ColumnsExtend
         $result['image'] = $column['image'];
         $result['banner_image'] = $column['banner_image'];
         $result['keywords'] = $column['keywords'];
+        $result['parent_id'] = $column['parent_id'];
         $result['limit'] = $column['limit'];
         $result['render'] = $column['render'];
         $result['description'] = $column['description'];
@@ -55,7 +56,7 @@ class ColumnsExtend
             $result['url'] = $column['page'];
         }else{
             // 页面
-            $result['url'] = $column['page'].'/'.$column['id'].page_suffix_message();
+            $result['url'] = '/'.$column['page'].'/'.$column['id'].page_suffix_message();
         }
         return $result;
     }
@@ -90,7 +91,7 @@ class ColumnsExtend
                 $result[$key]['url'] = $column['page'];
             }else{
                 // 页面
-                $result[$key]['url'] = $column['page'].'/'.$column['id'].page_suffix_message();
+                $result[$key]['url'] = '/'.$column['page'].'/'.$column['id'].page_suffix_message();
             }
         }
         return $result;

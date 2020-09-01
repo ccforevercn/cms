@@ -11,5 +11,8 @@ return [
     ],
     'suffix' => [
         'page' => env('PAGE_SUFFIX', '.html'),
+    ],
+    'config' => [
+        'unique_list' => env('CONFIG_UNIQUE_LIST', 'webname,website'),
     ]
 ];

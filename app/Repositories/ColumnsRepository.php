@@ -247,7 +247,7 @@ class ColumnsRepository implements RepositoryInterface
                     $data['url'] = $item['page'];
                 }else{
                     // 页面
-                    $data['url'] = $item['page'].'/'.$item['id'].page_suffix_message();
+                    $data['url'] = '/'.$item['page'].'/'.$item['id'].page_suffix_message();
                 }
                 $data['name_alias'] = $item['name_alias'];
                 $data['children'] = self::formatNavigation($columnsList,$item['id']);
@@ -342,5 +342,38 @@ class ColumnsRepository implements RepositoryInterface
         $order['select'] = 'weight';
         $order['value'] = 'ASC';
         return self::$model::base_array('pluck', ['render', [0]], ['id'], $order);
+    }
+
+    /**
+     * 顶级栏目编号
+     *
+     * @param int $id
+     * @return int
+     */
+    public static function topColumnId(int $id): int
+    {
+        $check = self::$model::base_bool('check', [], $id); // 验证编号
+        if(!$check){ return $id; }
+        $order['select'] = 'weight';
+        $order['value'] = 'ASC';
+        $columns = self::$model::base_array('equal', [], ['id', 'parent_id'], $order);
+        return self::formatTopColumnId($columns, $id);
+    }
+
+    /**
+     * 格式化顶级栏目编号
+     *
+     * @param array $columns
+     * @param int $parentId
+     * @return int
+     */
+    public static function formatTopColumnId(array $columns, int $parentId): int
+    {
+        foreach ($columns as &$column){
+            if($column['id'] === $parentId){
+                if(!$column['parent_id']) { return $parentId;}
+                return self::formatTopColumnId($columns, $column['parent_id']);
+            }
+        }
     }
 }

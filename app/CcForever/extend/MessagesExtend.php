@@ -69,7 +69,7 @@ class MessagesExtend
             $result[$key]['update_time'] = $message['update_time'];
             $result[$key]['time'] = date('Y-m-d H:i', $message['update_time']);
             $result[$key]['tag'] = $message['tag'];
-            $result[$key]['url'] = $message['page'].'/'.$message['id'].page_suffix_message();
+            $result[$key]['url'] = '/'.$message['page'].'/'.$message['id'].page_suffix_message();
         }
         return $result;
     }

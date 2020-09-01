@@ -55,8 +55,6 @@ class PageDataExtend
         $public = self::pagePublic();
         // 当前导航编号
         $navigationId = $id;
-        // 子栏目
-        $children = [];
         // 信息列表
         $messages = [];
         // 返回数据
@@ -65,8 +63,17 @@ class PageDataExtend
         $column = ColumnsExtend::column($id, true);
         // 栏目存在时
         if(count($column) && !$column['render']){
-            // 子栏目信息
-            $children  = ColumnsExtend::children($id, 0);
+            // 获取当前栏目的顶级栏目
+            $columnTop = $column;
+            if($column['parent_id']){
+                // 当前栏目非顶级栏目时重置顶级栏目数据
+                $columnsRepository = new ColumnsRepository();
+                $topId = $columnsRepository::topColumnId($id);
+                $navigationId = $topId;
+                $columnTop = ColumnsExtend::column($topId, true);
+            }
+            // 当前栏目的顶级栏目的子栏目信息
+            $children  = ColumnsExtend::children($columnTop['unique'], 0);
             // 获取 栏目排序和下级编号+
             $columnsMessagesOrderAndLoopIds = ColumnsExtend::columnsMessagesOrderAndLoopIds($id ,true);
             // 获取每页条数
@@ -97,7 +104,7 @@ class PageDataExtend
                     return $result;
                 }
             }
-            $result[] = compact('public', 'column', 'children', 'messages', 'navigationId');
+            $result[] = compact('public', 'column', 'columnTop', 'children', 'messages', 'navigationId');
         }
         return $result;
     }
@@ -123,7 +130,7 @@ class PageDataExtend
         // 公共配置
         $configMessageRepository = new ConfigMessageRepository();
         // 获取公共配置
-        $configList = $configMessageRepository::batch(['webname', 'website', 'weblogopc']);
+        $configList = $configMessageRepository::batch(explode(',', config('ccforever.config.unique_list')));
         // 获取公共配置前缀
         $labelPrefixBool = $configMessageRepository::config('label_prefix');
         $labelPrefix = ''; // 公共配置前缀
