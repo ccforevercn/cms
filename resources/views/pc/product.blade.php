@@ -50,7 +50,7 @@
                          <li class="col-xs-4"><em>点击量</em><span>{{ $message['click'] }}</span></li>
                          <li class="col-xs-4"><em>时间</em><span>{{ $message['time'] }}</span></li>
                      </ol>
-                     <p class="v2-mt15 v2-lc"><i>●</i>{{ $message['description'] }}</p>
+                     <p class="v2-mt15 v2-lc"><i>●</i>{{ get_str_cn_str($message['description'], 0, 20, true, '...') }}</p>
                      <a href="{{ $message['url'] }}" title="{{ $message['name'] }}" class="v2-mt15" target="_self">查看详情<i class="glyphicon glyphicon-menu-right"></i></a>
                  </div>
              </li>
