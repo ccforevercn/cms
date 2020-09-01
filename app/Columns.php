@@ -30,14 +30,14 @@ class Columns extends BaseModel implements ModelInterface
      *
      * @var array
      */
-    private static $select = ['id', 'name', 'name_alias', 'parent_id', 'image', 'banner_image', 'keywords', 'description', 'weight', 'sort', 'navigation', 'render', 'page', 'add_time', 'is_del'];
+    private static $select = ['id', 'name', 'name_alias', 'parent_id', 'image', 'banner_image', 'keywords', 'description', 'weight', 'limit', 'sort', 'navigation', 'render', 'page', 'add_time', 'is_del'];
 
     /**
      * 基本信息
      *
      * @var array
      */
-    private static $message = ['id', 'name', 'name_alias', 'parent_id', 'image', 'banner_image', 'keywords', 'description', 'weight', 'sort', 'navigation', 'render', 'page', 'add_time'];
+    private static $message = ['id', 'name', 'name_alias', 'parent_id', 'image', 'banner_image', 'keywords', 'description', 'weight', 'limit', 'sort', 'navigation', 'render', 'page', 'add_time'];
 
     /**
      * 编号查询 唯一索引

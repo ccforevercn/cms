@@ -59,7 +59,12 @@ class PageDataExtend
         // 子栏目信息
         $children  = ColumnsExtend::children($id, 0);
         // 栏目文章
+        $page = $page < 1 ? 1: $page;
         $offset = page_to_offset($page, $limit); // 获取起始值
+        if($page > 1){
+            // 页数大于1时修改页面地址
+            $column['url'] =  str_replace(page_suffix_message(),'', $column['url']).'-'.$page.page_suffix_message();
+        }
         $messages = MessagesExtend::messages($id, true, $offset, $limit, 3);
         $navigationId = $id;
         return compact('public', 'column', 'children', 'messages', 'navigationId');

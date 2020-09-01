@@ -46,11 +46,12 @@ class CacheController extends BaseController
     {
         // 获取栏目编号
         $id = (int)app('request')->input('id', 0);
-        $page = (int)app('request')->input('page', 1);
-        $limit = (int)app('request')->input('limit', 10);
         // 栏目编号为0 缓存所有栏目页面
         if($id > 0){
             // 缓存单个栏目
+            $page = 10; // 分页数据
+            $limit = 10; // 分页条数  上级栏目
+            // 获取栏目编号
             $columns = PageDataExtend::pageColumns($id, $page, $limit);
             // 栏目存在
             if(count($columns['column'])){
@@ -72,7 +73,6 @@ class CacheController extends BaseController
                         $fileName = $page;
                     }
                 }
-
                 // 截取源文件后面/
                 $sourcePath = substr($sourcePath, 0 , bcsub(strlen($sourcePath), 1, 0));
                 // 获取生成后的页面字符串
@@ -84,11 +84,16 @@ class CacheController extends BaseController
                 fwrite($file, $string);
                 // 关闭文件
                 fclose($file);
-                return JsonExtend::success('缓存成功', compact('path'));
+                return JsonExtend::success('缓存成功', ['path' => $resourcesPath.$fileName]);
             }
             return JsonExtend::error('栏目不存在');
         }else{
             // 全部栏目缓存
+            dd($id);
+
+            // 获取页面栏目
+
+            // 循环缓存栏目
 
 
             return JsonExtend::error('栏目不存在');
