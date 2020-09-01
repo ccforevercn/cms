@@ -322,7 +322,7 @@ class MenusRepository implements RepositoryInterface
                 $menusIds[] = $menu['mid'];
             }
             // 获取当前管理员菜单列表信息
-            $menusList = self::$model::base_array('pluck', $menusIds, ['id', 'parent_id', 'name'], $order);
+            $menusList = self::$model::base_array('pluck', ['id', $menusIds], ['id', 'parent_id', 'name'], $order);
             $status = (bool)count($menusList);
             return self::setMsg($status ? '菜单列表' : '获取失败', $status, $menusList);
         }

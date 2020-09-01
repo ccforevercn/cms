@@ -10,6 +10,7 @@ use App\Repositories\BannersRepository;
 use App\Repositories\ColumnsRepository;
 use App\Repositories\ConfigMessageRepository;
 use App\Repositories\LinksRepository;
+use App\Repositories\MessagesRepository;
 use App\Repositories\PartnersRepository;
 
 /**
@@ -46,28 +47,59 @@ class PageDataExtend
      * 栏目
      *
      * @param int $id
-     * @param int $page
-     * @param int $limit
      * @return array
      */
-    public static function pageColumns(int $id, int $page, int $limit): array
+    public static function pageColumns(int $id): array
     {
         // 公共配置
         $public = self::pagePublic();
+        // 当前导航编号
+        $navigationId = $id;
+        // 子栏目
+        $children = [];
+        // 信息列表
+        $messages = [];
+        // 返回数据
+        $result = [];
         // 获取栏目信息
         $column = ColumnsExtend::column($id, true);
-        // 子栏目信息
-        $children  = ColumnsExtend::children($id, 0);
-        // 栏目文章
-        $page = $page < 1 ? 1: $page;
-        $offset = page_to_offset($page, $limit); // 获取起始值
-        if($page > 1){
-            // 页数大于1时修改页面地址
-            $column['url'] =  str_replace(page_suffix_message(),'', $column['url']).'-'.$page.page_suffix_message();
+        // 栏目存在时
+        if(count($column) && !$column['render']){
+            // 子栏目信息
+            $children  = ColumnsExtend::children($id, 0);
+            // 获取 栏目排序和下级编号+
+            $columnsMessagesOrderAndLoopIds = ColumnsExtend::columnsMessagesOrderAndLoopIds($id ,true);
+            // 获取每页条数
+            $limit = $column['limit'];
+            if($limit){  // limit不为0时分页处理
+                // 信息类型 1 首页推荐 2 热门推荐 3 所有
+                $messagesType = 3;
+                // 实例化MessagesRepository
+                $messagesRepository = new MessagesRepository();
+                // 获取信息总条数
+                $messagesCount = $messagesRepository::messagesCount($columnsMessagesOrderAndLoopIds['columnIds'], $messagesType);
+                // 计算信息总页数
+                $countPage = (int)ceil(floatval(bcdiv($messagesCount, $limit, 2)));
+                if($countPage){
+                    $url = $column['url'];
+                    for ($page = 1; $page <= $countPage; $page++){
+                        // 获取起始值
+                        $offset = page_to_offset($page, $limit);
+                        // 信息页数大于1时
+                        if($page > 1){
+                            // 页数大于1时修改页面地址
+                            $column['url'] =  str_replace(page_suffix_message(),'', $url).'-'.$page.page_suffix_message();
+                        }
+                        // 栏目文章
+                        $messages = MessagesExtend::messageList($columnsMessagesOrderAndLoopIds['columnIds'], $columnsMessagesOrderAndLoopIds['order'], $offset, $limit, $messagesType);
+                        $result[] = compact('public', 'column', 'children', 'messages', 'navigationId');
+                    }
+                    return $result;
+                }
+            }
+            $result[] = compact('public', 'column', 'children', 'messages', 'navigationId');
         }
-        $messages = MessagesExtend::messages($id, true, $offset, $limit, 3);
-        $navigationId = $id;
-        return compact('public', 'column', 'children', 'messages', 'navigationId');
+        return $result;
     }
 
     /**

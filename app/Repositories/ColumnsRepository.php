@@ -299,17 +299,17 @@ class ColumnsRepository implements RepositoryInterface
      * 栏目子集+
      *
      * @param int $id
-     * @return bool
+     * @return array
      */
-    public static function subsets(int $id): bool
+    public static function subsets(int $id): array
     {
         $check = self::$model::base_bool('check', [], $id); // 验证编号
-        if(!$check){ return self::setMsg('参数错误', false); }
+        if(!$check){ return []; }
         $order['select'] = 'weight';
         $order['value'] = 'ASC';
         $columns = self::$model::base_array('equal', [], self::$model::GetMessage(), $order);
         $subsets = self::formatSubsets($columns, $id, []);
-        return self::setMsg('栏目列表', (bool)count($subsets), $subsets);
+        return $subsets;
     }
 
     /**
@@ -331,4 +331,16 @@ class ColumnsRepository implements RepositoryInterface
         return $subsets;
     }
 
+    /**
+     * 栏目编号(渲染类型为页面)
+     *
+     * @return array
+     */
+    public static function pageColumnsIds(): array
+    {
+        $order = [];
+        $order['select'] = 'weight';
+        $order['value'] = 'ASC';
+        return self::$model::base_array('pluck', ['render', [0]], ['id'], $order);
+    }
 }

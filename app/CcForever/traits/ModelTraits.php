@@ -212,7 +212,8 @@ trait ModelTraits
                     $array = self::model_handle_message($where, $select);
                     break;
                 case 'pluck': // 批量获取一列值
-                    $array = self::model_handle_pluck($where, $select, $order);
+                    list($field, $value) = $where;
+                    $array = self::model_handle_pluck($field, $value, $select, $order);
                     break;
                 case 'equal':// 获取where相同的值
                     $array = self::model_handle_equal($where, $select, $order);
@@ -247,17 +248,18 @@ trait ModelTraits
     /**
      * 列值
      *
+     * @param string $field
      * @param array $values
      * @param array $select
      * @param array $order
      * @return array
      */
-    public static function model_handle_pluck(array $values, array $select, array $order): array
+    public static function model_handle_pluck(string $field, array $values, array $select, array $order): array
     {
         if(count($select) === 1){
-            $message = DB::table(self::$modelTable)->whereIn('id', $values)->where('is_del', 0)->pluck($select[0])->toArray();
+            $message = DB::table(self::$modelTable)->whereIn($field, $values)->where('is_del', 0)->pluck($select[0])->toArray();
         }else{
-            $message = DB::table(self::$modelTable)->whereIn('id', $values)->where('is_del', 0)->select($select)->orderBy($order['select'], $order['value'])->get();
+            $message = DB::table(self::$modelTable)->whereIn($field, $values)->where('is_del', 0)->select($select)->orderBy($order['select'], $order['value'])->get();
             $message = is_null($message) ? [] : $message->toArray();
             foreach ($message as $key=>$value){
                 $message[$key] = (array)$value;

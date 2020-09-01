@@ -235,14 +235,14 @@ class Messages extends BaseModel implements ModelInterface
     /**
      * 信息列表
      *
-     * @param array $columnId
+     * @param array $columnIds
      * @param array $order
      * @param int $offset
      * @param int $limit
      * @param int $type
      * @return array
      */
-    public static function messages(array $columnId, array $order, int $offset, int $limit, int $type): array
+    public static function messages(array $columnIds, array $order, int $offset, int $limit, int $type): array
     {
         $select[] = Columns::GetAlias().'name as cname';
         $select[] = Columns::GetAlias().'name_alias as cname_alias';
@@ -262,7 +262,7 @@ class Messages extends BaseModel implements ModelInterface
         // 栏目表
         $model = $model->leftJoin(Columns::GetAlias(true), self::GetAlias().'columns_id', '=', Columns::GetAlias().'id');
         $model = $model->where(self::GetAlias().'is_del', 0);
-        $model = $model->whereIn(self::GetAlias().'columns_id', $columnId);
+        $model = $model->whereIn(self::GetAlias().'columns_id', $columnIds);
         switch ($type){
             case 1:
                 $model = $model->where(self::GetAlias().'index', 1);
@@ -281,5 +281,29 @@ class Messages extends BaseModel implements ModelInterface
             }, self::tags($item->unique));
             $item['tag'] = implode(',', $tags);
         })->toArray();
+    }
+
+    /**
+     * 信息列表 总数
+     *
+     * @param array $columnIds
+     * @param int $type
+     * @return int
+     */
+    public static function messagesCount(array $columnIds, int $type): int
+    {
+        $model = new self;
+        $model = $model->where(self::GetAlias().'is_del', 0);
+        $model = $model->whereIn(self::GetAlias().'columns_id', $columnIds);
+        switch ($type){
+            case 1:
+                $model = $model->where(self::GetAlias().'index', 1);
+                break;
+            case 2:
+                $model = $model->where(self::GetAlias().'hot', 1);
+                break;
+            default:;
+        }
+        return $model->count();
     }
 }

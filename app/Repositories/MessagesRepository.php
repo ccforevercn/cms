@@ -375,4 +375,15 @@ class MessagesRepository implements RepositoryInterface
         $messages = self::$model::messages($columnIds, $order, $offset, $limit, $type);
         return self::setMsg('信息列表', (bool)count($messages), $messages);
     }
+
+    /**
+     * 信息列表总数
+     * @param array $columnIds
+     * @param int $type
+     * @return int
+     */
+    public static function messagesCount(array $columnIds, int $type): int
+    {
+        return self::$model::messagesCount($columnIds, $type);
+    }
 }

@@ -6,7 +6,6 @@
 
 namespace App\CcForever\extend;
 
-use App\Repositories\ColumnsRepository;
 use App\Repositories\MessagesRepository;
 
 /**
@@ -18,13 +17,7 @@ use App\Repositories\MessagesRepository;
 class MessagesExtend
 {
     /**
-     * 信息列表
-     *
-     * $columnId 栏目编号
-     * $loop false 当前栏目信息  true 当前栏目和下级+ 栏目信息
-     * $offset 信息记录起始值
-     * $limit 信息记录长度
-     * $type 信息类型 1 首页推荐  2 热门推荐  3 全部
+     * 信息列表(直接获取)
      *
      * @param int $columnId
      * @param bool $loop
@@ -35,32 +28,31 @@ class MessagesExtend
      */
     public static function messages(int $columnId, bool $loop, int $offset, int $limit, int $type): array
     {
+        $columnsMessagesOrderAndLoopIds = ColumnsExtend::columnsMessagesOrderAndLoopIds($columnId, $loop);
+        if(!count($columnsMessagesOrderAndLoopIds)) return [];
+        $messages = MessagesExtend::messageList($columnsMessagesOrderAndLoopIds['columnIds'], $columnsMessagesOrderAndLoopIds['order'], $offset, $limit, $type);
+        return $messages;
+    }
+
+    /**
+     * 信息列表(调用需获取栏目排序和栏目编号)
+     *
+     * $columnId 栏目编号
+     * $order 排序方式
+     * $offset 信息记录起始值
+     * $limit 信息记录长度
+     * $type 信息类型 1 首页推荐  2 热门推荐  3 全部
+     *
+     * @param array $columnIds
+     * @param array $order
+     * @param int $offset
+     * @param int $limit
+     * @param int $type
+     * @return array
+     */
+    public static function messageList(array $columnIds, array $order, int $offset, int $limit, int $type): array
+    {
         $result = [];
-        // 栏目编号
-        $columnIds = [$columnId];
-        // 判断栏目是否存在 并 获取排序方式
-        $columnsRepository = new ColumnsRepository();
-        // 获取栏目
-        $bool = $columnsRepository::message($columnId);
-        // 栏目不存在
-        if(!$bool) return $result;
-        // 栏目信息
-        $column = $columnsRepository::returnData([]);
-        // 获取排序方式
-        $order = check_message_order($column['sort']);
-        // 下级栏目+ 编号
-        if($loop){
-            $bool  = $columnsRepository::subsets($columnId);
-            if($bool){
-                // 子集存在
-                // 获取子集信息
-                $subsets = $columnsRepository::returnData([]);
-                // 合并子集编号和栏目编号
-                $columnIds = array_merge($columnIds, array_map(function ($item){
-                    return $item['id'];
-                }, $subsets));
-            }
-        }
         $messagesRepository = new MessagesRepository();
         $bool = $messagesRepository::messages($columnIds, $order, $offset, $limit, $type);
         if(!$bool) return $result;

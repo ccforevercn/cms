@@ -47,6 +47,8 @@ class ColumnsExtend
         $result['image'] = $column['image'];
         $result['banner_image'] = $column['banner_image'];
         $result['keywords'] = $column['keywords'];
+        $result['limit'] = $column['limit'];
+        $result['render'] = $column['render'];
         $result['description'] = $column['description'];
         if($column['render']){
             // 外链
@@ -129,5 +131,37 @@ class ColumnsExtend
             }
         }
         return $result;
+    }
+
+    /**
+     * 栏目排序和下级编号+
+     *
+     * @param int $id
+     * @param bool $loop
+     * @return array
+     */
+    public static function columnsMessagesOrderAndLoopIds(int $id, bool $loop): array
+    {
+        // 栏目编号
+        $columnIds = [$id];
+        // 实例化ColumnsRepository
+        $columnsRepository = new ColumnsRepository();
+        // 栏目信息
+        $bool = $columnsRepository::message($id);
+        // 栏目不存在
+        if(!$bool) return [];
+        // 获取栏目信息
+        $column = $columnsRepository::returnData([]);
+        // 获取排序方式
+        $order = check_message_order($column['sort']);
+        if($loop){
+            // 获取子集信息
+            $subsets = $columnsRepository::subsets($id);
+            // 合并子集编号和栏目编号
+            $columnIds = array_merge($columnIds, array_map(function ($item){
+                return $item['id'];
+            }, $subsets));
+        }
+        return compact('order', 'columnIds');
     }
 }
