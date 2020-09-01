@@ -86,6 +86,7 @@ class ColumnsRepository implements RepositoryInterface
         $columns['keywords'] = array_key_exists('keywords', $data) && !is_null($data['keywords']) ? $data['keywords'] : $columns['name'];// 栏目关键字
         $columns['description'] = array_key_exists('description', $data) && !is_null($data['description']) ? $data['description'] : $columns['name'];// 栏目描述
         $columns['weight'] = array_key_exists('weight', $data) && !is_null($data['weight']) ? (int)$data['weight'] : 1;// 栏目权重
+        $columns['limit'] = array_key_exists('limit', $data) && !is_null($data['limit']) ? (int)$data['limit'] : 10;// 信息每页条数
         $columns['sort'] = array_key_exists('sort', $data) && !is_null($data['sort']) ? (int)$data['sort'] : 2;// 栏目排序
         $columns['navigation'] = array_key_exists('navigation', $data) && !is_null($data['navigation']) ? (int)$data['navigation'] : 1;// 栏目导航状态
         $columns['render'] = array_key_exists('render', $data) ? (int)$data['render'] : null;// 栏目渲染类型
@@ -122,6 +123,7 @@ class ColumnsRepository implements RepositoryInterface
         $columns['keywords'] = array_key_exists('keywords', $data) && !is_null($data['keywords']) ? $data['keywords'] : $columns['name'];// 栏目关键字
         $columns['description'] = array_key_exists('description', $data) && !is_null($data['description']) ? $data['description'] : $columns['name'];// 栏目描述
         $columns['weight'] = array_key_exists('weight', $data) && !is_null($data['weight']) ? (int)$data['weight'] : 1;// 栏目权重
+        $columns['limit'] = array_key_exists('limit', $data) && !is_null($data['limit']) ? (int)$data['limit'] : 10;// 信息每页条数
         $columns['sort'] = array_key_exists('sort', $data) && !is_null($data['sort']) ? (int)$data['sort'] : 2;// 栏目排序
         $columns['navigation'] = array_key_exists('navigation', $data) && !is_null($data['navigation']) ? (int)$data['navigation'] : 1;// 栏目导航状态
         $columns['render'] = array_key_exists('render', $data) ? (int)$data['render'] : null;// 栏目渲染类型
