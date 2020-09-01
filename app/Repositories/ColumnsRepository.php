@@ -150,7 +150,7 @@ class ColumnsRepository implements RepositoryInterface
         unset($data['type']); // $type  false 添加/修改  true 查询
         $id = (int)$data['id']; // 栏目编号
         $content = $data['content']; // 栏目内容
-        $markdown = array_key_exists('markdown', $data) ? $data['markdown'] : ''; // 栏目内容
+        $markdown = array_key_exists('markdown', $data) && !is_null($data['markdown'])  ? $data['markdown'] : ''; // 栏目内容
         $returnMsg = '栏目内容'; // 返回提示
         $returnStatus = true; // 返回状态
         $returnData = []; // 返回信息

@@ -35,7 +35,7 @@ class ColumnsContentRequest extends Request
     {
         return [
             'id' => 'bail|required|integer|min:1',
-            'content' =>  'bail|required',
+            'content' =>  'bail|present',
             'markdown' =>  'bail|present',
             'type' => 'bail|required|integer|min:0|max:1',  // 0 添加/修改  1 查询
         ];
