@@ -97,8 +97,6 @@ class CacheController extends BaseController
         // 生成页面地址
         $path = [];
         // 循环缓存栏目
-
-
         for ($loop = 0; $loop < count($columnIds);  $loop++){
             // 缓存单个栏目
             $columns = PageDataExtend::pageColumns($columnIds[$loop]);

@@ -99,7 +99,7 @@ class PageDataExtend
                         }
                         // 栏目文章
                         $messages = MessagesExtend::messageList($columnsMessagesOrderAndLoopIds['columnIds'], $columnsMessagesOrderAndLoopIds['order'], $offset, $limit, $messagesType);
-                        $result[] = compact('public', 'column', 'children', 'messages', 'navigationId');
+                        $result[] = compact('public', 'column', 'columnTop', 'children', 'messages', 'navigationId');
                     }
                     return $result;
                 }
