@@ -73,4 +73,28 @@ class MessagesExtend
         }
         return $result;
     }
+
+    /**
+     * 栏目信息总页数
+     *
+     * $columnIds  栏目编号
+     * $messagesType 信息类型
+     * $limit 每页条数
+     *
+     * @param array $columnIds
+     * @param int $messagesType
+     * @param int $limit
+     * @return int
+     */
+    public static function messagesCountPage(array $columnIds, int $messagesType, int $limit): int
+    {
+        // 实例化MessagesRepository
+        $messagesRepository = new MessagesRepository();
+        // 获取信息总条数
+        $messagesCount = $messagesRepository::messagesCount($columnIds, $messagesType);
+        // 计算信息总页数
+        $countPage = (int)ceil(floatval(bcdiv($messagesCount, $limit, 2)));
+        // 总页数
+        return $countPage;
+    }
 }

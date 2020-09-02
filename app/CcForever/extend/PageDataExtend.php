@@ -10,7 +10,6 @@ use App\Repositories\BannersRepository;
 use App\Repositories\ColumnsRepository;
 use App\Repositories\ConfigMessageRepository;
 use App\Repositories\LinksRepository;
-use App\Repositories\MessagesRepository;
 use App\Repositories\PartnersRepository;
 
 /**
@@ -59,6 +58,8 @@ class PageDataExtend
         $messages = [];
         // 返回数据
         $result = [];
+        // 当前页
+        $page = 1;
         // 获取栏目信息
         $column = ColumnsExtend::column($id, true);
         // 栏目存在时
@@ -81,12 +82,8 @@ class PageDataExtend
             if($limit){  // limit不为0时分页处理
                 // 信息类型 1 首页推荐 2 热门推荐 3 所有
                 $messagesType = 3;
-                // 实例化MessagesRepository
-                $messagesRepository = new MessagesRepository();
-                // 获取信息总条数
-                $messagesCount = $messagesRepository::messagesCount($columnsMessagesOrderAndLoopIds['columnIds'], $messagesType);
-                // 计算信息总页数
-                $countPage = (int)ceil(floatval(bcdiv($messagesCount, $limit, 2)));
+                // 获取总页数
+                $countPage = MessagesExtend::messagesCountPage($columnsMessagesOrderAndLoopIds['columnIds'], $messagesType, $limit);
                 if($countPage){
                     $url = $column['url'];
                     for ($page = 1; $page <= $countPage; $page++){
@@ -99,12 +96,12 @@ class PageDataExtend
                         }
                         // 栏目文章
                         $messages = MessagesExtend::messageList($columnsMessagesOrderAndLoopIds['columnIds'], $columnsMessagesOrderAndLoopIds['order'], $offset, $limit, $messagesType);
-                        $result[] = compact('public', 'column', 'columnTop', 'children', 'messages', 'navigationId');
+                        $result[] = compact('public', 'column', 'page', 'columnTop', 'children', 'messages', 'navigationId');
                     }
                     return $result;
                 }
             }
-            $result[] = compact('public', 'column', 'columnTop', 'children', 'messages', 'navigationId');
+            $result[] = compact('public', 'column', 'columnTop', 'page', 'children', 'messages', 'navigationId');
         }
         return $result;
     }

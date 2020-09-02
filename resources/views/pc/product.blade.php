@@ -58,8 +58,8 @@
      </ul> 
      <div class="met_clear"></div> 
      <div class="met_pager">
-       第一页&nbsp;上一页&nbsp;下一页&nbsp;尾页&nbsp;8条/页&nbsp;共1页/8条&nbsp;当前第1页&nbsp; 
-     </div> 
+         @php echo \App\CcForever\extend\ColumnsExtend::page($column['unique'], $page, 3, '', '', '', '', '', true, true, true); @endphp
+     </div>
     </div> 
    </div> 
   </article> 
