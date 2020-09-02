@@ -170,7 +170,7 @@ class MenusRepository implements RepositoryInterface
         $order = []; // 排序方式
         $order['select'] = 'sort';
         $order['value'] = 'DESC';
-        $menusIdsRoutes = self::$model::base_array('pluck', $ids, ['routes'], $order);
+        $menusIdsRoutes = self::$model::base_array('pluck', ['id', $ids], ['routes'], $order);
         return $menusIdsRoutes;
     }
 
@@ -238,7 +238,7 @@ class MenusRepository implements RepositoryInterface
         $order['select'] = 'sort';
         $order['value'] = 'DESC';
         // 获取菜单列表信息
-        $menusMessageList = self::$model::base_array('pluck', $menusIds, self::$model::GetMessage(), $order);
+        $menusMessageList = self::$model::base_array('pluck', ['id', $menusIds], self::$model::GetMessage(), $order);
         $menusMessageBottomList = [];  // 菜单按钮列表
         foreach ($menusMessageList as $key=>$value){
             if($value['menu']){
