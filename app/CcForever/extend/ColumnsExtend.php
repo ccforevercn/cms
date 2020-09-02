@@ -214,6 +214,7 @@ class ColumnsExtend
         $limit = $column['limit'];
         // 当前栏目总页数
         $countPage = MessagesExtend::messagesCountPage($columnsMessagesOrderAndLoopIds['columnIds'], $messagesType, $limit);
+        if(!$countPage) return $result;
         // 当前栏目首页
         $url = $column['url'];
         $result .= '<ul class="'. $classUl .'">';
