@@ -263,6 +263,10 @@ class Messages extends BaseModel implements ModelInterface
         $model = $model->leftJoin(Columns::GetAlias(true), self::GetAlias().'columns_id', '=', Columns::GetAlias().'id');
         $model = $model->where(self::GetAlias().'is_del', 0);
         $model = $model->whereIn(self::GetAlias().'columns_id', $columnIds);
+        $model = $model->where(self::GetAlias().'release', 1);
+        $model = $model->when(self::hasTableIndex('cc_messages_columns_id_index'),function ($query){
+            $query->from(DB::raw('`'. self::GetAlias(true, true) .'` FORCE INDEX (`cc_messages_columns_id_index`)'));
+        });
         switch ($type){
             case 1:
                 $model = $model->where(self::GetAlias().'index', 1);
@@ -305,5 +309,71 @@ class Messages extends BaseModel implements ModelInterface
             default:;
         }
         return $model->count();
+    }
+
+    /**
+     * 信息数据(当前栏目下信息所有数据)
+     *
+     * @param int $columnId
+     * @return array
+     */
+    public static function messageTotal(int $columnId): array
+    {
+        $select[] = DB::raw('(select '. Columns::GetAlias(false, true).'name from '.Columns::GetAlias(true, true).' where '.Columns::GetAlias(false, true).'id = '.self::GetAlias(false, true).'columns_id)  as cname');
+        $select[] = DB::raw('(select '.Columns::GetAlias(false, true).'name_alias from '.Columns::GetAlias(true, true).' where '.Columns::GetAlias(false, true).'id = '.self::GetAlias(false, true).'columns_id)  as cname_alias');
+        $select[] = DB::raw('(select '.Columns::GetAlias(false, true).'id from '.Columns::GetAlias(true, true).' where '.Columns::GetAlias(false, true).'id = '.self::GetAlias(false, true).'columns_id) as cid');
+        $alias = self::GetAlias(false, true);
+        self::SetModelTable('messages_content');
+        $select[] = DB::raw('(select '.self::GetAlias(false, true).'content from '.self::GetAlias(true, true).' where '.self::GetAlias(false, true).'id = '.$alias.'id) as content');
+        $select[] = DB::raw('(select '.self::GetAlias(false, true).'images from '.self::GetAlias(true, true).' where '.self::GetAlias(false, true).'id = '.$alias.'id) as images');
+        self::SetModelTable('messages');
+        $select[] = self::GetAlias().'name';
+        $select[] = self::GetAlias().'id';
+        $select[] = self::GetAlias().'image';
+        $select[] = self::GetAlias().'writer';
+        $select[] = self::GetAlias().'weight';
+        $select[] = self::GetAlias().'click';
+        $select[] = self::GetAlias().'keywords';
+        $select[] = self::GetAlias().'unique';
+        $select[] = self::GetAlias().'description';
+        $select[] = self::GetAlias().'update_time';
+        $select[] = self::GetAlias().'page';
+        $model = new self;
+        $model = $model->select($select);
+        $model = $model->where(self::GetAlias().'columns_id', $columnId);
+        $model = $model->where(self::GetAlias().'is_del', 0);
+        $model = $model->where(self::GetAlias().'release', 1);
+        $model = $model->when(self::hasTableIndex('cc_messages_columns_id_index'),function ($query){
+            $query->from(DB::raw('`'. self::GetAlias(true, true) .'` FORCE INDEX (`cc_messages_columns_id_index`)'));
+        });
+        return $model->get()->each(function ($item){
+            $tags = array_map(function ($tag){
+                return $tag['tname'];
+            }, self::tags($item->unique));
+            $item['content'] = is_null($item['content']) ? '' : $item['content'];
+            $item['images'] = is_null($item['images']) ?  [] : explode(',', $item['images']);
+            $item['tag'] = implode(',', $tags);
+        })->toArray();
+    }
+
+    /**
+     * 信息(上一页和下一页)
+     *
+     * @param int $columnId
+     * @param array $order
+     * @param int $value
+     * @return array
+     */
+    public static function messageEnter(int $columnId, array $order, int $value): array
+    {
+        $model = new self;
+        $model = $model->select(self::GetAlias().'id', self::GetAlias().'name', self::GetAlias().'page');
+        $model = $model->where(self::GetAlias().'columns_id', $columnId);
+        $model = $model->where(self::GetAlias().'is_del', 0);
+        $model = $model->where(self::GetAlias().'release', 1);
+        $model = $model->where(self::GetAlias().$order['select'], $order['condition'], $value);
+        $model = $model->orderBy(self::GetAlias().$order['select'], $order['value']);
+        $model = $model->limit(1);
+        return $model->get()->toArray();
     }
 }

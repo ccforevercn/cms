@@ -140,37 +140,149 @@ if(!function_exists('check_message_order')){
     function check_message_order(int $type): array
     {
         // 0 默认编号倒叙 1 修改时间升序 2 修改时间倒叙 3 权重升序 4 权重倒叙 5 点击量升序 6 点击量降序
-        $order = [];
         switch ($type) {
             case 1:
-                $order['select'] = 'update_time';
-                $order['value'] = 'ASC';
+                $select = 'update_time';
+                $value = 'ASC';
                 break;
             case 2:
-                $order['select'] = 'update_time';
-                $order['value'] = 'DESC';
+                $select = 'update_time';
+                $value = 'DESC';
                 break;
             case 3:
-                $order['select'] = 'weight';
-                $order['value'] = 'ASC';
+                $select = 'weight';
+                $value = 'ASC';
                 break;
             case 4:
-                $order['select'] = 'weight';
-                $order['value'] = 'DESC';
+                $select = 'weight';
+                $value = 'DESC';
                 break;
             case 5:
-                $order['select'] = 'click';
-                $order['value'] = 'ASC';
+                $select = 'click';
+                $value = 'ASC';
                 break;
             case 6:
-                $order['select'] = 'click';
-                $order['value'] = 'DESC';
+                $select = 'click';
+                $value = 'DESC';
                 break;
-            case 0:
             default:
-                $order['select'] = 'id';
-                $order['value'] = 'DESC';
+            $select = 'id';
+            $value = 'DESC';
         }
-        return $order;
+        return compact('select', 'value');
+    }
+}
+
+if (!function_exists('check_message_order_pre')){
+    /**
+     * 验证信息上一条where
+     *
+     * @param int $type
+     * @return array
+     */
+    function check_message_order_pre(int $type): array
+    {
+        // 0 默认编号倒叙 1 修改时间升序 2 修改时间倒叙 3 权重升序 4 权重倒叙 5 点击量升序 6 点击量降序
+        switch ($type){
+            case 1:
+                // 修改时间升序
+                $select = 'update_time';
+                $value = 'DESC';
+                $condition = '<';
+                break;
+            case 2:
+                // 修改时间倒叙
+                $select = 'update_time';
+                $value = 'ASC';
+                $condition = '>';
+                break;
+            case 3:
+                // 权重升序
+                $select = 'weight';
+                $value = 'DESC';
+                $condition = '<';
+                break;
+            case 4:
+                // 权重倒叙
+                $select = 'weight';
+                $value = 'ASC';
+                $condition = '>';
+                break;
+            case 5:
+                // 点击量升序
+                $select = 'click';
+                $value = 'DESC';
+                $condition = '<';
+                break;
+            case 6:
+                // 点击量降序
+                $select = 'click';
+                $value = 'ASC';
+                $condition = '>';
+                break;
+            default:
+                $select = 'id';
+                $value = 'DESC';
+                $condition = '<';
+                break;
+        }
+        return compact('select', 'value', 'condition');
+    }
+}
+
+if(!function_exists('check_message_order_next')){
+    /**
+     * 验证信息下一条where
+     *
+     * @param int $type
+     * @return array
+     */
+    function check_message_order_next(int $type): array
+    {
+        // 0 默认编号倒叙 1 修改时间升序 2 修改时间倒叙 3 权重升序 4 权重倒叙 5 点击量升序 6 点击量降序
+        switch ($type){
+            case 1:
+                // 修改时间升序
+                $select = 'update_time';
+                $value = 'ASC';
+                $condition = '>';
+                break;
+            case 2:
+                // 修改时间倒叙
+                $select = 'update_time';
+                $value = 'DESC';
+                $condition = '<';
+                break;
+            case 3:
+                // 权重升序
+                $select = 'weight';
+                $value = 'ASC';
+                $condition = '>';
+                break;
+            case 4:
+                // 权重倒叙
+                $select = 'weight';
+                $value = 'DESC';
+                $condition = '<';
+                break;
+            case 5:
+                // 点击量升序
+                $select = 'click';
+                $value = 'ASC';
+                $condition = '>';
+                break;
+            case 6:
+                // 点击量降序
+                $select = 'click';
+                $value = 'DESC';
+                $condition = '<';
+                break;
+            default:
+                $select = 'id';
+                $value = 'DESC';
+                $condition = '<';
+                break;
+        }
+        return compact('select', 'value', 'condition');
     }
 }

@@ -7,6 +7,7 @@
 namespace App\CcForever\traits;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 trait ModelTraits
 {
@@ -53,6 +54,18 @@ trait ModelTraits
     }
 
     /**
+     * 验证索引是否存在
+     *
+     * @param $name
+     * @return bool
+     */
+    protected static function hasTableIndex($name): bool
+    {
+        $doctrineTable = Schema::getConnection()->getDoctrineSchemaManager()->listTableDetails(self::GetAlias(true, true));
+        return $doctrineTable->hasIndex($name);
+    }
+
+    /**
      * bool返回值的操作
      *
      * @param string $function
@@ -87,7 +100,7 @@ trait ModelTraits
                     // ...
                 default:;
             }
-        }catch (\Exception $exception){ dd(encode_change($exception->getMessage(), 'utf-8')); }
+        }catch (\Exception $exception){}
         return $bool;
     }
 

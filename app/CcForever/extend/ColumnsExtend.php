@@ -57,6 +57,7 @@ class ColumnsExtend
         $result['parent_id'] = $column['parent_id'];
         $result['limit'] = $column['limit'];
         $result['render'] = $column['render'];
+        $result['sort'] = $column['sort'];
         $result['description'] = $column['description'];
         if($column['render']){
             // 外链

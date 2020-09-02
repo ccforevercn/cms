@@ -107,6 +107,7 @@ Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
             Route::get('/partners/message', 'PartnersController@message')->name('partnersmessage'.$admin);// 合作伙伴信息
             Route::get('/cache/index', 'CacheController@index')->name('cacheindex'.$admin);// 缓存首页
             Route::get('/cache/columns', 'CacheController@columns')->name('cachecolumns'.$admin);// 缓存栏目
+            Route::get('/cache/message', 'CacheController@message')->name('cachemessage'.$admin);// 缓存信息
 
         });
         Route::namespace('upload')->group(function () use($admin) { // 上传文件路由组

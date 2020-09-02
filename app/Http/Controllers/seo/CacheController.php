@@ -57,36 +57,7 @@ class CacheController extends BaseController
             if(!count($columns)){ return JsonExtend::error('栏目不存在'); }
             // 栏目存在
             foreach ($columns as &$column){
-                // 获取栏目模板文件
-                $pages = explode('/', $column['column']['url']);
-                $sourcePath = 'pc/'; // 源文件
-                $resourcesPath = ''; // 生成后的文件
-                $fileName = ''; // 生成后的文件名
-                foreach ($pages as $key=>&$page){
-                    if((int)$key !== (int)bcsub(count($pages), 1, 0)){
-                        // 获取文件目录
-                        $sourcePath .= $page.'/';
-                        $resourcesPath .= $page.'/';
-                        if(!is_dir($resourcesPath)){
-                            mkdir($resourcesPath, 0755);
-                        }
-                    }else{
-                        // 获取文件名称
-                        $fileName = $page;
-                    }
-                }
-                // 截取源文件后面/
-                $sourcePath = substr($sourcePath, 0 , bcsub(strlen($sourcePath), 1, 0));
-                // 获取生成后的页面字符串
-                $string = view($sourcePath, $column)->__toString();
-                // 生成静态文件
-                // 打开文件，如果没有就创建
-                $file = fopen($resourcesPath.$fileName, 'w+');
-                // 写入页面
-                fwrite($file, $string);
-                // 关闭文件
-                fclose($file);
-                $path[] = $resourcesPath.$fileName;
+                $path[] = PageDataExtend::pageWrite($column, 'column');
             }
             return JsonExtend::success('缓存成功', $path);
         }
@@ -103,37 +74,7 @@ class CacheController extends BaseController
             // 栏目存在
             if(count($columns)){
                 foreach ($columns as &$column){
-                    // 获取栏目模板文件
-                    $pages = explode('/', $column['column']['url']);
-                    $pages = array_slice($pages, 1);
-                    $sourcePath = 'pc/'; // 源文件
-                    $resourcesPath = ''; // 生成后的文件
-                    $fileName = ''; // 生成后的文件名
-                    foreach ($pages as $key=>&$page){
-                        if((int)$key !== (int)bcsub(count($pages), 1, 0)){
-                            // 获取文件目录
-                            $sourcePath .= $page.'/';
-                            $resourcesPath .= $page.'/';
-                            if(!is_dir($resourcesPath)){
-                                mkdir($resourcesPath, 0755);
-                            }
-                        }else{
-                            // 获取文件名称
-                            $fileName = $page;
-                        }
-                    }
-                    // 截取源文件后面/
-                    $sourcePath = substr($sourcePath, 0 , bcsub(strlen($sourcePath), 1, 0));
-                    // 获取生成后的页面字符串
-                    $string = view($sourcePath, $column)->__toString();
-                    // 生成静态文件
-                    // 打开文件，如果没有就创建
-                    $file = fopen($resourcesPath.$fileName, 'w+');
-                    // 写入页面
-                    fwrite($file, $string);
-                    // 关闭文件
-                    fclose($file);
-                    $path[] = $resourcesPath.$fileName;
+                    $path[] = PageDataExtend::pageWrite($column, 'column');
                 }
             }
         }
@@ -144,9 +85,38 @@ class CacheController extends BaseController
      * 信息缓存
      *
      * @return object
+     * @throws \Throwable
      */
     public function message():object
     {
-
+        $id = (int)app('request')->input('id', 0);
+        // 缓存单个栏目下的信息
+        if($id > 0){
+            $messages = PageDataExtend::pageMessage($id);
+            if(!count($messages)) { return JsonExtend::error('当前栏目下暂无信息'); }
+            // 生成页面地址
+            $path = [];
+            foreach ($messages as &$message){
+                $path[] = PageDataExtend::pageWrite($message, 'message');
+            }
+            return JsonExtend::success('缓存成功', $path);
+        }
+        // 全部栏目下的信息缓存
+        $columnsRepository = new ColumnsRepository();
+        // 获取页面栏目编号
+        $columnIds = $columnsRepository::pageColumnsIds();
+        // 生成页面地址
+        $path = [];
+        // 循环缓存栏目
+        for ($loop = 0; $loop < count($columnIds);  $loop++){
+            // 缓存单个栏目下的信息
+            $messages = PageDataExtend::pageMessage($columnIds[$loop]);
+            if(count($messages)){
+                foreach ($messages as &$message){
+                    $path[] = PageDataExtend::pageWrite($message, 'message');
+                }
+            }
+        }
+        return JsonExtend::success('缓存成功', $path);
     }
 }

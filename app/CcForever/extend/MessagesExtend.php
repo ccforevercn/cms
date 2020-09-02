@@ -97,4 +97,46 @@ class MessagesExtend
         // 总页数
         return $countPage;
     }
+
+    /**
+     * 信息数据(当前栏目下信息所有数据)
+     *
+     * @param int $columnId
+     * @param int $order
+     * @return array
+     */
+    public static function message(int $columnId, int $order): array
+    {
+        $result = [];
+        // 实例化MessagesRepository
+        $messagesRepository = new MessagesRepository();
+        // 获取栏目下的信息
+        $message = $messagesRepository::messageTotal($columnId);
+        // 上一条信息条件获取
+        $preWhere = check_message_order_pre($order);
+        // 下一条信息条件获取
+        $nextWhere = check_message_order_next($order);
+        // 格式化信息
+        foreach ($message as $key=>&$item){
+            $result[$key]['id'] = $item['id'];
+            $result[$key]['name'] = $item['name'];
+            $result[$key]['cname'] = $item['cname'];
+            $result[$key]['cname_alias'] = $item['cname_alias'];
+            $result[$key]['cid'] = $item['cid'];
+            $result[$key]['content'] = $item['content'];
+            $result[$key]['images'] = $item['images'];
+            $result[$key]['image'] = $item['image'];
+            $result[$key]['writer'] = $item['writer'];
+            $result[$key]['click'] = $item['click'];
+            $result[$key]['keywords'] = $item['keywords'];
+            $result[$key]['description'] = $item['description'];
+            $result[$key]['time'] = date('Y-m-d H:i', $item['update_time']);
+            $result[$key]['url'] = '/'.$item['page'].'/'.$item['id'].page_suffix_message();
+            // 上一条获取
+            $result[$key]['pre'] = $messagesRepository::messageEnter($columnId, $preWhere, $item[$preWhere['select']]);
+            // 下一条获取
+            $result[$key]['next'] = $messagesRepository::messageEnter($columnId, $nextWhere, $item[$nextWhere['select']]);
+        }
+        return $result;
+    }
 }

@@ -114,7 +114,35 @@ class PageDataExtend
      */
     public static function pageMessage(int $id): array
     {
-
+        // 返回数据
+        $result = [];
+        // 公共配置
+        $public = self::pagePublic();
+        // 导航编号
+        $navigationId = $id;
+        // 栏目信息
+        $column = ColumnsExtend::column($id, true);
+        // 栏目不存在
+        if(!count($column)) return $result;
+        // 当前栏目下的所有文章
+        $messages = MessagesExtend::message($id, $column['sort']);
+        // 文章不存在
+        if(!count($messages)) return $result;
+        // 顶级栏目
+        $columnTop = $column;
+        if($column['parent_id']){
+            // 当前栏目非顶级栏目时重置顶级栏目数据
+            $columnsRepository = new ColumnsRepository();
+            $topId = $columnsRepository::topColumnId($id);
+            $navigationId = $topId;
+            $columnTop = ColumnsExtend::column($topId, true);
+        }
+        // 当前栏目的顶级栏目的子栏目信息
+        $children  = ColumnsExtend::children($columnTop['unique'], 0);
+        foreach ($messages as $message){
+            $result[] = compact('public', 'column', 'columnTop', 'children', 'message', 'navigationId');
+        }
+        return $result;
     }
 
     /**
@@ -143,5 +171,48 @@ class PageDataExtend
         $bannersRepository = new BannersRepository();
         $banners = $bannersRepository::banners(1);
         return compact('configs', 'navigation', 'banners');
+    }
+
+    /**
+     * 静态文件写入
+     *
+     * @param array $date
+     * @param string $key
+     * @return string
+     * @throws \Throwable
+     */
+    public static function pageWrite(array $date, string $key): string
+    {
+        // 获取栏目模板文件
+        $pages = explode('/', $date[$key]['url']);
+        $pages = array_slice($pages, 1);
+        $sourcePath = 'pc/'; // 源文件
+        $resourcesPath = ''; // 生成后的文件
+        $fileName = ''; // 生成后的文件名
+        foreach ($pages as $key=>&$page){
+            if((int)$key !== (int)bcsub(count($pages), 1, 0)){
+                // 获取文件目录
+                $sourcePath .= $page.'/';
+                $resourcesPath .= $page.'/';
+                if(!is_dir($resourcesPath)){
+                    mkdir($resourcesPath, 0755);
+                }
+            }else{
+                // 获取文件名称
+                $fileName = $page;
+            }
+        }
+        // 截取源文件后面
+        $sourcePath = substr($sourcePath, 0 , bcsub(strlen($sourcePath), 1, 0));
+        // 获取生成后的页面字符串
+        $string = view($sourcePath, $date)->__toString();
+        // 生成静态文件
+        // 打开文件，如果没有就创建
+        $file = fopen($resourcesPath.$fileName, 'w+');
+        // 写入页面
+        fwrite($file, $string);
+        // 关闭文件
+        fclose($file);
+        return $resourcesPath.$fileName;
     }
 }

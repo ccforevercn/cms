@@ -386,4 +386,29 @@ class MessagesRepository implements RepositoryInterface
     {
         return self::$model::messagesCount($columnIds, $type);
     }
+
+    /**
+     * 信息数据(当前栏目下信息所有数据)
+     *
+     * @param int $columnId
+     * @return array
+     */
+    public static function messageTotal(int $columnId): array
+    {
+        return self::$model::messageTotal($columnId);
+    }
+
+    /**
+     * 信息(上一页和下一页)
+     *
+     * @param int $columnId
+     * @param array $order
+     * @param int $value
+     * @return array
+     */
+    public static function messageEnter(int $columnId, array $order, int $value): array
+    {
+        $message = self::$model::messageEnter($columnId, $order, $value);
+        return count($message) ? $message[0] : [];
+    }
 }
