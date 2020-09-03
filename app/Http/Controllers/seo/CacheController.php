@@ -32,9 +32,15 @@ class CacheController extends BaseController
         $path = 'pc/'.$page;// 需要生成的页面地址
         $string = view($path, $index)->__toString(); // 获取生成后的页面字符串
         $page = $page.page_suffix_message(); // 生成后的页面地址
-        if(file_put_contents($page, $string)){
-            return JsonExtend::success('缓存成功', [$path]);
-        }
+        // 打开文件，并且删除之前的数据
+        $file = @fopen($page, 'w+');
+        // 打开文件失败
+        if(!$file){ return JsonExtend::error('缓存失败'); }
+        // 写入内容
+        fwrite($file, $string);
+        // 关闭文件
+        fclose($file);
+        return JsonExtend::success('缓存成功', [$path]);
     }
 
     /**

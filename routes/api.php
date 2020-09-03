@@ -108,6 +108,8 @@ Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
             Route::get('/cache/index', 'CacheController@index')->name('cacheindex'.$admin);// 缓存首页
             Route::get('/cache/columns', 'CacheController@columns')->name('cachecolumns'.$admin);// 缓存栏目
             Route::get('/cache/message', 'CacheController@message')->name('cachemessage'.$admin);// 缓存信息
+            Route::get('/robots/content', 'RobotsController@content')->name('robotscontent'.$admin);// robots内容获取
+            Route::post('/robots/update', 'RobotsController@update')->name('robotsupdate'.$admin);// robots内容修改
 
         });
         Route::namespace('upload')->group(function () use($admin) { // 上传文件路由组
