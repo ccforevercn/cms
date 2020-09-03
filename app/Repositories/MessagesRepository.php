@@ -417,4 +417,14 @@ class MessagesRepository implements RepositoryInterface
         }
         return $result;
     }
+
+    /**
+     * 信息列表(编号和页面)
+     *
+     * @return array
+     */
+    public static function siteMapMessages(): array
+    {
+        return self::$model::base_array('equal', ['release' => 1], ['id', 'page'], []);
+    }
 }

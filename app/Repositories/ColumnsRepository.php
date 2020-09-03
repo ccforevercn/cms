@@ -334,14 +334,15 @@ class ColumnsRepository implements RepositoryInterface
     /**
      * 栏目编号(渲染类型为页面)
      *
+     * @param array $select
      * @return array
      */
-    public static function pageColumnsIds(): array
+    public static function pageColumnsIds(array $select): array
     {
         $order = [];
         $order['select'] = 'weight';
         $order['value'] = 'ASC';
-        return self::$model::base_array('pluck', ['render', [0]], ['id'], $order);
+        return self::$model::base_array('pluck', ['render', [0]], $select, $order);
     }
 
     /**

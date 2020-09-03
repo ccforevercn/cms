@@ -264,7 +264,7 @@ class Messages extends BaseModel implements ModelInterface
         $model = $model->where(self::GetAlias().'is_del', 0);
         $model = $model->whereIn(self::GetAlias().'columns_id', $columnIds);
         $model = $model->where(self::GetAlias().'release', 1);
-        $model = $model->when(self::hasTableIndex('cc_messages_columns_id_index'),function ($query){
+        $model = $model->when(self::hasTableIndex(self::GetAlias(true, true).'_columns_id_index'),function ($query){
             $query->from(DB::raw('`'. self::GetAlias(true, true) .'` FORCE INDEX (`cc_messages_columns_id_index`)'));
         });
         switch ($type){
@@ -299,6 +299,10 @@ class Messages extends BaseModel implements ModelInterface
         $model = new self;
         $model = $model->where(self::GetAlias().'is_del', 0);
         $model = $model->whereIn(self::GetAlias().'columns_id', $columnIds);
+        $model = $model->where(self::GetAlias().'release', 1);
+        $model = $model->when(self::hasTableIndex(self::GetAlias(true, true).'_columns_id_index'),function ($query){
+            $query->from(DB::raw('`'. self::GetAlias(true, true) .'` FORCE INDEX (`cc_messages_columns_id_index`)'));
+        });
         switch ($type){
             case 1:
                 $model = $model->where(self::GetAlias().'index', 1);
@@ -343,7 +347,7 @@ class Messages extends BaseModel implements ModelInterface
         $model = $model->where(self::GetAlias().'columns_id', $columnId);
         $model = $model->where(self::GetAlias().'is_del', 0);
         $model = $model->where(self::GetAlias().'release', 1);
-        $model = $model->when(self::hasTableIndex('cc_messages_columns_id_index'),function ($query){
+        $model = $model->when(self::hasTableIndex(self::GetAlias(true, true).'_columns_id_index'),function ($query){
             $query->from(DB::raw('`'. self::GetAlias(true, true) .'` FORCE INDEX (`cc_messages_columns_id_index`)'));
         });
         return $model->get()->each(function ($item){
