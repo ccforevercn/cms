@@ -116,6 +116,8 @@ class MessagesExtend
         $preWhere = check_message_order_pre($order);
         // 下一条信息条件获取
         $nextWhere = check_message_order_next($order);
+        // 获取域名
+        $url = config('app.url');
         // 格式化信息
         foreach ($message as $key=>&$item){
             $result[$key]['id'] = $item['id'];
@@ -123,7 +125,8 @@ class MessagesExtend
             $result[$key]['cname'] = $item['cname'];
             $result[$key]['cname_alias'] = $item['cname_alias'];
             $result[$key]['cid'] = $item['cid'];
-            $result[$key]['content'] = $item['content'];
+            // 替换域名信息
+            $result[$key]['content'] = str_replace($url.'/upload', '/upload', $item['content']);
             $result[$key]['images'] = $item['images'];
             $result[$key]['image'] = $item['image'];
             $result[$key]['writer'] = $item['writer'];
