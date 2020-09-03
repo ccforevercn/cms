@@ -38,9 +38,9 @@ class MenusInsertRequest extends Request
             'parent_id' => 'bail|required|integer|min:0',
             'routes' =>  'bail|required|max:64',
             'page' =>  ['bail', 'required', new MenusInsertPageRule(), 'max:64'],
-            'icon' => 'bail|filled|max:16',
-            'sort' => 'bail|filled|integer',
-            'menu' => 'bail|filled|min:0|max:1',
+            'icon' => 'bail|nullable|max:16',
+            'sort' => 'bail|nullable|integer',
+            'menu' => 'bail|nullable|min:0|max:1',
         ];
     }
 
@@ -59,14 +59,14 @@ class MenusInsertRequest extends Request
             'routes.max' => '路由地址不能超过64个字母',
             'page.required' => '请填写页面链接',
             'page.max' => '页面链接不能超过64个字符',
-            'icon.filled' => '请填写菜单icon',
+//            'icon.filled' => '请填写菜单icon',
             'icon.max' => '菜单icon不能超过16个字符',
             'sort.integer' => '菜单排序格式错误',
-            'sort.filled' => '请填写菜单排序',
+//            'sort.filled' => '请填写菜单排序',
             'menu.integer' => '菜单状态格式错误',
             'menu.min' => '菜单状态错误',
             'menu.max' => '菜单状态错误',
-            'menu.filled' => '请选择菜单状态',
+//            'menu.filled' => '请选择菜单状态',
         ];
     }
 }

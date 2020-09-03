@@ -97,9 +97,9 @@ class MenusRepository implements RepositoryInterface
         $menu['parent_id'] = array_key_exists('parent_id', $data) ? $data['parent_id'] : null;// 菜单父级
         $menu['routes'] = array_key_exists('routes', $data) ? $data['routes'] : null;// 菜单路由
         $menu['page'] = array_key_exists('page', $data) ? $data['page'] : '';// 菜单页面
-        $menu['icon'] = array_key_exists('icon', $data) ? $data['icon'] : '';// icon是否存在
-        $menu['sort'] = array_key_exists('sort', $data) ? (int)$data['sort'] : 1;// 排序是否存在
-        $menu['menu'] = array_key_exists('menu', $data) ? (int)$data['menu'] : 1;// 状态是否存在
+        $menu['icon'] = array_key_exists('icon', $data) && !is_null($data['icon']) ? $data['icon'] : '';// icon是否存在
+        $menu['sort'] = array_key_exists('sort', $data) && !is_null($data['sort']) ? (int)$data['sort'] : 1;// 排序是否存在
+        $menu['menu'] = array_key_exists('menu', $data) && !is_null($data['menu']) ? (int)$data['menu'] : 1;// 状态是否存在
         if(!check_null($menu['name'],$menu['parent_id'], $menu['routes'])){
             return self::setMsg('参数错误', false);
         }

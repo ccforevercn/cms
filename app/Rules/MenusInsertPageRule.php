@@ -51,6 +51,7 @@ class MenusInsertPageRule implements Rule
             $this->value = $value;
             return false;
         }
+        return true;
     }
 
     /**
