@@ -408,7 +408,13 @@ class MessagesRepository implements RepositoryInterface
      */
     public static function messageEnter(int $columnId, array $order, int $value): array
     {
+        $result = [];
         $message = self::$model::messageEnter($columnId, $order, $value);
-        return count($message) ? $message[0] : [];
+        $message = count($message) ? $message[0] : [];
+        if(count($message)){
+            $result['name'] = $message['name'];
+            $result['url'] = '/'.$message['page'].'/'.$message['id'].page_suffix_message();
+        }
+        return $result;
     }
 }
