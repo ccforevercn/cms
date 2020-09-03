@@ -54,7 +54,7 @@ class CacheController extends BaseController
             // 生成页面地址
             $path = [];
             // 栏目不存在
-            if(!count($columns)){ return JsonExtend::error('栏目不存在'); }
+            if(!count($columns)){ return JsonExtend::error('栏目不存在(外链页面不能缓存)'); }
             // 栏目存在
             foreach ($columns as &$column){
                 $path[] = PageDataExtend::pageWrite($column, 'column');
