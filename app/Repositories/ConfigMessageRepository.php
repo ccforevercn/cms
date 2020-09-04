@@ -127,17 +127,19 @@ class ConfigMessageRepository implements RepositoryInterface
                 if(!strlen($configMessage['value'])){ // 验证配置信息值为空时
                     return self::setMsg('请填写配置信息默认值', false);
                 }
-                // 验证配置信息默认值
-                $configMessageValueCheck = true;
+                // 修改值以|切割 处理多选按钮的选择的值
+                $radioOrCheckBox = explode('|', $configMessage['value']);
+                // 判断值命中几次
+                $valueCount = 0;
                 foreach ($typeValue as $key=>$values){
                     list($field) = $values;
-                    if($field == $configMessage['value']){ // 配置信息默认值存在
-                        $configMessageValueCheck = false;
-                        break;
+                    if(in_array($field, $radioOrCheckBox)){
+                        $valueCount++;
                     }
                 }
-                if($configMessageValueCheck){ // 配置信息默认值不存在
-                    return self::setMsg('配置信息默认值错误，请重新填写', false);
+                // 默认值为0或者默认值和类型值不匹配
+                if($valueCount !== count($radioOrCheckBox)){
+                    return self::setMsg($configMessage['name'].'默认值错误，请重新填写(值中不能出现:、|字符)', false);
                 }
                 break;
             default:;
@@ -184,17 +186,19 @@ class ConfigMessageRepository implements RepositoryInterface
                 if(!strlen($configMessage['value'])){ // 验证配置信息值为空时
                     return self::setMsg('请填写'.$configMessage['name'].'的值', false);
                 }
-                // 验证配置信息值
-                $configMessageValueCheck = true;
+                // 修改值以|切割 处理多选按钮的选择的值
+                $radioOrCheckBox = explode('|', $configMessage['value']);
+                // 判断值命中几次
+                $valueCount = 0;
                 foreach ($typeValue as $key=>$values){
                     list($field) = $values;
-                    if($field == $configMessage['value']){ // 配置信息值存在
-                        $configMessageValueCheck = false;
-                        break;
+                    if(in_array($field, $radioOrCheckBox)){
+                        $valueCount++;
                     }
                 }
-                if($configMessageValueCheck){ // 配置信息值不存在
-                    return self::setMsg($configMessage['name'].'的值错误，请重新填写', false);
+                // 默认值为0或者默认值和类型值不匹配
+                if($valueCount !== count($radioOrCheckBox)){
+                    return self::setMsg($configMessage['name'].'默认值错误，请重新填写(值中不能出现:、|字符)', false);
                 }
                 break;
             default:;

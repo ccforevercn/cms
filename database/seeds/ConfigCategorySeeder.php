@@ -28,7 +28,21 @@ class ConfigCategorySeeder extends Seeder
                 'description' => '网站基础配置',
                 'add_time' => time(),
                 'is_del' => 0
-            ]
+            ],
+            [
+                'id' => 2,
+                'name' => 'seo配置',
+                'description' => '网站seo配置',
+                'add_time' => time(),
+                'is_del' => 0
+            ],
+            [
+                'id' => 3,
+                'name' => '客服配置',
+                'description' => '网站客服配置',
+                'add_time' => time(),
+                'is_del' => 0
+            ],
         ]);
     }
 }
