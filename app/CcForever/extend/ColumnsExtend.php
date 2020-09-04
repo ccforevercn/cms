@@ -21,12 +21,14 @@ class ColumnsExtend
      *
      * $id  栏目编号
      * $content true 展示内容  false 隐藏内容
+     * $urlPrefix 地址前缀 /(pc端)
      *
      * @param int $id
      * @param bool $content
+     * @param string $urlPrefix
      * @return array
      */
-    public static function column(int $id, bool $content): array
+    public static function column(int $id, bool $content, string $urlPrefix): array
     {
         $result = [];
         $columnsRepository = new ColumnsRepository();
@@ -64,7 +66,7 @@ class ColumnsExtend
             $result['url'] = $column['page'];
         }else{
             // 页面
-            $result['url'] = '/'.$column['page'].'/'.$column['id'].page_suffix_message();
+            $result['url'] = $urlPrefix.$column['page'].'/'.$column['id'].page_suffix_message();
         }
         return $result;
     }
@@ -74,12 +76,14 @@ class ColumnsExtend
      *
      * $id  父级栏目
      * $limit  栏目子集条数  0 为全部
+     * $urlPrefix 地址前缀 /(pc端)
      *
      * @param int $id
      * @param int $limit
+     * @param string $urlPrefix
      * @return array
      */
-    public static function children(int $id, int $limit): array
+    public static function children(int $id, int $limit, string $urlPrefix): array
     {
         $result = [];
         $columnsRepository = new ColumnsRepository();
@@ -99,7 +103,7 @@ class ColumnsExtend
                 $result[$key]['url'] = $column['page'];
             }else{
                 // 页面
-                $result[$key]['url'] = '/'.$column['page'].'/'.$column['id'].page_suffix_message();
+                $result[$key]['url'] = $urlPrefix.$column['page'].'/'.$column['id'].page_suffix_message();
             }
         }
         return $result;
@@ -109,11 +113,13 @@ class ColumnsExtend
      * 栏目列表
      *
      * $ids 指定栏目编号
+     * $urlPrefix 地址前缀 /(pc端)
      *
      * @param array $ids
+     * @param string $urlPrefix
      * @return array
      */
-    public static function appointed(array $ids): array
+    public static function appointed(array $ids, string $urlPrefix): array
     {
         $result = [];
         // 指定的栏目编号为空
@@ -136,7 +142,7 @@ class ColumnsExtend
                 $result[$key]['url'] = $column['page'];
             }else{
                 // 页面
-                $result[$key]['url'] = $column['page'].'/'.$column['id'].page_suffix_message();
+                $result[$key]['url'] = $urlPrefix.$column['page'].'/'.$column['id'].page_suffix_message();
             }
         }
         return $result;
@@ -206,7 +212,7 @@ class ColumnsExtend
     {
         $result = '';
         // 当前栏目信息
-        $column = self::column($id, false);
+        $column = self::column($id, false, '/');
         // 栏目不存在
         if(!count($column)) return $result;
         // 获取 栏目排序和下级编号+

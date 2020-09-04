@@ -24,13 +24,14 @@ class MessagesExtend
      * @param int $offset
      * @param int $limit
      * @param int $type
+     * @param string $urlPrefix
      * @return array
      */
-    public static function messages(int $columnId, bool $loop, int $offset, int $limit, int $type): array
+    public static function messages(int $columnId, bool $loop, int $offset, int $limit, int $type, string $urlPrefix): array
     {
         $columnsMessagesOrderAndLoopIds = ColumnsExtend::columnsMessagesOrderAndLoopIds($columnId, $loop);
         if(!count($columnsMessagesOrderAndLoopIds)) return [];
-        $messages = MessagesExtend::messageList($columnsMessagesOrderAndLoopIds['columnIds'], $columnsMessagesOrderAndLoopIds['order'], $offset, $limit, $type);
+        $messages = MessagesExtend::messageList($columnsMessagesOrderAndLoopIds['columnIds'], $columnsMessagesOrderAndLoopIds['order'], $offset, $limit, $type, $urlPrefix);
         return $messages;
     }
 
@@ -42,15 +43,17 @@ class MessagesExtend
      * $offset 信息记录起始值
      * $limit 信息记录长度
      * $type 信息类型 1 首页推荐  2 热门推荐  3 全部
+     * $urlPrefix 地址前缀 /(pc端)
      *
      * @param array $columnIds
      * @param array $order
      * @param int $offset
      * @param int $limit
      * @param int $type
+     * @param string $urlPrefix
      * @return array
      */
-    public static function messageList(array $columnIds, array $order, int $offset, int $limit, int $type): array
+    public static function messageList(array $columnIds, array $order, int $offset, int $limit, int $type, string $urlPrefix): array
     {
         $result = [];
         $messagesRepository = new MessagesRepository();
@@ -69,7 +72,7 @@ class MessagesExtend
             $result[$key]['update_time'] = $message['update_time'];
             $result[$key]['time'] = date('Y-m-d H:i', $message['update_time']);
             $result[$key]['tag'] = $message['tag'];
-            $result[$key]['url'] = '/'.$message['page'].'/'.$message['id'].page_suffix_message();
+            $result[$key]['url'] = $urlPrefix.$message['page'].'/'.$message['id'].page_suffix_message();
         }
         return $result;
     }
@@ -103,9 +106,10 @@ class MessagesExtend
      *
      * @param int $columnId
      * @param int $order
+     * @param string $urlPrefix
      * @return array
      */
-    public static function message(int $columnId, int $order): array
+    public static function message(int $columnId, int $order, string $urlPrefix): array
     {
         $result = [];
         // 实例化MessagesRepository
@@ -134,11 +138,11 @@ class MessagesExtend
             $result[$key]['keywords'] = $item['keywords'];
             $result[$key]['description'] = $item['description'];
             $result[$key]['time'] = date('Y-m-d H:i', $item['update_time']);
-            $result[$key]['url'] = '/'.$item['page'].'/'.$item['id'].page_suffix_message();
+            $result[$key]['url'] = $urlPrefix.$item['page'].'/'.$item['id'].page_suffix_message();
             // 上一条获取
-            $result[$key]['pre'] = $messagesRepository::messageEnter($columnId, $preWhere, $item[$preWhere['select']]);
+            $result[$key]['pre'] = $messagesRepository::messageEnter($columnId, $preWhere, $item[$preWhere['select']], $urlPrefix);
             // 下一条获取
-            $result[$key]['next'] = $messagesRepository::messageEnter($columnId, $nextWhere, $item[$nextWhere['select']]);
+            $result[$key]['next'] = $messagesRepository::messageEnter($columnId, $nextWhere, $item[$nextWhere['select']], $urlPrefix);
         }
         return $result;
     }

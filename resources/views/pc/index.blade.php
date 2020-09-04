@@ -6,8 +6,8 @@
  <body>
  @include('pc.header')
  @php
-    $product = \App\CcForever\extend\ColumnsExtend::column(3, false);
-    $productMessage = \App\CcForever\extend\MessagesExtend::messages(3, true, 0, 4, 1);
+    $product = \App\CcForever\extend\ColumnsExtend::column(3, false, '/');
+    $productMessage = \App\CcForever\extend\MessagesExtend::messages(3, true, 0, 4, 1, '/');
  @endphp
  @if(count($product))
   <section class="v2-product"> 
@@ -32,9 +32,9 @@
   </section>
   @endif
  @php
-     $news = \App\CcForever\extend\ColumnsExtend::column(4, false);
-     $newsMessageTop = \App\CcForever\extend\MessagesExtend::messages(4, true, 0, 1, 1);
-     $newsMessage = \App\CcForever\extend\MessagesExtend::messages(4, true, 1, 3, 1);
+     $news = \App\CcForever\extend\ColumnsExtend::column(4, false, '/');
+     $newsMessageTop = \App\CcForever\extend\MessagesExtend::messages(4, true, 0, 1, 1, '/');
+     $newsMessage = \App\CcForever\extend\MessagesExtend::messages(4, true, 1, 3, 1, '/');
  @endphp
  @if(count($news))
   <section class="v2-news"> 
@@ -67,8 +67,8 @@
   </section>
   @endif
  @php
-  $about = \App\CcForever\extend\ColumnsExtend::column(2, false);
-  $aboutChildren = \App\CcForever\extend\ColumnsExtend::children(2, 2);
+  $about = \App\CcForever\extend\ColumnsExtend::column(2, false, '/');
+  $aboutChildren = \App\CcForever\extend\ColumnsExtend::children(2, 2, '/');
  @endphp
  @if(count($about))
   <section class="v2-contact"> 

@@ -27,20 +27,19 @@ class CacheController extends BaseController
      */
     public function index():object
     {
-        $index = PageDataExtend::pageIndex(); // 首页数据
-        $page = 'index';
-        $path = 'pc/'.$page;// 需要生成的页面地址
-        $string = view($path, $index)->__toString(); // 获取生成后的页面字符串
-        $page = $page.page_suffix_message(); // 生成后的页面地址
-        // 打开文件，并且删除之前的数据
-        $file = @fopen($page, 'w+');
-        // 打开文件失败
-        if(!$file){ return JsonExtend::error('缓存失败'); }
-        // 写入内容
-        fwrite($file, $string);
-        // 关闭文件
-        fclose($file);
-        return JsonExtend::success('缓存成功', [$path]);
+        // 地址前缀
+        $urlPrefix = '/';
+        // 源文件前缀
+        $sourcePathPrefix = 'pc/';
+        // 生成文件地址
+        $path = [];
+        // 首页数据
+        $index = PageDataExtend::pageIndex($urlPrefix);
+        // 添加首页地址
+        $index['index']['url'] = $urlPrefix.'index'.page_suffix_message();
+        // 缓存静态文件
+        $path[] = PageDataExtend::pageWrite($index, 'index', $urlPrefix, $sourcePathPrefix);
+        return JsonExtend::success('缓存成功', $path);
     }
 
     /**
@@ -51,19 +50,23 @@ class CacheController extends BaseController
      */
     public function columns(): object
     {
+        // 地址前缀
+        $urlPrefix = '/';
+        // 源文件前缀
+        $sourcePathPrefix = 'pc/';
         // 获取栏目编号
         $id = (int)app('request')->input('id', 0);
         // 栏目编号为0 缓存所有栏目页面
         if($id > 0){
             // 缓存单个栏目
-            $columns = PageDataExtend::pageColumns($id);
+            $columns = PageDataExtend::pageColumns($id, $urlPrefix);
             // 生成页面地址
             $path = [];
             // 栏目不存在
             if(!count($columns)){ return JsonExtend::error('栏目不存在(外链页面不能缓存)'); }
             // 栏目存在
             foreach ($columns as &$column){
-                $path[] = PageDataExtend::pageWrite($column, 'column');
+                $path[] = PageDataExtend::pageWrite($column, 'column', $urlPrefix, $sourcePathPrefix);
             }
             return JsonExtend::success('缓存成功', $path);
         }
@@ -76,11 +79,11 @@ class CacheController extends BaseController
         // 循环缓存栏目
         for ($loop = 0; $loop < count($columnIds);  $loop++){
             // 缓存单个栏目
-            $columns = PageDataExtend::pageColumns($columnIds[$loop]);
+            $columns = PageDataExtend::pageColumns($columnIds[$loop], $urlPrefix);
             // 栏目存在
             if(count($columns)){
                 foreach ($columns as &$column){
-                    $path[] = PageDataExtend::pageWrite($column, 'column');
+                    $path[] = PageDataExtend::pageWrite($column, 'column', $urlPrefix, $sourcePathPrefix);
                 }
             }
         }
@@ -95,15 +98,19 @@ class CacheController extends BaseController
      */
     public function message():object
     {
+        // 地址前缀
+        $urlPrefix = '/';
+        // 源文件前缀
+        $sourcePathPrefix = 'pc/';
         $id = (int)app('request')->input('id', 0);
         // 缓存单个栏目下的信息
         if($id > 0){
-            $messages = PageDataExtend::pageMessage($id);
+            $messages = PageDataExtend::pageMessage($id, $urlPrefix);
             if(!count($messages)) { return JsonExtend::error('当前栏目下暂无信息'); }
             // 生成页面地址
             $path = [];
             foreach ($messages as &$message){
-                $path[] = PageDataExtend::pageWrite($message, 'message');
+                $path[] = PageDataExtend::pageWrite($message, 'message', $urlPrefix, $sourcePathPrefix);
             }
             return JsonExtend::success('缓存成功', $path);
         }
@@ -116,10 +123,10 @@ class CacheController extends BaseController
         // 循环缓存栏目
         for ($loop = 0; $loop < count($columnIds);  $loop++){
             // 缓存单个栏目下的信息
-            $messages = PageDataExtend::pageMessage($columnIds[$loop]);
+            $messages = PageDataExtend::pageMessage($columnIds[$loop], $urlPrefix);
             if(count($messages)){
                 foreach ($messages as &$message){
-                    $path[] = PageDataExtend::pageWrite($message, 'message');
+                    $path[] = PageDataExtend::pageWrite($message, 'message', $urlPrefix, $sourcePathPrefix);
                 }
             }
         }

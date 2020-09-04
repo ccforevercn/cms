@@ -80,7 +80,7 @@ class SiteMapExtend
         // 实例化ColumnsRepository
         $columnsRepository = new ColumnsRepository();
         // 获取导航
-        $navigation = $columnsRepository::navigation();
+        $navigation = $columnsRepository::navigation('/');
         // 网站名称 网站地址 网站LOGO 版权
         $configMessageRepository = new ConfigMessageRepository();
         $config = $configMessageRepository::batch(['webname', 'website', 'weblogopc', 'copyright']);

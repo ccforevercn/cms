@@ -214,15 +214,16 @@ class ColumnsRepository implements RepositoryInterface
     /**
      * 导航
      *
+     * @param string $urlPrefix
      * @return array
      */
-    public static function navigation(): array
+    public static function navigation(string $urlPrefix): array
     {
         $order = [];
         $order['select'] = 'weight';
         $order['value'] = 'ASC';
         $columns = self::$model::base_array('equal', ['navigation' => '1'], ['id', 'name', 'name_alias', 'parent_id', 'render', 'page'], $order);
-        $formatNavigation =  self::formatNavigation($columns, 0);
+        $formatNavigation =  self::formatNavigation($columns, 0, $urlPrefix);
         return $formatNavigation;
     }
 
@@ -232,9 +233,10 @@ class ColumnsRepository implements RepositoryInterface
      *
      * @param array $columnsList
      * @param int $parentId
+     * @param string $urlPrefix
      * @return array
      */
-    private static function formatNavigation(array $columnsList, int $parentId): array
+    private static function formatNavigation(array $columnsList, int $parentId, string $urlPrefix): array
     {
         $columnsFormatList = [];
         foreach($columnsList as &$item){
@@ -247,10 +249,10 @@ class ColumnsRepository implements RepositoryInterface
                     $data['url'] = $item['page'];
                 }else{
                     // 页面
-                    $data['url'] = '/'.$item['page'].'/'.$item['id'].page_suffix_message();
+                    $data['url'] = $urlPrefix.$item['page'].'/'.$item['id'].page_suffix_message();
                 }
                 $data['name_alias'] = $item['name_alias'];
-                $data['children'] = self::formatNavigation($columnsList,$item['id']);
+                $data['children'] = self::formatNavigation($columnsList,$item['id'], $urlPrefix);
                 $columnsFormatList[] = $data;
             }
         }

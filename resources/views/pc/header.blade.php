@@ -1,8 +1,8 @@
 <header class="v2-ac">
     <div class="head-v2__top v2-ac">
         <h1 class="pull-left">
-            <a href="{{ $public['configs']['zy_cms_website'] }}" title="{{ $public['configs']['zy_cms_webname'] }}">
-                <img src="{{ $public['configs']['zy_cms_weblogopc'] }}" alt="{{ $public['configs']['zy_cms_webname'] }}" style="margin:15px 0 0 50px;"/>
+            <a href="{{ $public['configs']['zy_cms_website'] }}" title="{{ $public['configs']['zy_cms_name'] }}">
+                <img src="{{ $public['configs']['zy_cms_pc_logo_top'] }}" alt="{{ $public['configs']['zy_cms_name'] }}" style="margin:15px 0 0 50px;"/>
             </a>
         </h1>
         <ul class="head-v2__right pull-right v2-list">

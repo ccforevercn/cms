@@ -23,12 +23,13 @@ class PageDataExtend
     /**
      * 首页
      *
+     * @param string $urlPrefix
      * @return array
      */
-    public static function pageIndex(): array
+    public static function pageIndex(string $urlPrefix): array
     {
         // 公共配置
-        $public = self::pagePublic();
+        $public = self::pagePublic($urlPrefix);
         // 友情链接
         $linksRepository = new LinksRepository();
         $links = $linksRepository::links();
@@ -46,12 +47,13 @@ class PageDataExtend
      * 栏目
      *
      * @param int $id
+     * @param string $urlPrefix
      * @return array
      */
-    public static function pageColumns(int $id): array
+    public static function pageColumns(int $id, string $urlPrefix): array
     {
         // 公共配置
-        $public = self::pagePublic();
+        $public = self::pagePublic($urlPrefix);
         // 当前导航编号
         $navigationId = $id;
         // 信息列表
@@ -61,7 +63,7 @@ class PageDataExtend
         // 当前页
         $page = 1;
         // 获取栏目信息
-        $column = ColumnsExtend::column($id, true);
+        $column = ColumnsExtend::column($id, true, $urlPrefix);
         // 栏目存在时
         if(count($column) && !$column['render']){
             // 获取当前栏目的顶级栏目
@@ -71,10 +73,10 @@ class PageDataExtend
                 $columnsRepository = new ColumnsRepository();
                 $topId = $columnsRepository::topColumnId($id);
                 $navigationId = $topId;
-                $columnTop = ColumnsExtend::column($topId, true);
+                $columnTop = ColumnsExtend::column($topId, true, $urlPrefix);
             }
             // 当前栏目的顶级栏目的子栏目信息
-            $children  = ColumnsExtend::children($columnTop['unique'], 0);
+            $children  = ColumnsExtend::children($columnTop['unique'], 0, $urlPrefix);
             // 获取 栏目排序和下级编号+
             $columnsMessagesOrderAndLoopIds = ColumnsExtend::columnsMessagesOrderAndLoopIds($id ,true);
             // 获取每页条数
@@ -95,7 +97,7 @@ class PageDataExtend
                             $column['url'] =  str_replace(page_suffix_message(),'', $url).'-'.$page.page_suffix_message();
                         }
                         // 栏目文章
-                        $messages = MessagesExtend::messageList($columnsMessagesOrderAndLoopIds['columnIds'], $columnsMessagesOrderAndLoopIds['order'], $offset, $limit, $messagesType);
+                        $messages = MessagesExtend::messageList($columnsMessagesOrderAndLoopIds['columnIds'], $columnsMessagesOrderAndLoopIds['order'], $offset, $limit, $messagesType, $urlPrefix);
                         $result[] = compact('public', 'column', 'page', 'columnTop', 'children', 'messages', 'navigationId');
                     }
                     return $result;
@@ -110,22 +112,23 @@ class PageDataExtend
      * 信息
      *
      * @param int $id
+     * @param string $urlPrefix
      * @return array
      */
-    public static function pageMessage(int $id): array
+    public static function pageMessage(int $id, string $urlPrefix): array
     {
         // 返回数据
         $result = [];
         // 公共配置
-        $public = self::pagePublic();
+        $public = self::pagePublic($urlPrefix);
         // 导航编号
         $navigationId = $id;
         // 栏目信息
-        $column = ColumnsExtend::column($id, true);
+        $column = ColumnsExtend::column($id, true, $urlPrefix);
         // 栏目不存在
         if(!count($column)) return $result;
         // 当前栏目下的所有文章
-        $messages = MessagesExtend::message($id, $column['sort']);
+        $messages = MessagesExtend::message($id, $column['sort'], $urlPrefix);
         // 文章不存在
         if(!count($messages)) return $result;
         // 顶级栏目
@@ -135,10 +138,10 @@ class PageDataExtend
             $columnsRepository = new ColumnsRepository();
             $topId = $columnsRepository::topColumnId($id);
             $navigationId = $topId;
-            $columnTop = ColumnsExtend::column($topId, true);
+            $columnTop = ColumnsExtend::column($topId, true, $urlPrefix);
         }
         // 当前栏目的顶级栏目的子栏目信息
-        $children  = ColumnsExtend::children($columnTop['unique'], 0);
+        $children  = ColumnsExtend::children($columnTop['unique'], 0, $urlPrefix);
         foreach ($messages as $message){
             $result[] = compact('public', 'column', 'columnTop', 'children', 'message', 'navigationId');
         }
@@ -148,9 +151,10 @@ class PageDataExtend
     /**
      * 公共
      *
+     * @param string $urlPrefix
      * @return array
      */
-    public static function pagePublic(): array
+    public static function pagePublic(string $urlPrefix): array
     {
         // 公共配置
         $configMessageRepository = new ConfigMessageRepository();
@@ -166,7 +170,7 @@ class PageDataExtend
         }
         // 导航
         $columnsRepository = new ColumnsRepository();
-        $navigation = $columnsRepository::navigation(); // 获取导航
+        $navigation = $columnsRepository::navigation($urlPrefix); // 获取导航
         // 轮播图
         $bannersRepository = new BannersRepository();
         $banners = $bannersRepository::banners(1);
@@ -176,21 +180,49 @@ class PageDataExtend
     /**
      * 静态文件写入
      *
+     * $date  数据
+     * $key   数据中的key
+     * $urlPrefix 地址前缀
+     * $sourcePathPrefix 缓存源文件前缀
+     *
      * @param array $date
      * @param string $key
+     * @param string $urlPrefix
+     * @param string $sourcePathPrefix
      * @return string
      * @throws \Throwable
      */
-    public static function pageWrite(array $date, string $key): string
+    public static function pageWrite(array $date, string $key, string $urlPrefix, string $sourcePathPrefix): string
     {
-        // 获取栏目模板文件
-        $pages = explode('/', $date[$key]['url']);
+        // 替换模板文件前缀(地址前缀)
+        $pages = str_replace($urlPrefix, '/', $date[$key]['url']);
+        // 使用/分割源文件地址
+        $pages = explode('/', $pages);
+        // 删除第一个键值(空串)
         $pages = array_slice($pages, 1);
-        $sourcePath = 'pc/'; // 源文件
+        // 获取原文件前缀
+        $sourcePath = $sourcePathPrefix; // 源文件
         $resourcesPath = ''; // 生成后的文件
         $fileName = ''; // 生成后的文件名
-        foreach ($pages as $key=>&$page){
-            if((int)$key !== (int)bcsub(count($pages), 1, 0)){
+        // 使用/分割地址前缀
+        $urlPrefixArr = explode('/', $urlPrefix);
+        // 删除第一个元素
+        array_shift($urlPrefixArr);
+        // 删除最后一个元素
+        array_pop($urlPrefixArr);
+        // 地址前缀存在时
+        if(count($urlPrefixArr)){
+            // 追加到生成后的文件地址路径
+            foreach ($urlPrefixArr as &$url){
+                $resourcesPath .= $url.'/';
+                if(!is_dir($resourcesPath)){
+                    mkdir($resourcesPath, 0755);
+                }
+            }
+        }
+        // 获取源文件地址和生成后文件地址
+        foreach ($pages as $loop=>&$page){
+            if((int)$loop !== (int)bcsub(count($pages), 1, 0)){
                 // 获取文件目录
                 $sourcePath .= $page.'/';
                 $resourcesPath .= $page.'/';
@@ -204,6 +236,10 @@ class PageDataExtend
         }
         // 截取源文件后面
         $sourcePath = substr($sourcePath, 0 , bcsub(strlen($sourcePath), 1, 0));
+        // 首页缓存时添加index
+        if($key === 'index'){
+            $sourcePath .= '/index';
+        }
         // 获取生成后的页面字符串
         $string = view($sourcePath, $date)->__toString();
         // 生成静态文件
