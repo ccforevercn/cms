@@ -110,9 +110,10 @@ Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
             Route::get('/cache/message', 'CacheController@message')->name('cachemessage'.$admin);// 缓存信息
             Route::get('/robots/content', 'RobotsController@content')->name('robotscontent'.$admin);// robots内容获取
             Route::post('/robots/update', 'RobotsController@update')->name('robotsupdate'.$admin);// robots内容修改
-            Route::get('/sitemap/html', 'SiteMapController@html')->name('sitemaphtml'.$admin);// 网站地图html缓存
-            Route::get('/sitemap/xml', 'SiteMapController@xml')->name('sitemapxml'.$admin);// 网站地图xml缓存
-            Route::get('/sitemap/txt', 'SiteMapController@txt')->name('sitemaptxt'.$admin);// 网站地图txt缓存
+            Route::get('/sitemap/index', 'SiteMapController@index')->name('sitemapindex'.$admin);// 网站地图html缓存
+            Route::post('/sitemap/html', 'SiteMapController@html')->name('sitemaphtml'.$admin);// 网站地图html缓存
+            Route::post('/sitemap/xml', 'SiteMapController@xml')->name('sitemapxml'.$admin);// 网站地图xml缓存
+            Route::post('/sitemap/txt', 'SiteMapController@txt')->name('sitemaptxt'.$admin);// 网站地图txt缓存
         });
         Route::namespace('upload')->group(function () use($admin) { // 上传文件路由组
             Route::post('/uploads/upload', 'UploadsController@upload')->name('uploadsupload'.$admin);// 单文件上传

@@ -18,6 +18,16 @@ use App\CcForever\extend\SiteMapExtend;
 class SiteMapController extends BaseController
 {
     /**
+     * 缓存网站链接
+     *
+     * @return object
+     */
+    public function index(): object
+    {
+        $urls = SiteMapExtend::index();
+        return JsonExtend::success('网站链接', $urls);
+    }
+    /**
      * 缓存网站地图HTML
      *
      * @return object

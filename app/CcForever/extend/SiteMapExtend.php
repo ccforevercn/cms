@@ -18,7 +18,6 @@ use App\Repositories\MessagesRepository;
  */
 class SiteMapExtend
 {
-
     // 网站地图html文件名称
     private static $html = 'sitemap.html';
 
@@ -28,6 +27,49 @@ class SiteMapExtend
     // 网站地图txt文件名称
     private static $txt = 'sitemap.txt';
 
+    /**
+     * 网站链接(栏目和信息)
+     *
+     * @return array
+     */
+    private static function url():array
+    {
+        $result = [];
+        // 实例化ConfigMessageRepository获取配置
+        $configMessageRepository = new ConfigMessageRepository();
+        // 网站地址
+        $bool = $configMessageRepository::config('website');
+        if($bool) { list($url) = $configMessageRepository::returnData(['']); }
+        else { $url = config('app.url'); }
+        // 网站地址不存在获取默认值
+        if(!strlen($url)){  $url = config('app.url'); }
+        // 实例化ColumnsRepository获取栏目
+        $columnsRepository = new ColumnsRepository();
+        // 获取页面栏目编号和页面
+        $columns = $columnsRepository::pageColumnsIds(['id', 'page']);
+        // 栏目
+        foreach ($columns as &$column){
+            $result[] = $url .'/'.$column['page'] . '/' .$column['id'].page_suffix_message();
+        }
+        // 信息
+        $messagesRepository = new MessagesRepository();
+        $messages = $messagesRepository::siteMapMessages();
+        foreach ($messages as &$message){
+            $result[] = $url .'/'.$message['page'] . '/' .$message['id'].page_suffix_message();
+        }
+        return $result;
+    }
+
+    /**
+     * 网站链接
+     *
+     * @return array
+     */
+    public static function index(): array
+    {
+        $urls = self::url();
+        return $urls;
+    }
     /**
      * 缓存网站地图HTML
      *
@@ -125,15 +167,11 @@ class SiteMapExtend
         // 实例化ConfigMessageRepository获取配置
         $configMessageRepository = new ConfigMessageRepository();
         // 内链和外链的优先级  页面内容更改频率
-        $config = $configMessageRepository::batch(['website', 'priority', 'changefreq']);
+        $config = $configMessageRepository::batch(['priority', 'changefreq']);
         $priority = '0.6'; // 内链和外链的优先级
         $changefreq = 'monthly'; // 页面内容更改频率
-        $url = config('app.url'); // 网站地址
         if(count($config)){
             foreach ($config as &$item){
-                if($item['select'] === 'website'){
-                    $url = $item['value'];
-                }
                 if($item['select'] === 'priority'){
                     $priority = $item['value'];
                 }
@@ -145,24 +183,10 @@ class SiteMapExtend
         $xml = '';
         $xml .= '<?xml version="1.0" encoding="utf-8" ?>';
         $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
-        // 实例化ColumnsRepository获取栏目
-        $columnsRepository = new ColumnsRepository();
-        // 获取页面栏目编号和页面
-        $columns = $columnsRepository::pageColumnsIds(['id', 'page']);
-        foreach ($columns as &$column){
+        $urls = self::url();
+        foreach ($urls as &$url){
             $xml .= '<url>';
-            $xml .= '<loc>'. $url .'/'.$column['page'] . '/' .$column['id'].page_suffix_message().'</loc>';
-            $xml .= '<lastmod>'.date("Y-m-d", time()).'</lastmod>';
-            $xml .= '<changefreq>'.$changefreq.'</changefreq>';
-            $xml .= '<priority>'.$priority.'</priority>';
-            $xml .= '</url>';
-        }
-        // 信息
-        $messagesRepository = new MessagesRepository();
-        $messages = $messagesRepository::siteMapMessages();
-        foreach ($messages as &$message){
-            $xml .= '<url>';
-            $xml .= '<loc>'. $url .'/'. $message['page'] . '/' .$message['id'].page_suffix_message().'</loc>';
+            $xml .= '<loc>'.$url.'</loc>';
             $xml .= '<lastmod>'.date("Y-m-d", time()).'</lastmod>';
             $xml .= '<changefreq>'.$changefreq.'</changefreq>';
             $xml .= '<priority>'.$priority.'</priority>';
@@ -188,7 +212,6 @@ class SiteMapExtend
      */
     public static function txt(): bool
     {
-
         // 实例化ConfigMessageRepository获取配置
         $configMessageRepository = new ConfigMessageRepository();
         // 网站地址
@@ -197,21 +220,10 @@ class SiteMapExtend
         else { $url = config('app.url'); }
         // 网站地址不存在获取默认值
         if(!strlen($url)){  $url = config('app.url'); }
-        // 实例化ColumnsRepository获取栏目
-        $columnsRepository = new ColumnsRepository();
-        // 获取页面栏目编号和页面
-        $columns = $columnsRepository::pageColumnsIds(['id', 'page']);
-        $txt = '';
-        // 栏目
-        foreach ($columns as &$column){
-            $txt .= $url .'/'.$column['page'] . '/' .$column['id'].page_suffix_message()."\r\n";
-        }
-        // 信息
-        $messagesRepository = new MessagesRepository();
-        $messages = $messagesRepository::siteMapMessages();
-        foreach ($messages as &$message){
-            $txt .= $url .'/'.$message['page'] . '/' .$message['id'].page_suffix_message()."\r\n";
-        }
+        // 网站链接
+        $urls = self::url();
+        // 使用换行把数组转为字符串
+        $txt = implode("\r\n", $urls);
         // 文件路径+文件名
         $path = public_path(DIRECTORY_SEPARATOR).self::$txt;
         // 打开文件，并且删除之前的数据
