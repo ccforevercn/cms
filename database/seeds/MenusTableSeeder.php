@@ -1127,9 +1127,9 @@ class MenusTableSeeder extends Seeder
             ],
             [
                 'id' => 93,
-                'name' => '网站链接html',
+                'name' => '网站链接txt',
                 'parent_id' => 69,
-                'routes' => '/sitemap/html',
+                'routes' => '/sitemap/txt',
                 'page' => '',
                 'icon' => '',
                 'menu' => 0,
