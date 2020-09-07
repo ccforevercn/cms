@@ -13,6 +13,7 @@ return [
         'page' => env('PAGE_SUFFIX', '.html'),
     ],
     'config' => [
-        'unique_list' => env('CONFIG_UNIQUE_LIST', 'webname,website'),
+        'unique_list' => env('CONFIG_UNIQUE_LIST', 'website'),
+        'wap_type' => env('CONFIG_WAP_TYPE', '1')
     ]
 ];

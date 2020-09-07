@@ -204,17 +204,25 @@ class PageDataExtend
         foreach ($configList as &$config){
             $configs[strtolower($labelPrefix.$config['select'])] = $config['value'];
         }
-        if(array_key_exists('zy_cms_website', $configs)){
+        // 域名追加分站地址
+        if(array_key_exists($labelPrefix.'website', $configs)){
             $configs['zy_cms_website'] = $configs['zy_cms_website'].self::$substation_link;
         }
+        // 添加自动跳转wap端
+        if((int)config('ccforever.config.wap_type') && array_key_exists($labelPrefix.'pc_top_code', $configs)){
+            $configs[$labelPrefix.'pc_top_code'] .= $configs[$labelPrefix.'pc_top_code'].automatic_skip_wap($configs['zy_cms_website'].'wap/');
+        }
+        // 分站名称添加到配置中
         $configs[$labelPrefix.'substation_name'] = self::$substation_name;
+        // 分站地址前缀添加到配置中
         $configs[$labelPrefix.'substation_link'] = self::$substation_link;
-//        dd($configs);
-        // 导航
+        // 实例化ColumnsRepository
         $columnsRepository = new ColumnsRepository();
-        $navigation = $columnsRepository::navigation($urlPrefix); // 获取导航
-        // 轮播图
+        // 获取导航
+        $navigation = $columnsRepository::navigation($urlPrefix);
+        // 实例化BannersRepository
         $bannersRepository = new BannersRepository();
+        // 获取banners
         $banners = $bannersRepository::banners(1);
         return compact('configs', 'navigation', 'banners');
     }
