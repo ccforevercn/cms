@@ -21,6 +21,32 @@ use App\Repositories\PartnersRepository;
 class PageDataExtend
 {
     /**
+     * 分站名称
+     *
+     * @var string
+     */
+    private static $substation_name = '';
+
+    /**
+     * 分站链接
+     *
+     * @var string
+     */
+    private static $substation_link = '';
+
+    /**
+     * 设置分站
+     *
+     * @param string $substation
+     * @param string $unique
+     */
+    public static function SetSubstation(string $substation, string $unique): void
+    {
+        self::$substation_name = $substation;
+        self::$substation_link = $unique;
+    }
+
+    /**
      * 首页数据
      *
      * @param string $urlPrefix
@@ -168,6 +194,8 @@ class PageDataExtend
         foreach ($configList as &$config){
             $configs[strtolower($labelPrefix.$config['select'])] = $config['value'];
         }
+        $configs[$labelPrefix.'substation_name'] = self::$substation_name;
+        $configs[$labelPrefix.'substation_link'] = self::$substation_link;
         // 导航
         $columnsRepository = new ColumnsRepository();
         $navigation = $columnsRepository::navigation($urlPrefix); // 获取导航

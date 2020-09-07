@@ -148,10 +148,12 @@ class SubstationsRepository implements RepositoryInterface
         if(!$check){
             return self::setMsg('参数错误', false);
         }
-        // 获取分站唯一值
-        $urlPrefix = self::$model::base_string('select', $id, 'unique');
-        $urlPrefix = '/'.$urlPrefix.'/'; // 地址前缀
+        // 获取分站名称和唯一值
+        $substation = self::$model::base_array('message', $id, ['name', 'unique'], []);
+        $urlPrefix = '/'.$substation['unique'].'/'; // 地址前缀
         $sourcePathPrefix = 'pc/'; // 源文件前缀
+        // 分站设置
+        CachesExtend::substation($substation['name'], $substation['unique']);
         // 缓存首页
         $page = CachesExtend::index($urlPrefix, $sourcePathPrefix);
         // 缓存栏目

@@ -17,6 +17,16 @@ use App\Repositories\ColumnsRepository;
 class CachesExtend
 {
     /**
+     * 设置分站
+     *
+     * @param string $substation
+     * @param string $unique
+     */
+    public static function substation(string $substation, string $unique): void
+    {
+        PageDataExtend::SetSubstation($substation, $unique);
+    }
+    /**
      * 首页缓存
      *
      * $urlPrefix   地址前缀
