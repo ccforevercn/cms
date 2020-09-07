@@ -296,6 +296,6 @@ if(!function_exists('automatic_skip_wap')){
      */
     function automatic_skip_wap($url): string
     {
-        return "<script>if(window.location.toString().indexOf('pref=padindex') != -1){}else{if(/AppleWebKit.*Mobile/i.test(navigator.userAgent) || (/MIDP|SymbianOS|NOKIA|SAMSUNG|LG|NEC|TCL|Alcatel|BIRD|DBTEL|Dopod|PHILIPS|HAIER|LENOVO|MOT-|Nokia|SonyEricsson|SIE-|Amoi|ZTE/.test(navigator.userAgent))){if(window.location.href.indexOf(\"?mobile\")<0){try{if(/Android|WindowsPhone|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)){window.location.href=\"$url\";}else if(/iPad/i.test(navigator.userAgent)){}else{}}catch(e){}}}}</script>";
+        return "<script>if(window.location.toString().indexOf('pref=padindex') != -1){}else{if(/AppleWebKit.*Mobile/i.test(navigator.userAgent) || (/MIDP|SymbianOS|NOKIA|SAMSUNG|LG|NEC|TCL|Alcatel|BIRD|DBTEL|Dopod|PHILIPS|HAIER|LENOVO|MOT-|Nokia|SonyEricsson|SIE-|Amoi|ZTE/.test(navigator.userAgent))){if(window.location.href.indexOf(\"?mobile\")<0){try{if(/Android|WindowsPhone|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)){var urlLength = ".strlen($url).";var url = location.href.substring(0, urlLength);if(url !== '".$url."'){window.location.href=\"$url\";}}else if(/iPad/i.test(navigator.userAgent)){}else{}}catch(e){}}}}</script>";
     }
 }

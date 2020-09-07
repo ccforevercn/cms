@@ -210,7 +210,7 @@ class PageDataExtend
         }
         // 添加自动跳转wap端
         if((int)config('ccforever.config.wap_type') && array_key_exists($labelPrefix.'pc_top_code', $configs)){
-            $configs[$labelPrefix.'pc_top_code'] .= $configs[$labelPrefix.'pc_top_code'].automatic_skip_wap($configs['zy_cms_website'].'wap/');
+            $configs[$labelPrefix.'pc_top_code'] .= $configs[$labelPrefix.'pc_top_code'].automatic_skip_wap($configs['zy_cms_website']);
         }
         // 分站名称添加到配置中
         $configs[$labelPrefix.'substation_name'] = self::$substation_name;
