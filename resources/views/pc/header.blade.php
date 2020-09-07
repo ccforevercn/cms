@@ -30,7 +30,7 @@
                 @if($navigation['id'] == $navigationId)
                     @if(count($navigation['children']))
                         <li class="dropdown   nav-v2__list2  navdown">
-                            <a href="{{ $navigation['url'] }}" title="{{ $navigation['name'] }}" role="button" data-hover="dropdown">{{ $navigation['name'] }}</a>
+                            <a href="{{ $public['configs']['zy_cms_substation_link'].$navigation['url'] }}" title="{{ $navigation['name'] }}" role="button" data-hover="dropdown">{{ $navigation['name'] }}</a>
                             <ul class="dropdown-menu  nav-v2__list2__ul " role="menu">
                                 @foreach($navigation['children'] as $child)
                                     <li><a href="{{ $child['url'] }}" title="{{ $child['name'] }}">{{ $child['name'] }}</a></li>

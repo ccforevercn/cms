@@ -32,7 +32,7 @@ class PageDataExtend
      *
      * @var string
      */
-    private static $substation_link = '';
+    private static $substation_link = '/';
 
     /**
      * 设置分站
@@ -43,7 +43,7 @@ class PageDataExtend
     public static function SetSubstation(string $substation, string $unique): void
     {
         self::$substation_name = $substation;
-        self::$substation_link = $unique;
+        self::$substation_link .= $unique;
     }
 
     /**
@@ -194,8 +194,12 @@ class PageDataExtend
         foreach ($configList as &$config){
             $configs[strtolower($labelPrefix.$config['select'])] = $config['value'];
         }
+        if(array_key_exists('zy_cms_website', $configs)){
+            $configs['zy_cms_website'] = $configs['zy_cms_website'].self::$substation_link;
+        }
         $configs[$labelPrefix.'substation_name'] = self::$substation_name;
         $configs[$labelPrefix.'substation_link'] = self::$substation_link;
+//        dd($configs);
         // 导航
         $columnsRepository = new ColumnsRepository();
         $navigation = $columnsRepository::navigation($urlPrefix); // 获取导航

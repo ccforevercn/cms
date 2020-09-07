@@ -153,7 +153,7 @@ class SubstationsRepository implements RepositoryInterface
         $urlPrefix = '/'.$substation['unique'].'/'; // 地址前缀
         $sourcePathPrefix = 'pc/'; // 源文件前缀
         // 分站设置
-        CachesExtend::substation($substation['name'], $substation['unique']);
+        CachesExtend::substation($substation['name'], $substation['unique'].'/');
         // 缓存首页
         $page = CachesExtend::index($urlPrefix, $sourcePathPrefix);
         // 缓存栏目

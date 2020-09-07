@@ -247,6 +247,15 @@ class ColumnsRepository implements RepositoryInterface
                 if($item['render']){
                     // 超链
                     $data['url'] = $item['page'];
+                    // 获取网站地址
+                    $site = config('app.url');
+                    // 截取超链的网站地址长度
+                    $url = substr($data['url'], 0, strlen($site));
+                    // 内网超链
+                    if($url === $site){
+                        // 添加地址前缀
+                        $data['url'] = str_replace($site, $site.$urlPrefix, $data['url']);
+                    }
                 }else{
                     // 页面
                     $data['url'] = $urlPrefix.$item['page'].'/'.$item['id'].page_suffix_message();
