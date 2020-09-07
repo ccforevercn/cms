@@ -86,9 +86,9 @@ class SubstationsRepository implements RepositoryInterface
         if(count($equal)) {
             return self::setMsg('分站唯一值已存在', false);
         }
-        $tags['is_del'] = 0;
-        $tags['add_time'] = time();
-        $status = self::$model::base_bool('insert', $tags, 0);
+        $substation['is_del'] = 0;
+        $substation['add_time'] = time();
+        $status = self::$model::base_bool('insert', $substation, 0);
         return self::setMsg($status ? '添加成功' : '添加失败', $status);
     }
 
