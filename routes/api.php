@@ -114,6 +114,11 @@ Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
             Route::post('/sitemap/html', 'SiteMapController@html')->name('sitemaphtml'.$admin);// 网站地图html缓存
             Route::post('/sitemap/xml', 'SiteMapController@xml')->name('sitemapxml'.$admin);// 网站地图xml缓存
             Route::post('/sitemap/txt', 'SiteMapController@txt')->name('sitemaptxt'.$admin);// 网站地图txt缓存
+            Route::get('/substations/list', 'SubstationsController@lst')->name('substationslist'.$admin);// 分站列表
+            Route::post('/substations/insert', 'SubstationsController@insert')->name('substationsinsert'.$admin);// 分站添加
+            Route::post('/substations/update', 'SubstationsController@update')->name('substationsupdate'.$admin);// 分站修改
+            Route::post('/substations/delete', 'SubstationsController@delete')->name('substationsdelete'.$admin);// 分站删除
+            Route::get('/substations/message', 'SubstationsController@message')->name('substationsmessage'.$admin);// 分站信息
         });
         Route::namespace('upload')->group(function () use($admin) { // 上传文件路由组
             Route::post('/uploads/upload', 'UploadsController@upload')->name('uploadsupload'.$admin);// 单文件上传

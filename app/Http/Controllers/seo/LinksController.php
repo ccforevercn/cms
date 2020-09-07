@@ -115,7 +115,7 @@ class LinksController extends BaseController
         if(!$id){ return JsonExtend::error($linksRepository::returnMsg('参数错误')); }
         $bool = $linksRepository::message($id);
         if($bool){
-            return JsonExtend::success($linksRepository::returnMsg('轮播图信息'), $linksRepository::returnData([]));
+            return JsonExtend::success($linksRepository::returnMsg('友情链接信息'), $linksRepository::returnData([]));
         }
         return JsonExtend::error($linksRepository::returnMsg('数据不存在'));
     }

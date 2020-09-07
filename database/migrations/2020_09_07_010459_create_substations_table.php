@@ -27,8 +27,8 @@ class CreateSubstationsTable extends Migration
             $table->charset = 'utf8';  //表默认字符集
             $table->collation = 'utf8_general_ci';  // 表默认的排序规则
             $table->increments('id')->comment('分站表');
-            $table->string('title', 255)->comment('名称');
-            $table->string('unique', 128)->unique()->comment('唯一值');
+            $table->string('name', 64)->comment('名称');
+            $table->string('unique', 32)->unique()->comment('唯一值');
             $table->integer('add_time')->comment('添加时间');
             $table->tinyInteger('is_del')->comment('是否删除(1是 0否)');
             $table->unique('id'); // 编号添加唯一索引

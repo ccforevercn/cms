@@ -35,14 +35,14 @@ class Substations extends BaseModel implements ModelInterface
      *
      * @var array
      */
-    private static $select = ['id', 'title', 'unique', 'add_time', 'is_del'];
+    private static $select = ['id', 'name', 'unique', 'add_time', 'is_del'];
 
     /**
      * 基本信息
      *
      * @var array
      */
-    private static $message = ['id', 'title', 'unique', 'add_time'];
+    private static $message = ['id', 'name', 'unique', 'add_time'];
 
     /**
      * 编号查询 唯一索引
