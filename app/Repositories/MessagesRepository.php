@@ -222,6 +222,21 @@ class MessagesRepository implements RepositoryInterface
         return self::setMsg($status ? '修改成功' : '修改失败', $status);
     }
 
+
+    /**
+     * 信息内容(批量)
+     *
+     * @param array $ids
+     * @return array
+     */
+    public static function contents(array $ids): array
+    {
+        self::$model::SetModelTable('messages_content');
+        $contents = self::$model::base_array('equal_in', ['id', $ids], ['id', 'content'], []);
+        self::$model::SetModelTable('messages');
+        return $contents;
+    }
+
     /**
      * 信息内容  添加/修改/查询
      *
@@ -421,12 +436,13 @@ class MessagesRepository implements RepositoryInterface
     }
 
     /**
-     * 信息列表(编号和页面)
+     * 信息列表(指定字段)
      *
+     * @param array $select
      * @return array
      */
-    public static function siteMapMessages(): array
+    public static function messagesSelects(array $select): array
     {
-        return self::$model::base_array('equal', ['release' => 1], ['id', 'page'], []);
+        return self::$model::base_array('equal', ['release' => 1], $select, []);
     }
 }

@@ -46,14 +46,14 @@ class SiteMapExtend
         // 实例化ColumnsRepository获取栏目
         $columnsRepository = new ColumnsRepository();
         // 获取页面栏目编号和页面
-        $columns = $columnsRepository::pageColumnsIds(['id', 'page']);
+        $columns = $columnsRepository::columnsSelects(['id', 'page']);
         // 栏目
         foreach ($columns as &$column){
             $result[] = $url .'/'.$column['page'] . '/' .$column['id'].page_suffix_message();
         }
         // 信息
         $messagesRepository = new MessagesRepository();
-        $messages = $messagesRepository::siteMapMessages();
+        $messages = $messagesRepository::messagesSelects(['id', 'page']);
         foreach ($messages as &$message){
             $result[] = $url .'/'.$message['page'] . '/' .$message['id'].page_suffix_message();
         }

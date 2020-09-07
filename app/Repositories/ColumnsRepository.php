@@ -140,6 +140,20 @@ class ColumnsRepository implements RepositoryInterface
     }
 
     /**
+     * 栏目内容(批量)
+     *
+     * @param array $ids
+     * @return array
+     */
+    public static function contents(array $ids): array
+    {
+        self::$model::SetModelTable('columns_content');
+        $contents = self::$model::base_array('equal_in', ['id', $ids], ['id', 'content'], []);
+        self::$model::SetModelTable('columns');
+        return $contents;
+    }
+
+    /**
      * 栏目内容添加、修改、查询
      * @param array $data
      * @param bool $type
@@ -343,12 +357,12 @@ class ColumnsRepository implements RepositoryInterface
     }
 
     /**
-     * 栏目编号(渲染类型为页面)
+     * 栏目信息(指定字段)
      *
      * @param array $select
      * @return array
      */
-    public static function pageColumnsIds(array $select): array
+    public static function columnsSelects(array $select): array
     {
         $order = [];
         $order['select'] = 'weight';

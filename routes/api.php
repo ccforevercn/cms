@@ -120,6 +120,9 @@ Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
             Route::post('/substations/delete', 'SubstationsController@delete')->name('substationsdelete'.$admin);// 分站删除
             Route::get('/substations/message', 'SubstationsController@message')->name('substationsmessage'.$admin);// 分站信息
             Route::post('/substations/cache', 'SubstationsController@cache')->name('substationscache'.$admin);// 分站缓存
+            Route::get('/forbidden/word/forbidden', 'ForbiddenWordController@forbidden')->name('forbiddenwordforbidden'.$admin);// 违禁词查询
+            Route::post('/forbidden/word/update', 'ForbiddenWordController@update')->name('forbiddenwordupdate'.$admin);// 违禁词修改
+            Route::get('/forbidden/word/check', 'ForbiddenWordController@check')->name('forbiddenwordcheck'.$admin);// 违禁词验证
         });
         Route::namespace('upload')->group(function () use($admin) { // 上传文件路由组
             Route::post('/uploads/upload', 'UploadsController@upload')->name('uploadsupload'.$admin);// 单文件上传

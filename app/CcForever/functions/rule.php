@@ -299,3 +299,27 @@ if(!function_exists('automatic_skip_wap')){
         return "<script>if(window.location.toString().indexOf('pref=padindex') != -1){}else{if(/AppleWebKit.*Mobile/i.test(navigator.userAgent) || (/MIDP|SymbianOS|NOKIA|SAMSUNG|LG|NEC|TCL|Alcatel|BIRD|DBTEL|Dopod|PHILIPS|HAIER|LENOVO|MOT-|Nokia|SonyEricsson|SIE-|Amoi|ZTE/.test(navigator.userAgent))){if(window.location.href.indexOf(\"?mobile\")<0){try{if(/Android|WindowsPhone|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)){var urlLength = ".strlen($url).";var url = location.href.substring(0, urlLength);if(url !== '".$url."'){window.location.href=\"$url\";}}else if(/iPad/i.test(navigator.userAgent)){}else{}}catch(e){}}}}</script>";
     }
 }
+
+if(!function_exists('array_check_string')){
+    /**
+     * 验证数组中是否有指定字符串内容，存在时返回true
+     *
+     * @param string $str
+     * @param array $arr
+     * @return bool
+     */
+    function array_check_string(string  $str, array $arr): bool
+    {
+        // 是否存在  是 true  否 false
+        $status = false;
+        foreach ($arr as &$word){
+            $status = stripos($str, $word);
+            // 存在时break
+            if($status !== false){
+                $status = true;
+                break;
+            }
+        }
+        return $status;
+    }
+}

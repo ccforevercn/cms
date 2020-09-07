@@ -82,7 +82,7 @@ class CachesExtend
         // 全部栏目缓存
         $columnsRepository = new ColumnsRepository();
         // 获取页面栏目编号
-        $columnIds = $columnsRepository::pageColumnsIds(['id']);
+        $columnIds = $columnsRepository::columnsSelects(['id']);
         // 生成页面地址
         $path = [];
         // 循环缓存栏目
@@ -128,7 +128,7 @@ class CachesExtend
         // 全部栏目下的信息缓存
         $columnsRepository = new ColumnsRepository();
         // 获取页面栏目编号
-        $columnIds = $columnsRepository::pageColumnsIds(['id']);
+        $columnIds = $columnsRepository::columnsSelects(['id']);
         // 生成页面地址
         $path = [];
         // 循环缓存栏目

@@ -36,6 +36,9 @@ class RobotsController extends BaseController
     public function update(): object
     {
         $content = app('request')->input('content', '');
+        if(is_null($content)){
+            return JsonExtend::error('修改失败');
+        }
         $bool = RobotsExtend::update($content);
         if($bool){
             return JsonExtend::success('修改成功');
