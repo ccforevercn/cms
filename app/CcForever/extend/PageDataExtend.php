@@ -21,7 +21,7 @@ use App\Repositories\PartnersRepository;
 class PageDataExtend
 {
     /**
-     * 首页
+     * 首页数据
      *
      * @param string $urlPrefix
      * @return array
@@ -44,7 +44,7 @@ class PageDataExtend
     }
 
     /**
-     * 栏目
+     * 栏目数据
      *
      * @param int $id
      * @param string $urlPrefix
@@ -109,7 +109,7 @@ class PageDataExtend
     }
 
     /**
-     * 信息
+     * 信息数据
      *
      * @param int $id
      * @param string $urlPrefix
@@ -149,7 +149,7 @@ class PageDataExtend
     }
 
     /**
-     * 公共
+     * 公共数据
      *
      * @param string $urlPrefix
      * @return array
@@ -175,80 +175,5 @@ class PageDataExtend
         $bannersRepository = new BannersRepository();
         $banners = $bannersRepository::banners(1);
         return compact('configs', 'navigation', 'banners');
-    }
-
-    /**
-     * 静态文件写入
-     *
-     * $date  数据
-     * $key   数据中的key
-     * $urlPrefix 地址前缀
-     * $sourcePathPrefix 缓存源文件前缀
-     *
-     * @param array $date
-     * @param string $key
-     * @param string $urlPrefix
-     * @param string $sourcePathPrefix
-     * @return string
-     * @throws \Throwable
-     */
-    public static function pageWrite(array $date, string $key, string $urlPrefix, string $sourcePathPrefix): string
-    {
-        // 替换模板文件前缀(地址前缀)
-        $pages = str_replace($urlPrefix, '/', $date[$key]['url']);
-        // 使用/分割源文件地址
-        $pages = explode('/', $pages);
-        // 删除第一个键值(空串)
-        $pages = array_slice($pages, 1);
-        // 获取原文件前缀
-        $sourcePath = $sourcePathPrefix; // 源文件
-        $resourcesPath = ''; // 生成后的文件
-        $fileName = ''; // 生成后的文件名
-        // 使用/分割地址前缀
-        $urlPrefixArr = explode('/', $urlPrefix);
-        // 删除第一个元素
-        array_shift($urlPrefixArr);
-        // 删除最后一个元素
-        array_pop($urlPrefixArr);
-        // 地址前缀存在时
-        if(count($urlPrefixArr)){
-            // 追加到生成后的文件地址路径
-            foreach ($urlPrefixArr as &$url){
-                $resourcesPath .= $url.'/';
-                if(!is_dir($resourcesPath)){
-                    mkdir($resourcesPath, 0755);
-                }
-            }
-        }
-        // 获取源文件地址和生成后文件地址
-        foreach ($pages as $loop=>&$page){
-            if((int)$loop !== (int)bcsub(count($pages), 1, 0)){
-                // 获取文件目录
-                $sourcePath .= $page.'/';
-                $resourcesPath .= $page.'/';
-                if(!is_dir($resourcesPath)){
-                    mkdir($resourcesPath, 0755);
-                }
-            }else{
-                // 获取文件名称
-                $fileName = $page;
-            }
-        }
-        // 截取源文件后面
-        $sourcePath = substr($sourcePath, 0 , bcsub(strlen($sourcePath), 1, 0));
-        // 首页缓存时添加index
-        if($key === 'index'){
-            $sourcePath .= '/index';
-        }
-        // 获取生成后的页面字符串
-        $string = view($sourcePath, $date)->__toString();
-        // 生成静态文件
-        // 打开文件，如果没有就创建
-        $file = fopen($resourcesPath.$fileName, 'w+');
-        // 写入页面
-        fwrite($file, $string);
-        // 关闭文件
-        fclose($file);
-        return $resourcesPath.$fileName;
     }
 }

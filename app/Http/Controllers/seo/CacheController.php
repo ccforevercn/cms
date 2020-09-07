@@ -7,9 +7,8 @@
 namespace App\Http\Controllers\seo;
 
 use App\CcForever\controller\BaseController;
+use App\CcForever\extend\CachesExtend;
 use App\CcForever\extend\JsonExtend;
-use App\CcForever\extend\PageDataExtend;
-use App\Repositories\ColumnsRepository;
 
 /**
  * 缓存控制器
@@ -27,18 +26,10 @@ class CacheController extends BaseController
      */
     public function index():object
     {
-        // 地址前缀
-        $urlPrefix = '/';
-        // 源文件前缀
-        $sourcePathPrefix = 'pc/';
-        // 生成文件地址
-        $path = [];
-        // 首页数据
-        $index = PageDataExtend::pageIndex($urlPrefix);
-        // 添加首页地址
-        $index['index']['url'] = $urlPrefix.'index'.page_suffix_message();
-        // 缓存静态文件
-        $path[] = PageDataExtend::pageWrite($index, 'index', $urlPrefix, $sourcePathPrefix);
+        $urlPrefix = '/'; // 地址前缀
+        $sourcePathPrefix = 'pc/'; // 源文件前缀
+        // 缓存首页
+        $path = CachesExtend::index($urlPrefix, $sourcePathPrefix);
         return JsonExtend::success('缓存成功', $path);
     }
 
@@ -56,38 +47,13 @@ class CacheController extends BaseController
         $sourcePathPrefix = 'pc/';
         // 获取栏目编号
         $id = (int)app('request')->input('id', 0);
-        // 栏目编号为0 缓存所有栏目页面
-        if($id > 0){
-            // 缓存单个栏目
-            $columns = PageDataExtend::pageColumns($id, $urlPrefix);
-            // 生成页面地址
-            $path = [];
-            // 栏目不存在
-            if(!count($columns)){ return JsonExtend::error('栏目不存在(外链页面不能缓存)'); }
-            // 栏目存在
-            foreach ($columns as &$column){
-                $path[] = PageDataExtend::pageWrite($column, 'column', $urlPrefix, $sourcePathPrefix);
-            }
+        // 缓存栏目
+        $path = CachesExtend::columns($id, $urlPrefix, $sourcePathPrefix);
+        if(count($path)){
             return JsonExtend::success('缓存成功', $path);
+        }else{
+            return JsonExtend::error('缓存失败，没有可缓存的页面');
         }
-        // 全部栏目缓存
-        $columnsRepository = new ColumnsRepository();
-        // 获取页面栏目编号
-        $columnIds = $columnsRepository::pageColumnsIds(['id']);
-        // 生成页面地址
-        $path = [];
-        // 循环缓存栏目
-        for ($loop = 0; $loop < count($columnIds);  $loop++){
-            // 缓存单个栏目
-            $columns = PageDataExtend::pageColumns($columnIds[$loop], $urlPrefix);
-            // 栏目存在
-            if(count($columns)){
-                foreach ($columns as &$column){
-                    $path[] = PageDataExtend::pageWrite($column, 'column', $urlPrefix, $sourcePathPrefix);
-                }
-            }
-        }
-        return JsonExtend::success('缓存成功', $path);
     }
 
     /**
@@ -98,38 +64,16 @@ class CacheController extends BaseController
      */
     public function message():object
     {
-        // 地址前缀
-        $urlPrefix = '/';
-        // 源文件前缀
-        $sourcePathPrefix = 'pc/';
+        $urlPrefix = '/'; // 地址前缀
+        $sourcePathPrefix = 'pc/'; // 源文件前缀
+        // 栏目编号
         $id = (int)app('request')->input('id', 0);
-        // 缓存单个栏目下的信息
-        if($id > 0){
-            $messages = PageDataExtend::pageMessage($id, $urlPrefix);
-            if(!count($messages)) { return JsonExtend::error('当前栏目下暂无信息'); }
-            // 生成页面地址
-            $path = [];
-            foreach ($messages as &$message){
-                $path[] = PageDataExtend::pageWrite($message, 'message', $urlPrefix, $sourcePathPrefix);
-            }
+        // 缓存信息
+        $path = CachesExtend::message($id, $urlPrefix, $sourcePathPrefix);
+        if(count($path)){
             return JsonExtend::success('缓存成功', $path);
+        }else{
+            return JsonExtend::error('缓存失败，没有可缓存的页面');
         }
-        // 全部栏目下的信息缓存
-        $columnsRepository = new ColumnsRepository();
-        // 获取页面栏目编号
-        $columnIds = $columnsRepository::pageColumnsIds(['id']);
-        // 生成页面地址
-        $path = [];
-        // 循环缓存栏目
-        for ($loop = 0; $loop < count($columnIds);  $loop++){
-            // 缓存单个栏目下的信息
-            $messages = PageDataExtend::pageMessage($columnIds[$loop], $urlPrefix);
-            if(count($messages)){
-                foreach ($messages as &$message){
-                    $path[] = PageDataExtend::pageWrite($message, 'message', $urlPrefix, $sourcePathPrefix);
-                }
-            }
-        }
-        return JsonExtend::success('缓存成功', $path);
     }
 }
