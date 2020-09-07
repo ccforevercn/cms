@@ -49,7 +49,7 @@
       @endforeach
      </ul>
      <div class="met_pager">
-      @php echo \App\CcForever\extend\ColumnsExtend::page($column['unique'], $page, 3, '', '', '', '', '', true, true, true); @endphp
+      @php echo \App\CcForever\extend\ColumnsExtend::page($column['unique'], $page, 3, '', '', '', '', '', $public['configs']['zy_cms_substation_link'], true, true, true); @endphp
      </div>
     </div> 
    </div> 

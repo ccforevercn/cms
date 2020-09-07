@@ -47,6 +47,16 @@ class PageDataExtend
     }
 
     /**
+     * 获取分站名称
+     *
+     * @return string
+     */
+    public static function GetSubstationName(): string
+    {
+        return self::$substation_name;
+    }
+
+    /**
      * 首页数据
      *
      * @param string $urlPrefix

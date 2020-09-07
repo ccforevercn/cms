@@ -63,7 +63,7 @@ class MessagesExtend
         foreach ($messages as $key=>&$message){
             $result[$key]['cname'] = $message['cname'];
             $result[$key]['cname_alias'] = $message['cname_alias'];
-            $result[$key]['name'] = $message['name'];
+            $result[$key]['name'] = PageDataExtend::GetSubstationName().$message['name'];
             $result[$key]['image'] = $message['image'];
             $result[$key]['writer'] = $message['writer'];
             $result[$key]['click'] = $message['click'];
@@ -125,7 +125,7 @@ class MessagesExtend
         // 格式化信息
         foreach ($message as $key=>&$item){
             $result[$key]['id'] = $item['id'];
-            $result[$key]['name'] = $item['name'];
+            $result[$key]['name'] = PageDataExtend::GetSubstationName().$item['name'];
             $result[$key]['cname'] = $item['cname'];
             $result[$key]['cname_alias'] = $item['cname_alias'];
             $result[$key]['cid'] = $item['cid'];
@@ -140,9 +140,9 @@ class MessagesExtend
             $result[$key]['time'] = date('Y-m-d H:i', $item['update_time']);
             $result[$key]['url'] = $urlPrefix.$item['page'].'/'.$item['id'].page_suffix_message();
             // 上一条获取
-            $result[$key]['pre'] = $messagesRepository::messageEnter($columnId, $preWhere, $item[$preWhere['select']], $urlPrefix);
+            $result[$key]['pre'] = $messagesRepository::messageEnter($columnId, $preWhere, $item[$preWhere['select']], $urlPrefix, PageDataExtend::GetSubstationName());
             // 下一条获取
-            $result[$key]['next'] = $messagesRepository::messageEnter($columnId, $nextWhere, $item[$nextWhere['select']], $urlPrefix);
+            $result[$key]['next'] = $messagesRepository::messageEnter($columnId, $nextWhere, $item[$nextWhere['select']], $urlPrefix, PageDataExtend::GetSubstationName());
         }
         return $result;
     }

@@ -191,6 +191,7 @@ class ColumnsExtend
      * $classA a标签样式
      * $classCurrentLi 当前页li标签样式
      * $classCurrentA 当前页a标签样式
+     * $urlPrefix 地址前缀
      * $extremes 是否展示首页和尾页(默认true)   true 是   false 否
      * $enter 是否展示上一页和下一页(默认true)   true 是   false 否
      * $number 是否展示之前一页，之前两页，之后一页，之后两页(默认true)   true 是   false 否
@@ -203,16 +204,17 @@ class ColumnsExtend
      * @param string $classA
      * @param string $classCurrentLi
      * @param string $classCurrentA
+     * @param string $urlPrefix
      * @param bool $extremes
      * @param bool $enter
      * @param bool $number
      * @return string
      */
-    public static function page(int $id, int $current, int $messagesType, string $classUl, string $classLi, string $classA, string $classCurrentLi, string $classCurrentA, bool $extremes = true, bool $enter = true, bool $number = true):string
+    public static function page(int $id, int $current, int $messagesType, string $classUl, string $classLi, string $classA, string $classCurrentLi, string $classCurrentA, string $urlPrefix, bool $extremes = true, bool $enter = true, bool $number = true):string
     {
         $result = '';
         // 当前栏目信息
-        $column = self::column($id, false, '/');
+        $column = self::column($id, false, $urlPrefix);
         // 栏目不存在
         if(!count($column)) return $result;
         // 获取 栏目排序和下级编号+
