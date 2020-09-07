@@ -195,18 +195,21 @@ class CachesExtend
         // 截取源文件后面
         $sourcePath = substr($sourcePath, 0 , bcsub(strlen($sourcePath), 1, 0));
         // 首页缓存时添加index
-        if($key === 'index'){
-            $sourcePath .= '/index';
+        if($key === 'index'){ $sourcePath .= '/index'; }
+        try{
+            // 获取生成后的页面字符串
+            $string = view($sourcePath, $date)->__toString();
+            // 生成静态文件
+            // 打开文件，如果没有就创建
+            $file = @fopen($resourcesPath.$fileName, 'w+');
+            if(!$file) return '';
+            // 写入页面
+            fwrite($file, $string);
+            // 关闭文件
+            fclose($file);
+            return $resourcesPath.$fileName;
+        }catch (\Exception $exception){
+            return '';
         }
-        // 获取生成后的页面字符串
-        $string = view($sourcePath, $date)->__toString();
-        // 生成静态文件
-        // 打开文件，如果没有就创建
-        $file = fopen($resourcesPath.$fileName, 'w+');
-        // 写入页面
-        fwrite($file, $string);
-        // 关闭文件
-        fclose($file);
-        return $resourcesPath.$fileName;
     }
 }

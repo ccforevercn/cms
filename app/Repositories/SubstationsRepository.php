@@ -6,6 +6,7 @@
 
 namespace App\Repositories;
 
+use App\CcForever\extend\CachesExtend;
 use App\CcForever\interfaces\RepositoryInterface;
 use App\CcForever\traits\RepositoryReturnMsgData;
 use App\Substations;
@@ -131,5 +132,33 @@ class SubstationsRepository implements RepositoryInterface
         }
         $status = self::$model::base_bool('update', $substation, $id); // 修改数据
         return self::setMsg($status ? '修改成功' : '修改失败', $status);
+    }
+
+    /**
+     * 分站缓存
+     *
+     * @param int $id
+     * @return bool
+     * @throws \Throwable
+     */
+    public static function cache(int $id): bool
+    {
+        // 验证编号
+        $check = self::$model::base_bool('check', [], $id);
+        if(!$check){
+            return self::setMsg('参数错误', false);
+        }
+        // 获取分站唯一值
+        $urlPrefix = self::$model::base_string('select', $id, 'unique');
+        $urlPrefix = '/'.$urlPrefix.'/'; // 地址前缀
+        $sourcePathPrefix = 'pc/'; // 源文件前缀
+        // 缓存首页
+        $page = CachesExtend::index($urlPrefix, $sourcePathPrefix);
+        // 缓存栏目
+        $page = array_merge($page, CachesExtend::columns(0, $urlPrefix, $sourcePathPrefix));
+        // 缓存信息
+        $page = array_merge($page, CachesExtend::message(0, $urlPrefix, $sourcePathPrefix));
+        $status = (bool)count($page);
+        return self::setMsg($status ? '缓存成功' : '缓存失败', $status, $page);
     }
 }

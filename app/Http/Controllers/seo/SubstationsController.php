@@ -118,4 +118,23 @@ class SubstationsController extends BaseController
         }
         return JsonExtend::error($substationsRepository::returnMsg('数据不存在'));
     }
+
+    /**
+     * 分站缓存
+     *
+     * @param SubstationsRequest $substationsRequest
+     * @param SubstationsRepository $substationsRepository
+     * @return object
+     * @throws \Throwable
+     */
+    public function cache(SubstationsRequest $substationsRequest, SubstationsRepository $substationsRepository): object
+    {
+        $id = (int)$substationsRequest->input('id');
+        if(!$id){ return JsonExtend::error($substationsRepository::returnMsg('参数错误')); }
+        $bool = $substationsRepository::cache($id);
+        if($bool){
+            return JsonExtend::success($substationsRepository::returnMsg('缓存成功'), $substationsRepository::returnData([]));
+        }
+        return JsonExtend::error($substationsRepository::returnMsg('缓存失败'));
+    }
 }

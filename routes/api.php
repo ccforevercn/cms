@@ -119,6 +119,7 @@ Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
             Route::post('/substations/update', 'SubstationsController@update')->name('substationsupdate'.$admin);// 分站修改
             Route::post('/substations/delete', 'SubstationsController@delete')->name('substationsdelete'.$admin);// 分站删除
             Route::get('/substations/message', 'SubstationsController@message')->name('substationsmessage'.$admin);// 分站信息
+            Route::post('/substations/cache', 'SubstationsController@cache')->name('substationscache'.$admin);// 分站缓存
         });
         Route::namespace('upload')->group(function () use($admin) { // 上传文件路由组
             Route::post('/uploads/upload', 'UploadsController@upload')->name('uploadsupload'.$admin);// 单文件上传
