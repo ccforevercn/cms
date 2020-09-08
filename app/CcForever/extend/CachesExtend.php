@@ -144,26 +144,68 @@ class CachesExtend
         return $path;
     }
 
+    /**
+     * 搜索缓存
+     *
+     * @param string $urlPrefix
+     * @param string $sourcePathPrefix
+     * @return array
+     * @throws \Throwable
+     */
+    public static function search(string $urlPrefix, string $sourcePathPrefix): array
+    {
+        $path = []; // 生成文件路径
+        // 获取所有信息
+        $search = PageDataExtend::pageSearch($urlPrefix);
+        // 验证文件是否存在
+        $searchPath = public_path('resources'.DIRECTORY_SEPARATOR.'search'.DIRECTORY_SEPARATOR);
+        if(!is_dir($searchPath)){
+            mkdir($searchPath, 0755);
+        }
+        // 缓存到js文件中
+        $message = json_encode($search['message'], JSON_UNESCAPED_UNICODE);
+        $script = "function getQuerySelect(select){var query = window.location.search.substring(1);var selects = query.split(\"&\");for (var i=0;i<selects.length;i++) {var param = selects[i].split(\"=\");if(param[0] == select){return param[1];}}return(false);}function search(){var name= decodeURIComponent(getQuerySelect('search'));var data = [];for(let index in messages){if(messages[index].name.indexOf(name) >= 0){data.push(messages[index])}}console.log(data);return data;}";
+        $file = @fopen($searchPath.'search.js', 'w+');
+        fwrite($file, 'var messages = '.$message."\r\n".$script);
+        fclose($file);
+        // 缓存静态文件
+        $search['search']['url'] = $urlPrefix.'search'.page_suffix_message();
+        $path[] = self::write($search, 'search', $urlPrefix, $sourcePathPrefix);
+        if(count($path)){
+            // 缓存成功添加search.js到搜索页面
+            $tpl = public_path($path[0]);
+            $file = @fopen($tpl, 'r');
+            if(!$file) return $path;
+            $searchContent = fread($file, filesize($tpl));
+            fclose($file);
+            $searchContent = str_replace("</body>", "<script type='text/javascript' src=\"/resources/search/search.js\"></script>\r\n</body>", $searchContent);
+            $file = @fopen($tpl, 'w+');
+            fwrite($file, $searchContent);
+            fclose($file);
+        }
+        return $path;
+    }
+
 
     /**
      * 静态文件写入
      *
-     * $date  数据
+     * $data  数据
      * $key   数据中的key
      * $urlPrefix 地址前缀
      * $sourcePathPrefix 缓存源文件前缀
      *
-     * @param array $date
+     * @param array $data
      * @param string $key
      * @param string $urlPrefix
      * @param string $sourcePathPrefix
      * @return string
      * @throws \Throwable
      */
-    private static function write(array $date, string $key, string $urlPrefix, string $sourcePathPrefix): string
+    private static function write(array $data, string $key, string $urlPrefix, string $sourcePathPrefix): string
     {
         // 替换模板文件前缀(地址前缀)
-        $pages = str_replace($urlPrefix, '/', $date[$key]['url']);
+        $pages = str_replace($urlPrefix, '/', $data[$key]['url']);
         // 使用/分割源文件地址
         $pages = explode('/', $pages);
         // 删除第一个键值(空串)
@@ -182,7 +224,7 @@ class CachesExtend
         if(count($urlPrefixArr)){
             // 追加到生成后的文件地址路径
             foreach ($urlPrefixArr as &$url){
-                $resourcesPath .= $url.'/';
+                $resourcesPath .= $url.DIRECTORY_SEPARATOR;
                 if(!is_dir($resourcesPath)){
                     mkdir($resourcesPath, 0755);
                 }
@@ -192,8 +234,8 @@ class CachesExtend
         foreach ($pages as $loop=>&$page){
             if((int)$loop !== (int)bcsub(count($pages), 1, 0)){
                 // 获取文件目录
-                $sourcePath .= $page.'/';
-                $resourcesPath .= $page.'/';
+                $sourcePath .= $page.DIRECTORY_SEPARATOR;
+                $resourcesPath .= $page.DIRECTORY_SEPARATOR;
                 if(!is_dir($resourcesPath)){
                     mkdir($resourcesPath, 0755);
                 }
@@ -205,10 +247,11 @@ class CachesExtend
         // 截取源文件后面
         $sourcePath = substr($sourcePath, 0 , bcsub(strlen($sourcePath), 1, 0));
         // 首页缓存时添加index
-        if($key === 'index'){ $sourcePath .= '/index'; }
+        if($key === 'index'){ $sourcePath .= DIRECTORY_SEPARATOR.'index'; }
+        if($key === 'search'){ $sourcePath .= DIRECTORY_SEPARATOR.'search'; }
         try{
             // 获取生成后的页面字符串
-            $string = view($sourcePath, $date)->__toString();
+            $string = view($sourcePath, $data)->__toString();
             // 生成静态文件
             // 打开文件，如果没有就创建
             $file = @fopen($resourcesPath.$fileName, 'w+');
@@ -218,8 +261,6 @@ class CachesExtend
             // 关闭文件
             fclose($file);
             return $resourcesPath.$fileName;
-        }catch (\Exception $exception){
-            return '';
-        }
+        }catch (\Exception $exception){return '';}
     }
 }

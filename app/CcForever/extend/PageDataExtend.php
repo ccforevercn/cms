@@ -10,6 +10,7 @@ use App\Repositories\BannersRepository;
 use App\Repositories\ColumnsRepository;
 use App\Repositories\ConfigMessageRepository;
 use App\Repositories\LinksRepository;
+use App\Repositories\MessagesRepository;
 use App\Repositories\PartnersRepository;
 
 /**
@@ -182,6 +183,37 @@ class PageDataExtend
             $result[] = compact('public', 'column', 'columnTop', 'children', 'message', 'navigationId');
         }
         return $result;
+    }
+
+    /**
+     * 搜索页数据
+     *
+     * @param string $urlPrefix
+     * @return array
+     */
+    public static function pageSearch(string  $urlPrefix): array
+    {
+        // 公共配置
+        $public = self::pagePublic($urlPrefix);
+        // 导航编号
+        $navigationId = -1;
+        // 实例化MessagesRepository
+        $messagesRepository = new MessagesRepository();
+        // 获取所有已发布的信息
+        $messages = $messagesRepository::messagesSelects($messagesRepository::GetModel()::GetMessage());
+        // 获取需要的信息数据
+        foreach ($messages as $key=>&$item){
+            $message[$key]['name'] = $item['name'];
+            $message[$key]['image'] = $item['image'];
+            $message[$key]['writer'] = $item['writer'];
+            $message[$key]['click'] = $item['click'];
+            $message[$key]['keywords'] = $item['keywords'];
+            $message[$key]['description'] = $item['description'];
+            $message[$key]['update_time'] = $item['update_time'];
+            $message[$key]['time'] = date('Y-m-d H:i', $item['update_time']);
+            $message[$key]['url'] = $urlPrefix.$item['page'].'/'.$item['id'].page_suffix_message();
+        }
+        return compact('public', 'message', 'navigationId');
     }
 
     /**

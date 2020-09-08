@@ -33,11 +33,12 @@ class CacheController extends BaseController
             return JsonExtend::error('缓存失败，没有可缓存的页面');
         }
         // 源文件前缀
-        $sourcePathPrefix = app('request')->input('source', 'pc/');
+        $sourcePathPrefix = app('request')->input('source', 'pc');
         // 源文件前缀错误
-        if(!in_array($sourcePathPrefix, ['pc/', 'wap/'])){
+        if(!in_array($sourcePathPrefix, ['pc', 'wap'])){
             return JsonExtend::error('缓存失败，没有可缓存的页面');
         }
+        $sourcePathPrefix = $sourcePathPrefix.DIRECTORY_SEPARATOR;
         CachesExtend::substation('', substr($urlPrefix, 1, strlen($urlPrefix)));
         // 缓存首页
         $path = CachesExtend::index($urlPrefix, $sourcePathPrefix);
@@ -59,11 +60,12 @@ class CacheController extends BaseController
             return JsonExtend::error('缓存失败，没有可缓存的页面');
         }
         // 源文件前缀
-        $sourcePathPrefix = app('request')->input('source', 'pc/');
+        $sourcePathPrefix = app('request')->input('source', 'pc');
         // 源文件前缀错误
-        if(!in_array($sourcePathPrefix, ['pc/', 'wap/'])){
+        if(!in_array($sourcePathPrefix, ['pc', 'wap'])){
             return JsonExtend::error('缓存失败，没有可缓存的页面');
         }
+        $sourcePathPrefix = $sourcePathPrefix.DIRECTORY_SEPARATOR;
         // 获取栏目编号
         $id = (int)app('request')->input('id', 0);
         CachesExtend::substation('', substr($urlPrefix, 1, strlen($urlPrefix)));
@@ -91,16 +93,46 @@ class CacheController extends BaseController
             return JsonExtend::error('缓存失败，没有可缓存的页面');
         }
         // 源文件前缀
-        $sourcePathPrefix = app('request')->input('source', 'pc/');
+        $sourcePathPrefix = app('request')->input('source', 'pc');
         // 源文件前缀错误
-        if(!in_array($sourcePathPrefix, ['pc/', 'wap/'])){
+        if(!in_array($sourcePathPrefix, ['pc', 'wap'])){
             return JsonExtend::error('缓存失败，没有可缓存的页面');
         }
+        $sourcePathPrefix = $sourcePathPrefix.DIRECTORY_SEPARATOR;
         // 栏目编号
         $id = (int)app('request')->input('id', 0);
         CachesExtend::substation('', substr($urlPrefix, 1, strlen($urlPrefix)));
         // 缓存信息
         $path = CachesExtend::message($id, $urlPrefix, $sourcePathPrefix);
+        if(count($path)){
+            return JsonExtend::success('缓存成功', $path);
+        }else{
+            return JsonExtend::error('缓存失败，没有可缓存的页面');
+        }
+    }
+
+    /**
+     * 搜索页缓存
+     *
+     * @return object
+     * @throws \Throwable
+     */
+    public function search():object
+    {
+        // 地址前缀
+        $urlPrefix = app('request')->input('url', '/');
+        // 地址前缀错误
+        if(!in_array($urlPrefix, ['/', '/wap/'])){
+            return JsonExtend::error('缓存失败，没有可缓存的页面');
+        }
+        // 源文件前缀
+        $sourcePathPrefix = app('request')->input('source', 'pc');
+        // 源文件前缀错误
+        if(!in_array($sourcePathPrefix, ['pc', 'wap'])){
+            return JsonExtend::error('缓存失败，没有可缓存的页面');
+        }
+        $sourcePathPrefix = $sourcePathPrefix.DIRECTORY_SEPARATOR;
+        $path = CachesExtend::search($urlPrefix, $sourcePathPrefix);
         if(count($path)){
             return JsonExtend::success('缓存成功', $path);
         }else{
