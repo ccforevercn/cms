@@ -1232,6 +1232,18 @@ class MenusTableSeeder extends Seeder
                 'is_del' => 0,
                 'add_time' => time(),
                 'sort' => 1,
+            ],
+            [
+                'id' => 102,
+                'name' => '缓存搜索页',
+                'parent_id' => 69,
+                'routes' => '/cache/search',
+                'page' => '',
+                'icon' => '',
+                'menu' => 0,
+                'is_del' => 0,
+                'add_time' => time(),
+                'sort' => 1,
             ]
         ]);
     }
