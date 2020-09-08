@@ -6,6 +6,7 @@
 
 namespace App\Repositories;
 
+use App\CcForever\extend\ForbiddenWordExtend;
 use App\CcForever\interfaces\RepositoryInterface;
 use App\CcForever\traits\RepositoryReturnMsgData;
 use App\Messages;
@@ -179,6 +180,21 @@ class MessagesRepository implements RepositoryInterface
         if(!check_null($messages['name'], $messages['columns_id'], $messages['page'])){
             return self::setMsg('参数错误', false);
         }
+        // 验证名称违禁词
+        $forbiddenWordBool = ForbiddenWordExtend::single($messages['name']);
+        if($forbiddenWordBool) {
+            return self::setMsg('名称存在违禁词', false);
+        }
+        // 验证关键字违禁词
+        $forbiddenWordBool = ForbiddenWordExtend::single($messages['keywords']);
+        if($forbiddenWordBool) {
+            return self::setMsg('关键字存在违禁词', false);
+        }
+        // 验证描述违禁词
+        $forbiddenWordBool = ForbiddenWordExtend::single($messages['description']);
+        if($forbiddenWordBool) {
+            return self::setMsg('描述存在违禁词', false);
+        }
         $messagesTags = []; // 信息标签
         $messagesTagsCount = 0; // 信息标签添加总数
         $unique = create_admin_password(create_millisecond(), $data['username'].$data['admin_id']); // 信息和信息标签的唯一值
@@ -264,22 +280,29 @@ class MessagesRepository implements RepositoryInterface
                 $returnData = ['content' => '', 'markdown' => '', 'images' => ''];
             }
         }else{ // 添加/修改
-            $messages = []; // 信息内容数据
-            $messages['content'] = $content; // 信息内容
-            $messages['markdown'] = $markdown; // 信息内容
-            $messages['images'] = $images; // 信息图片
-            if(!$check){ // 添加
-                $messages['id'] = $id; // 信息编号
-                $messages['is_del'] = 0; // 信息是否删除
-                $returnStatus = self::$model::base_bool('insert', $messages, 0);
-                $returnMsg = $returnStatus ? '添加成功' : '添加失败';
-            }else{ // 修改
-                $message = self::$model::base_array('message', $id, array_keys($messages), []);
-                if($message === $messages){ // 数据库的数据和修改的数据一致
-                    $returnMsg = '修改成功';
-                }else{
-                    $returnStatus = self::$model::base_bool('update', $messages, $id);
-                    $returnMsg = $returnStatus ? '修改成功' : '修改失败';
+
+            $forbiddenWordBool = ForbiddenWordExtend::single($content);
+            if($forbiddenWordBool){
+                $returnMsg = '内容存在违禁词';
+                $returnStatus = false;
+            }else{
+                $messages = []; // 信息内容数据
+                $messages['content'] = $content; // 信息内容
+                $messages['markdown'] = $markdown; // 信息内容
+                $messages['images'] = $images; // 信息图片
+                if(!$check){ // 添加
+                    $messages['id'] = $id; // 信息编号
+                    $messages['is_del'] = 0; // 信息是否删除
+                    $returnStatus = self::$model::base_bool('insert', $messages, 0);
+                    $returnMsg = $returnStatus ? '添加成功' : '添加失败';
+                }else{ // 修改
+                    $message = self::$model::base_array('message', $id, array_keys($messages), []);
+                    if($message === $messages){ // 数据库的数据和修改的数据一致
+                        $returnMsg = '修改成功';
+                    }else{
+                        $returnStatus = self::$model::base_bool('update', $messages, $id);
+                        $returnMsg = $returnStatus ? '修改成功' : '修改失败';
+                    }
                 }
             }
         }

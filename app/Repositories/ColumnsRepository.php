@@ -6,6 +6,7 @@
 
 namespace App\Repositories;
 
+use App\CcForever\extend\ForbiddenWordExtend;
 use App\CcForever\interfaces\RepositoryInterface;
 use App\CcForever\traits\RepositoryReturnMsgData;
 use App\Columns;
@@ -178,21 +179,28 @@ class ColumnsRepository implements RepositoryInterface
                 $returnData = ['content' => '', 'markdown' => ''];
             }
         }else{ // 添加/修改
-            $columns = []; // 栏目内容数据
-            $columns['content'] = $content; // 栏目内容
-            $columns['markdown'] = $markdown; // 栏目内容
-            if(!$check){ // 添加
-                $columns['id'] = $id; // 栏目编号
-                $columns['is_del'] = 0; // 栏目是否删除
-                $returnStatus = self::$model::base_bool('insert', $columns, 0);
-                $returnMsg = $returnStatus ? '添加成功' : '添加失败';
-            }else{ // 修改
-                $message = self::$model::base_array('message', $id, array_keys($columns), []);
-                if($message === $columns){ // 数据库的数据和修改的数据一致
-                    $returnMsg = '修改成功';
-                }else{
-                    $returnStatus = self::$model::base_bool('update', $columns, $id);
-                    $returnMsg = $returnStatus ? '修改成功' : '修改失败';
+            // 验证违禁词
+            $forbiddenWordBool = ForbiddenWordExtend::single($content);
+            if($forbiddenWordBool){
+                $returnMsg = '内容存在违禁词';
+                $returnStatus = false;
+            }else{
+                $columns = []; // 栏目内容数据
+                $columns['content'] = $content; // 栏目内容
+                $columns['markdown'] = $markdown; // 栏目内容
+                if(!$check){ // 添加
+                    $columns['id'] = $id; // 栏目编号
+                    $columns['is_del'] = 0; // 栏目是否删除
+                    $returnStatus = self::$model::base_bool('insert', $columns, 0);
+                    $returnMsg = $returnStatus ? '添加成功' : '添加失败';
+                }else{ // 修改
+                    $message = self::$model::base_array('message', $id, array_keys($columns), []);
+                    if($message === $columns){ // 数据库的数据和修改的数据一致
+                        $returnMsg = '修改成功';
+                    }else{
+                        $returnStatus = self::$model::base_bool('update', $columns, $id);
+                        $returnMsg = $returnStatus ? '修改成功' : '修改失败';
+                    }
                 }
             }
         }

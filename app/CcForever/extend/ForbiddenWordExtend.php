@@ -79,17 +79,15 @@ class ForbiddenWordExtend
     public static function check(): array
     {
         $result = [];
-        // 验证信息名称和内容
-        // 获取违禁词内容
-        $content = self::GetForbiddenWord();
+        // 获取违禁词
+        $forbiddenWords = self::GetForbiddenWord();
         // 替换违禁词内容换行
-        $content = str_replace("\r\n", "", $content);
+        $forbiddenWords = str_replace("\r\n", "", $forbiddenWords);
         // 违禁词转为数组
-        $forbiddenWord = explode('、', $content);
+        $forbiddenWordArr = explode('、', $forbiddenWords);
         // 违禁词不存在
-        if(!count($forbiddenWord)){ return $result; }
+        if(!count($forbiddenWordArr)){ return $result; }
         // 验证栏目名称和内容
-
         // 全部栏目下的信息缓存
         $columnsRepository = new ColumnsRepository();
         // 获取页面栏目编号
@@ -101,7 +99,7 @@ class ForbiddenWordExtend
         // 验证违禁词
         foreach ($contents as &$content){
             // 栏目内容验证
-            if(array_check_string($content['content'], $forbiddenWord)){
+            if(array_check_string($content['content'], $forbiddenWordArr)){
                 // 违禁词存在时获取栏目编号
                 $columnsIds[] = $content['id'];
             }
@@ -130,17 +128,17 @@ class ForbiddenWordExtend
         $messagesIds = []; // 信息编号
         foreach ($messages as &$message){
             // 信息名称
-            if(array_check_string($message['name'], $forbiddenWord)){
+            if(array_check_string($message['name'], $forbiddenWordArr)){
                 // 违禁词存在时获取栏目编号
                 $messagesNameIds[] = $message['id'];
             }
             // 信息关键字
-            if(array_check_string($message['keywords'], $forbiddenWord)){
+            if(array_check_string($message['keywords'], $forbiddenWordArr)){
                 // 违禁词存在时获取栏目编号
                 $messagesKeywordsIds[] = $message['id'];
             }
             // 信息描述
-            if(array_check_string($message['description'], $forbiddenWord)){
+            if(array_check_string($message['description'], $forbiddenWordArr)){
                 // 违禁词存在时获取栏目编号
                 $messagesDescriptionIds[] = $message['id'];
             }
@@ -151,7 +149,7 @@ class ForbiddenWordExtend
         $messagesContents = $messagesRepository::contents($messagesIds);
         foreach ($messagesContents as &$content){
             // 信息内容
-            if(array_check_string($content['content'], $forbiddenWord)){
+            if(array_check_string($content['content'], $forbiddenWordArr)){
                 // 违禁词存在时获取栏目编号
                 $messagesContentIds[] = $content['id'];
             }
@@ -185,6 +183,28 @@ class ForbiddenWordExtend
             }
         }
         return $result;
+    }
+
+    /**
+     * 验证违禁词
+     *
+     * @param string $content
+     * @return bool
+     */
+    public static function single(string  $content): bool
+    {
+        $bool = false;
+        $forbiddenWords = self::GetForbiddenWord();
+        // 替换违禁词内容换行
+        $forbiddenWords = str_replace("\r\n", "", $forbiddenWords);
+        // 违禁词转为数组
+        $forbiddenWordArr = explode('、', $forbiddenWords);
+        // 违禁词不存在
+        if(!count($forbiddenWordArr)){ return $bool; }
+        if(array_check_string($content, $forbiddenWordArr)){
+            return true;
+        }
+        return false;
     }
 
 }
