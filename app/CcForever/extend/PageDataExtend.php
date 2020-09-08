@@ -111,6 +111,29 @@ class PageDataExtend
                 $topId = $columnsRepository::topColumnId($id);
                 $navigationId = $topId;
                 $columnTop = ColumnsExtend::column($topId, true, $urlPrefix);
+            }  // 公共配置
+            $configMessageRepository = new ConfigMessageRepository();
+            // 获取公共配置前缀
+            $labelPrefixBool = $configMessageRepository::config('label_prefix');
+            $labelPrefix = ''; // 公共配置前缀
+            if($labelPrefixBool) list($labelPrefix) = $configMessageRepository::returnData(['']);
+            // 重置网站栏目标题
+            if(array_key_exists($labelPrefix.'title', $public['configs'])){
+                $public['configs'][$labelPrefix.'title'] = $column['name'].$public['configs'][$labelPrefix.'title'];
+            }
+            // 重置网站栏目关键字
+            if(array_key_exists($labelPrefix.'keyword', $public['configs'])){
+                $public['configs'][$labelPrefix.'keyword'] = $column['keywords'].$public['configs'][$labelPrefix.'keyword'];
+            }
+            // 重置网站栏目描述
+            if(array_key_exists($labelPrefix.'description', $public['configs'])){
+                $public['configs'][$labelPrefix.'description'] = $column['description'].$public['configs'][$labelPrefix.'description'];
+            }
+            $crumbs = ''; // 面包销导航
+            $crumbs .= "<a href='{$public['configs'][$labelPrefix.'website']}' title='{$public['configs'][$labelPrefix.'name']}'>首页</a>>";
+            $crumbs .= "<a href='{$columnTop['url']}' title='{$columnTop['name']}'>{$columnTop['name']}</a>>";
+            if($columnTop['unique'] !== $column['unique']){
+                $crumbs .= "<a href='{$column['url']}' title='{$column['name']}'>{$column['name']}</a>";
             }
             // 当前栏目的顶级栏目的子栏目信息
             $children  = ColumnsExtend::children($columnTop['unique'], 0, $urlPrefix);
@@ -135,12 +158,12 @@ class PageDataExtend
                         }
                         // 栏目文章
                         $messages = MessagesExtend::messageList($columnsMessagesOrderAndLoopIds['columnIds'], $columnsMessagesOrderAndLoopIds['order'], $offset, $limit, $messagesType, $urlPrefix);
-                        $result[] = compact('public', 'column', 'page', 'columnTop', 'children', 'messages', 'navigationId');
+                        $result[] = compact('public', 'column', 'page', 'columnTop', 'children', 'crumbs', 'messages', 'navigationId');
                     }
                     return $result;
                 }
             }
-            $result[] = compact('public', 'column', 'columnTop', 'page', 'children', 'messages', 'navigationId');
+            $result[] = compact('public', 'column', 'columnTop', 'page', 'children', 'crumbs', 'messages', 'navigationId');
         }
         return $result;
     }
@@ -179,8 +202,33 @@ class PageDataExtend
         }
         // 当前栏目的顶级栏目的子栏目信息
         $children  = ColumnsExtend::children($columnTop['unique'], 0, $urlPrefix);
+        // 公共配置
+        $configMessageRepository = new ConfigMessageRepository();
+        // 获取公共配置前缀
+        $labelPrefixBool = $configMessageRepository::config('label_prefix');
+        $labelPrefix = ''; // 公共配置前缀
+        if($labelPrefixBool) list($labelPrefix) = $configMessageRepository::returnData(['']);
         foreach ($messages as $message){
-            $result[] = compact('public', 'column', 'columnTop', 'children', 'message', 'navigationId');
+            // 重置网站信息标题
+            if(array_key_exists($labelPrefix.'title', $public['configs'])){
+                $public['configs'][$labelPrefix.'title'] = $message['name'].$public['configs'][$labelPrefix.'title'];
+            }
+            // 重置网站信息关键字
+            if(array_key_exists($labelPrefix.'keyword', $public['configs'])){
+                $public['configs'][$labelPrefix.'keyword'] = $message['keywords'].$public['configs'][$labelPrefix.'keyword'];
+            }
+            // 重置网站信息描述
+            if(array_key_exists($labelPrefix.'description', $public['configs'])){
+                $public['configs'][$labelPrefix.'description'] = $message['description'].$public['configs'][$labelPrefix.'description'];
+            }
+            $crumbs = ''; // 面包销导航
+            $crumbs .= "<a href='{$public['configs'][$labelPrefix.'website']}' title='{$public['configs'][$labelPrefix.'name']}'>首页</a>>";
+            $crumbs .= "<a href='{$columnTop['url']}' title='{$columnTop['name']}'>{$columnTop['name']}</a>>";
+            if($columnTop['unique'] !== $column['unique']){
+                $crumbs .= "<a href='{$column['url']}' title='{$column['name']}'>{$column['name']}</a>>";
+            }
+            $crumbs .= "<a href='{$message['url']}' title='{$message['name']}'>{$message['name']}</a>";
+            $result[] = compact('public', 'column', 'columnTop', 'children', 'crumbs', 'message', 'navigationId');
         }
         return $result;
     }
@@ -238,11 +286,11 @@ class PageDataExtend
         }
         // 域名追加分站地址
         if(array_key_exists($labelPrefix.'website', $configs)){
-            $configs['zy_cms_website'] = $configs['zy_cms_website'].self::$substation_link;
+            $configs[$labelPrefix.'website'] = $configs[$labelPrefix.'website'].self::$substation_link;
         }
         // 添加自动跳转wap端
         if((int)config('ccforever.config.wap_type') && array_key_exists($labelPrefix.'pc_top_code', $configs)){
-            $configs[$labelPrefix.'pc_top_code'] .= $configs[$labelPrefix.'pc_top_code'].automatic_skip_wap($configs['zy_cms_website']);
+            $configs[$labelPrefix.'pc_top_code'] .= $configs[$labelPrefix.'pc_top_code'].automatic_skip_wap($configs[$labelPrefix.'website']);
         }
         // 分站名称添加到配置中
         $configs[$labelPrefix.'substation_name'] = self::$substation_name;
