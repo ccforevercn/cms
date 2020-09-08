@@ -224,6 +224,8 @@ class PageDataExtend
         $bannersRepository = new BannersRepository();
         // 获取banners
         $banners = $bannersRepository::banners(1);
-        return compact('configs', 'navigation', 'banners');
+        // 获取banners
+        $bannersWap = $bannersRepository::banners(2);
+        return compact('configs', 'navigation', 'banners', 'bannersWap');
     }
 }
