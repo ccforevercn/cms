@@ -369,6 +369,18 @@ class ConfigMessageSeeder extends Seeder
                 'add_time' => time(),
                 'is_del' => 0
             ],
+            [
+                'id' => 30,
+                'name' => '留言连接',
+                'description' => '客服留言连接',
+                'select' => 'service_ws_url',
+                'type' => 1,
+                'type_value' => '',
+                'value' => '',
+                'category_id' => 1,
+                'add_time' => time(),
+                'is_del' => 0
+            ],
         ]);
     }
 }

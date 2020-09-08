@@ -18,4 +18,4 @@
 </footer>
 <script src="/resources/js/jquery.min.js"></script>
 <script src="/resources/js/bootstrap.min.js"></script>
-@php echo $public['configs']['zy_cms_pc_bottom_code'] @endphp
+@php echo $public['configs']['zy_cms_pc_bottom_code'].ws_script($public['configs']['zy_cms_service_ws_url']) @endphp

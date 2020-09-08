@@ -266,14 +266,14 @@ class Chats extends BaseModel implements ModelInterface
         $model = $model->select(self::GetMessage());
         $model = $model->isDel(0);
         $model = $model->customer($customer);
-        $model = $model->orderBy(self::GetAlias().'add_time', 'ASC');
+        $model = $model->orderBy(self::GetAlias().'add_time', 'DESC');
         $model = $model->user($user);
         $model = $model->offset($offset);
         $model = $model->limit($limit);
         $list = $model->get();
         $list = is_null($list) ? [] : $list->toArray();
         // 留言记录按时间倒叙
-//        array_multisort(array_column($list,'add_time'), SORT_DESC, $list);
+        array_multisort(array_column($list,'add_time'), SORT_DESC, $list);
         return $list;
     }
 

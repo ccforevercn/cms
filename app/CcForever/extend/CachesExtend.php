@@ -261,6 +261,8 @@ class CachesExtend
             // 关闭文件
             fclose($file);
             return $resourcesPath.$fileName;
-        }catch (\Exception $exception){return '';}
+        }catch (\Exception $exception){
+            return '';
+        }
     }
 }

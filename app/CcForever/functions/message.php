@@ -113,4 +113,16 @@ if (! function_exists('get_str_cn_str')) {
         return mb_substr($str, $start, $length);
     }
 }
+if(!function_exists('ws_script')){
+    /**
+     * worker js(留言的页面引入)
+     *
+     * @param string $url
+     * @return string
+     */
+    function ws_script(string $url):string
+    {
+        return "<script>var url = '{$url}';var ws;var timer;var cookieName = 'ws_unique';ws = new WebSocket(url);ws.onopen = function () {console.log('open');};ws.onmessage = function (event) {const {type, message, data = {}} = JSON.parse(event.data);if (type === 'user_notice') {alert(message);} else if (type === 'user_message') {alert(message);messages(data.customer, data.content)} else if (type === 'connect') {if (getCookie() === null) {setCookie(data.unique);}heartbeat();};};ws.onclose = function () {clearInterval(timer);delCookie();};function heartbeat() {timer = setInterval(function () {send('heartbeat', {});}, 10000);};ws.onerror = function (event) {console.log(event);};function messages(customer, content) {console.log(customer);console.log(content);};function chat(content) {send('chats_user', {content: content});};function send(type, data) {var send = {'type': type, 'unique': getCookie(),};ws.send(JSON.stringify(Object.assign(send, data)));};function setCookie(value) {var exp = new Date();exp.setTime(exp.getTime() + 60 * 60 * 1000);document.cookie = cookieName + '=' + escape(value);};function getCookie() {var arr, reg = new RegExp('(^| )' + cookieName + '=([^;]*)(;|$)');if (arr = document.cookie.match(reg)) {return unescape(arr[2]);}else{return null;}};function delCookie() {var exp = new Date();exp.setTime(exp.getTime() - 60 * 60 * 1000);var value = getCookie(cookieName);if (value != null) {document.cookie = cookieName + '=' + value + ';expires=' + exp.toGMTString();}};</script>";
+    }
+}
 

@@ -31,25 +31,32 @@ class ChatsExtend
     private static $admins = [];
 
     /**
-     * 已接入用户
+     * 已接入用户(已发送消息)
      *
      * @var array
      */
     private static $users = [];
 
     /**
-     * 已查看用户
+     * 所有接入的用户(所有连接过得用户)
      *
      * @var array
      */
-    private static $speak = [];
+    private static $total = [];
 
     /**
-     * 已接入用户的 唯一值
+     * 已接入用户(发送过消息) 唯一值
      *
      * @var array
      */
     private static $usersUnique = [];
+
+    /**
+     * 已查看用户(管理员已查看) 唯一值
+     *
+     * @var array
+     */
+    private static $speak = [];
 
     const SEND_TYPE_CONNECT = 'connect'; // 连接成功
 
@@ -59,9 +66,9 @@ class ChatsExtend
 
     const SEND_TYPE_ADMIN_NOTICE_MESSAGE = 'admin_notice_message';  // 管理员新消息
 
-    const SEND_TYPE_ADMIN_NOTICE_SUCCESS = 'admin_notice_success';  // 管理员成功通知
+    const SEND_TYPE_ADMIN_NOTICE_SUCCESS = 'admin_notice_success';  // 管理员信息发送成功提示
 
-    const SEND_TYPE_ADMIN_NOTICE_ERROR = 'admin_notice_error';  // 管理员鼠标通知
+    const SEND_TYPE_ADMIN_NOTICE_ERROR = 'admin_notice_error';  // 管理员信息发送失败提示
 
     const SEND_TYPE_ADMIN_SHUT_USER = 'admin_shut_user'; // 未接入用户
 
@@ -121,9 +128,10 @@ class ChatsExtend
      */
     public static function onConnect($connection)
     {
+        // 生成唯一值
         $unique = md5(implode(',', app('request')->getClientIps()).create_millisecond().mt_rand(10000, 99999));
-        self::$usersUnique[$unique] = $unique;
-        self::$users[$unique] = $connection;
+        // 添加到所有用户组
+        self::$total[$unique] = $connection;
         self::formatDataSend($connection, self::SEND_TYPE_CONNECT, '基本信息', compact('unique'));
     }
 
@@ -184,7 +192,6 @@ class ChatsExtend
                     if(array_key_exists('token', $messageArr) && array_key_exists('unique', $messageArr) && $messageArr['unique'] !== 'undefined') {
                         try{
                             // 验证token
-
                             auth('login')->setToken($messageArr['token']);
                             $adminId = auth('login')->id();
                             if($adminId){ // 管理员访问
@@ -263,6 +270,14 @@ class ChatsExtend
                     }
                     break;
                 case 'chats_user': // 聊天用户
+                    // 判断当前发送消息的用户是否在用户组中
+                    if(!array_key_exists($messageArr['unique'], self::$users)){
+                        // 不存在时，添加到用户组中
+                        // 添加用户唯一值
+                        self::$usersUnique[$messageArr['unique']] = $messageArr['unique'];
+                        // 添加用户到用户组中
+                        self::$users[$messageArr['unique']] = $connection;
+                    }
                     $data = []; // 留言记录
                     $adminSendData = []; // 发送数据的管理员
                     $data['content'] = $messageArr['content']; // 内容
@@ -301,9 +316,10 @@ class ChatsExtend
                     if($bool){ // 添加数据库成功
                         $message  = count($adminSendData) == 1 ? "用户发送消息" : "客户消息";
                         foreach ($adminSendData as $value){
-                            self::formatDataSend($value, self::SEND_TYPE_ADMIN_NOTICE_MESSAGE, $message, $data);
-                            if($seed){
+                            if($seed) {
                                 self::formatDataSend($value, self::SEND_TYPE_ADMIN_MESSAGE, $message, $data);
+                            }else{
+                                self::formatDataSend($value, self::SEND_TYPE_ADMIN_NOTICE_MESSAGE, $message, $data);
                             }
                         }
                         // 给客户提示发送成功
