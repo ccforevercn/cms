@@ -119,8 +119,11 @@ class ChatsController extends BaseController
     public function users(ChatsUsersRequest $chatsUsersRequest, ChatsRepository $chatsRepository): object
     {
         $where = $chatsUsersRequest->all();
-        $chatsRepository::users($where['customer'], (int)$where['page'], (int)$where['limit']);
-        return JsonExtend::success($chatsRepository::returnMsg('获取成功'), $chatsRepository::returnData([]));
+        $bool = $chatsRepository::users($where['customer'], (int)$where['page'], (int)$where['limit']);
+        if($bool){
+            return JsonExtend::success($chatsRepository::returnMsg('获取成功'), $chatsRepository::returnData([]));
+        }
+        return JsonExtend::error($chatsRepository::returnMsg('获取失败'));
     }
 
     /**

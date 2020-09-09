@@ -194,12 +194,12 @@ class ChatsRepository implements RepositoryInterface
         // 验证客服是否存在
         $check = self::$model::base_bool('check', [], [$customer, 'customer']);
         if(!$check){
-            return self::setMsg('客服不存在', true);
+            return self::setMsg('客服不存在', false);
         }
         $offset = page_to_offset($page, $limit); // 获取起始值
         $list = self::$model::users($customer, $offset, $limit); // 留言用户列表
         if(!count($list)){
-            return self::setMsg('暂无留言用户', true);
+            return self::setMsg('暂无留言用户', false);
         }
         $count = self::$model::usersCount($customer); // 留言用户总数
         return self::setMsg('留言用户列表', true, compact('list', 'count'));
