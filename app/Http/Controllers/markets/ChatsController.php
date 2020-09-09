@@ -119,11 +119,8 @@ class ChatsController extends BaseController
     public function users(ChatsUsersRequest $chatsUsersRequest, ChatsRepository $chatsRepository): object
     {
         $where = $chatsUsersRequest->all();
-        $bool = $chatsRepository::users($where['customer'], (int)$where['page'], (int)$where['limit']);
-        if($bool){
-            return JsonExtend::success($chatsRepository::returnMsg('获取成功'), $chatsRepository::returnData([]));
-        }
-        return JsonExtend::error($chatsRepository::returnMsg('获取失败'));
+        $chatsRepository::users($where['customer'], (int)$where['page'], (int)$where['limit']);
+        return JsonExtend::success($chatsRepository::returnMsg('获取成功'), $chatsRepository::returnData([]));
     }
 
     /**
@@ -141,5 +138,22 @@ class ChatsController extends BaseController
             return JsonExtend::success($chatsRepository::returnMsg('获取成功'), $chatsRepository::returnData([]));
         }
         return JsonExtend::error($chatsRepository::returnMsg('获取失败'));
+    }
+
+    /**
+     * 留言用户统计
+     *
+     * @param ChatsRepository $chatsRepository
+     * @return object
+     */
+    public function statistics(ChatsRepository $chatsRepository): object
+    {
+        $limit = (int)config('ccforever.config.chart_limit');
+        $limit = $limit > 7 ? 7 : $limit;
+        $bool = $chatsRepository::statistics($limit);
+        if($bool){
+            return JsonExtend::success($chatsRepository::returnMsg('留言用户'), $chatsRepository::returnData([]));
+        }
+        return JsonExtend::error($chatsRepository::returnMsg('留言用户'));
     }
 }

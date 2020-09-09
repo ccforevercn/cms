@@ -94,6 +94,7 @@ Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
             Route::get('/chats/users', 'ChatsController@users')->name('chatsusers'.$admin);// 留言用户列表
             Route::get('/chats/chats', 'ChatsController@chats')->name('chatschats'.$admin);// 留言客服和用户对话列表
             Route::post('/chats/see', 'ChatsController@see')->name('chatssee'.$admin);// 留言状态修改
+            Route::get('/chats/statistics', 'ChatsController@statistics')->name('chatsstatistics'.$admin);// 留言统计
         });
         Route::namespace('seo')->group(function () use($admin) { // seo路由组
             Route::get('/links/list', 'LinksController@lst')->name('linkslist'.$admin);// 友情链接列表

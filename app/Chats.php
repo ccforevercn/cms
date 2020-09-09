@@ -308,4 +308,25 @@ class Chats extends BaseModel implements ModelInterface
     {
         return self::$seeApi;
     }
+
+    /**
+     * 获取时间区间修改留言用户的时间
+     *
+     * @param int $startTime
+     * @param int $stopTime
+     * @return array
+     */
+    public static function statistics(int $startTime, int $stopTime): array
+    {
+        $model = new self;
+        $model = $model->select(self::GetAlias().'add_time as time');
+        $model = $model->where(self::GetAlias().'is_del', 0);
+        $model = $model->when(self::hasTableIndex(self::GetAlias(true, true).'_is_del_index'),function ($query){
+            $query->from(DB::raw('`'. self::GetAlias(true, true) .'` FORCE INDEX (`'.self::GetAlias(true, true).'_is_del_index`)'));
+        });
+        $model = $model->userGroupBy();;
+        $model = $model->where(self::GetAlias().'add_time', '>=', $startTime);
+        $model = $model->where(self::GetAlias().'add_time', '<', $stopTime);
+        return $model->get()->toArray();
+    }
 }

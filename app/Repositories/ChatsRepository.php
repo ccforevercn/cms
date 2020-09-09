@@ -194,12 +194,12 @@ class ChatsRepository implements RepositoryInterface
         // 验证客服是否存在
         $check = self::$model::base_bool('check', [], [$customer, 'customer']);
         if(!$check){
-            return self::setMsg('客服不存在', false);
+            return self::setMsg('客服不存在', true);
         }
         $offset = page_to_offset($page, $limit); // 获取起始值
         $list = self::$model::users($customer, $offset, $limit); // 留言用户列表
         if(!count($list)){
-            return self::setMsg('暂无留言用户', false);
+            return self::setMsg('暂无留言用户', true);
         }
         $count = self::$model::usersCount($customer); // 留言用户总数
         return self::setMsg('留言用户列表', true, compact('list', 'count'));
@@ -233,5 +233,55 @@ class ChatsRepository implements RepositoryInterface
         }
         $count = self::$model::chatsCount($customer, $user); // 留言客服和用户对话总数
         return self::setMsg('留言用户列表', true, compact('list', 'count'));
+    }
+
+    /**
+     * 留言用户统计
+     *
+     * @param int $limit
+     * @return bool
+     */
+    public static function statistics(int $limit): bool
+    {
+        // 获取结束时间
+        $stopTime = date('Y/m/d', strtotime('0 week Monday'));
+        // 获取开始时间
+        $startTime = date('Y/m/d', strtotime('-'.$limit.' week Monday'));
+        // 获取时间区间修改留言用户的时间
+        $chats = self::$model::statistics(strtotime($startTime), strtotime($stopTime));
+        // 格式化最近几周用户留言
+        $result = self::formatStatistics($chats, $limit, []);
+        return self::setMsg('留言用户', true, array_merge($result));
+    }
+
+    /**
+     * 格式化留言用户统计
+     *
+     * @param array $chats
+     * @param int $limit
+     * @param array $result
+     * @return array
+     */
+    public static function formatStatistics(array $chats, int $limit, array $result): array
+    {
+        // $limit 为0是返回
+        if(!$limit){ return $result; }
+        // 获取结束时间
+        $stopTime = date('Y/m/d', strtotime('-'. (int)bcsub($limit, 1, 0) . ' week Monday'));
+        // 获取开始时间
+        $startTime = date('Y/m/d', strtotime('-'.$limit.' week Monday'));
+        $count = 0; // 时间区间 留言用户总数
+        foreach ($chats as &$chat){
+            if($chat['time'] >= strtotime($startTime)  &&  $chat['time'] < strtotime($stopTime)){
+                $count++;
+            }
+        }
+        // 添加数据 周
+        $result[$limit]['week'] = $startTime.'-'.$stopTime;
+        // 添加数据 留言用户的总数
+        $result[$limit]['count'] = $count;
+        // $limit自减
+        $limit--;
+        return self::formatStatistics($chats, $limit, $result);
     }
 }

@@ -476,25 +476,33 @@ class MessagesRepository implements RepositoryInterface
     }
 
     /**
-     * 获取最近几周信息修改
+     * 信息统计
      *
      * @param int $limit
      * @return bool
      */
     public static function statistics(int $limit): bool
     {
-        $result = self::formatStatistics($limit, []);
+        // 获取结束时间
+        $stopTime = date('Y/m/d', strtotime('0 week Monday'));
+        // 获取开始时间
+        $startTime = date('Y/m/d', strtotime('-'.$limit.' week Monday'));
+        // 获取时间区间修改信息的时间
+        $messages = self::$model::statistics(strtotime($startTime), strtotime($stopTime));
+        // 格式化最近几周信息修改
+        $result = self::formatStatistics($messages, $limit, []);
         return self::setMsg('信息发布', true, array_merge($result));
     }
 
     /**
-     * 格式化最近几周信息修改
+     * 格式化信息统计
      *
+     * @param array $messages
      * @param int $limit
-     * @param $result
+     * @param array $result
      * @return array
      */
-    public static function formatStatistics(int $limit, $result): array
+    public static function formatStatistics(array $messages, int $limit, array $result): array
     {
         // $limit 为0是返回
         if(!$limit){ return $result; }
@@ -502,14 +510,18 @@ class MessagesRepository implements RepositoryInterface
         $stopTime = date('Y/m/d', strtotime('-'. (int)bcsub($limit, 1, 0) . ' week Monday'));
         // 获取开始时间
         $startTime = date('Y/m/d', strtotime('-'.$limit.' week Monday'));
-        // 获取时间区间修改信息的总数
-        $count = self::$model::statistics(strtotime($startTime), strtotime($stopTime));
+        $count = 0; // 时间区间修改信息的总数
+        foreach ($messages as &$message){
+            if($message['time'] >= strtotime($startTime)  &&  $message['time'] < strtotime($stopTime)){
+                $count++;
+            }
+        }
         // 添加数据 周
         $result[$limit]['week'] = $startTime.'-'.$stopTime;
         // 添加数据 修改信息的总数
         $result[$limit]['count'] = $count;
         // $limit自减
         $limit--;
-        return self::formatStatistics($limit, $result);
+        return self::formatStatistics($messages, $limit, $result);
     }
 }

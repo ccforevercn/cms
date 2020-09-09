@@ -386,12 +386,12 @@ class Messages extends BaseModel implements ModelInterface
      *
      * @param int $startTime
      * @param int $stopTime
-     * @return int
+     * @return array
      */
-    public static function statistics(int $startTime, int $stopTime): int
+    public static function statistics(int $startTime, int $stopTime): array
     {
         $model = new self;
-        $model = $model->select(self::GetAlias().'id');
+        $model = $model->select(self::GetAlias().'update_time as time');
         $model = $model->where(self::GetAlias().'is_del', 0);
         $model = $model->where(self::GetAlias().'release', 1);
         $model = $model->when(self::hasTableIndex(self::GetAlias(true, true).'_is_del_index'),function ($query){
@@ -399,6 +399,6 @@ class Messages extends BaseModel implements ModelInterface
         });
         $model = $model->where(self::GetAlias().'update_time', '>=', $startTime);
         $model = $model->where(self::GetAlias().'update_time', '<', $stopTime);
-        return $model->count();
+        return $model->get()->toArray();
     }
 }

@@ -226,8 +226,8 @@ class MessagesController extends BaseController
         $limit = $limit > 7 ? 7 : $limit;
         $bool = $messagesRepository::statistics($limit);
         if($bool){
-            return JsonExtend::success($messagesRepository::returnMsg('信息数量列表'), $messagesRepository::returnData([]));
+            return JsonExtend::success($messagesRepository::returnMsg('信息发布'), $messagesRepository::returnData([]));
         }
-        return JsonExtend::error($messagesRepository::returnMsg('信息数量列表'));
+        return JsonExtend::error($messagesRepository::returnMsg('信息发布'));
     }
 }
