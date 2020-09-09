@@ -57,9 +57,9 @@ class ManagesExtend
     {
         $messageArr = json_decode($message, true);
         if($messageArr && is_array($messageArr) && array_key_exists('token', $messageArr)){ // 判断是否有token
-//            $adminsTokenRepository = new AdminsTokenRepository();// 验证Token
-//            $adminId = $adminsTokenRepository::checkToken($messageArr['token']); // 验证Token
-            $adminId = 1;
+            // 验证token
+            auth('login')->setToken($messageArr['token']);
+            $adminId = auth('login')->id();
             if(array_key_exists('type', $messageArr)){
                 switch ($messageArr['type']){
                     case 'adminparentids': // 缓存管理员的编号和上级编号+

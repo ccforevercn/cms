@@ -121,7 +121,7 @@ class Admins extends  JWTModel
      *
      * @var array
      */
-    private static $noMenusRoute = ['/menus/button', '/menus/menus', '/logout', '/admins/message'];
+    private static $noMenusRoute = ['/menus/button', '/menus/menus', '/logout', '/admins/message', '/chats/statistics', '/messages/statistics'];
 
     /**
      * 管理员编号 唯一索引
