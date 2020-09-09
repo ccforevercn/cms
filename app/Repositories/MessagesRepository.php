@@ -462,10 +462,54 @@ class MessagesRepository implements RepositoryInterface
      * 信息列表(指定字段)
      *
      * @param array $select
+     * @param array $order
      * @return array
      */
-    public static function messagesSelects(array $select): array
+    public static function messagesSelects(array $select, array $order = []): array
     {
-        return self::$model::base_array('equal', ['release' => 1], $select, []);
+        // 排序不存在时，设置默认排序
+        if(!count($order)){
+            $order['select'] = 'id';
+            $order['value'] = 'DESC';
+        }
+        return self::$model::base_array('equal', ['release' => 1], $select, $order);
+    }
+
+    /**
+     * 获取最近几周信息修改
+     *
+     * @param int $limit
+     * @return bool
+     */
+    public static function statistics(int $limit): bool
+    {
+        $result = self::formatStatistics($limit, []);
+        return self::setMsg('信息发布', true, array_merge($result));
+    }
+
+    /**
+     * 格式化最近几周信息修改
+     *
+     * @param int $limit
+     * @param $result
+     * @return array
+     */
+    public static function formatStatistics(int $limit, $result): array
+    {
+        // $limit 为0是返回
+        if(!$limit){ return $result; }
+        // 获取结束时间
+        $stopTime = date('Y/m/d', strtotime('-'. (int)bcsub($limit, 1, 0) . ' week Monday'));
+        // 获取开始时间
+        $startTime = date('Y/m/d', strtotime('-'.$limit.' week Monday'));
+        // 获取时间区间修改信息的总数
+        $count = self::$model::statistics(strtotime($startTime), strtotime($stopTime));
+        // 添加数据 周
+        $result[$limit]['week'] = $startTime.'-'.$stopTime;
+        // 添加数据 修改信息的总数
+        $result[$limit]['count'] = $count;
+        // $limit自减
+        $limit--;
+        return self::formatStatistics($limit, $result);
     }
 }

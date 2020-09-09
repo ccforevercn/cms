@@ -368,13 +368,16 @@ class ColumnsRepository implements RepositoryInterface
      * 栏目信息(指定字段)
      *
      * @param array $select
+     * @param array $order
      * @return array
      */
-    public static function columnsSelects(array $select): array
+    public static function columnsSelects(array $select, array $order = []): array
     {
-        $order = [];
-        $order['select'] = 'weight';
-        $order['value'] = 'ASC';
+        // 排序不存在时，设置默认排序
+        if(!count($order)){
+            $order['select'] = 'weight';
+            $order['value'] = 'ASC';
+        }
         return self::$model::base_array('pluck', ['render', [0]], $select, $order);
     }
 

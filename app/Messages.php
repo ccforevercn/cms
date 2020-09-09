@@ -264,8 +264,8 @@ class Messages extends BaseModel implements ModelInterface
         $model = $model->where(self::GetAlias().'is_del', 0);
         $model = $model->whereIn(self::GetAlias().'columns_id', $columnIds);
         $model = $model->where(self::GetAlias().'release', 1);
-        $model = $model->when(self::hasTableIndex(self::GetAlias(true, true).'_columns_id_index'),function ($query){
-            $query->from(DB::raw('`'. self::GetAlias(true, true) .'` FORCE INDEX (`cc_messages_columns_id_index`)'));
+        $model = $model->when(self::hasTableIndex(self::GetAlias(true, true).'_is_del_index'),function ($query){
+            $query->from(DB::raw('`'. self::GetAlias(true, true) .'` FORCE INDEX (`'.self::GetAlias(true, true).'_is_del_index`)'));
         });
         switch ($type){
             case 1:
@@ -300,8 +300,8 @@ class Messages extends BaseModel implements ModelInterface
         $model = $model->where(self::GetAlias().'is_del', 0);
         $model = $model->whereIn(self::GetAlias().'columns_id', $columnIds);
         $model = $model->where(self::GetAlias().'release', 1);
-        $model = $model->when(self::hasTableIndex(self::GetAlias(true, true).'_columns_id_index'),function ($query){
-            $query->from(DB::raw('`'. self::GetAlias(true, true) .'` FORCE INDEX (`cc_messages_columns_id_index`)'));
+        $model = $model->when(self::hasTableIndex(self::GetAlias(true, true).'_is_del_index'),function ($query){
+            $query->from(DB::raw('`'. self::GetAlias(true, true) .'` FORCE INDEX (`'.self::GetAlias(true, true).'_is_del_index`)'));
         });
         switch ($type){
             case 1:
@@ -347,8 +347,8 @@ class Messages extends BaseModel implements ModelInterface
         $model = $model->where(self::GetAlias().'columns_id', $columnId);
         $model = $model->where(self::GetAlias().'is_del', 0);
         $model = $model->where(self::GetAlias().'release', 1);
-        $model = $model->when(self::hasTableIndex(self::GetAlias(true, true).'_columns_id_index'),function ($query){
-            $query->from(DB::raw('`'. self::GetAlias(true, true) .'` FORCE INDEX (`cc_messages_columns_id_index`)'));
+        $model = $model->when(self::hasTableIndex(self::GetAlias(true, true).'_is_del_index'),function ($query){
+            $query->from(DB::raw('`'. self::GetAlias(true, true) .'` FORCE INDEX (`'.self::GetAlias(true, true).'_is_del_index`)'));
         });
         return $model->get()->each(function ($item){
             $tags = array_map(function ($tag){
@@ -379,5 +379,26 @@ class Messages extends BaseModel implements ModelInterface
         $model = $model->orderBy(self::GetAlias().$order['select'], $order['value']);
         $model = $model->limit(1);
         return $model->get()->toArray();
+    }
+
+    /**
+     * 获取最近几周信息修改
+     *
+     * @param int $startTime
+     * @param int $stopTime
+     * @return int
+     */
+    public static function statistics(int $startTime, int $stopTime): int
+    {
+        $model = new self;
+        $model = $model->select(self::GetAlias().'id');
+        $model = $model->where(self::GetAlias().'is_del', 0);
+        $model = $model->where(self::GetAlias().'release', 1);
+        $model = $model->when(self::hasTableIndex(self::GetAlias(true, true).'_is_del_index'),function ($query){
+            $query->from(DB::raw('`'. self::GetAlias(true, true) .'` FORCE INDEX (`'.self::GetAlias(true, true).'_is_del_index`)'));
+        });
+        $model = $model->where(self::GetAlias().'update_time', '>=', $startTime);
+        $model = $model->where(self::GetAlias().'update_time', '<', $stopTime);
+        return $model->count();
     }
 }

@@ -56,6 +56,7 @@ Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
             Route::get('/messages/views', 'MessagesController@views')->name('messagesviews'.$admin);// 信息视图
             Route::post('/messages/click', 'MessagesController@click')->name('messagesclick'.$admin);// 信息 点击量添加
             Route::post('/messages/state', 'MessagesController@state')->name('messagesstate'.$admin);// 信息内容 状态修改
+            Route::get('/messages/statistics', 'MessagesController@statistics')->name('messagesstatistics'.$admin);// 信息内容统计
             Route::get('/tags/list', 'TagsController@lst')->name('tagslist'.$admin);// 标签列表
             Route::post('/tags/insert', 'TagsController@insert')->name('tagsinsert'.$admin);// 标签添加
             Route::post('/tags/update', 'TagsController@update')->name('tagsupdate'.$admin);// 标签修改

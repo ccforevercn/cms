@@ -50,9 +50,9 @@ class CreateMessagesTable extends Migration
             $table->index('index'); // 首页推荐普通索引
             $table->index('hot');   // 热门推荐普通索引
             $table->index('release');  // 发布状态普通索引
-            $table->index(['click', 'columns_id', 'is_del']); // 点击量普通索引
-            $table->index(['weight', 'columns_id', 'is_del']); // 权重普通索引
-            $table->index(['update_time', 'columns_id', 'is_del']);   // 信息修改时间普通索引
+            $table->index('click'); // 点击量普通索引
+            $table->index('weight'); // 权重普通索引
+            $table->index('update_time');   // 信息修改时间普通索引
             $table->index('is_del'); // 菜单是否删除普通索引
         });
     }

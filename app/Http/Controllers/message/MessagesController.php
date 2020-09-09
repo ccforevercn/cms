@@ -213,4 +213,21 @@ class MessagesController extends BaseController
         }
         return JsonExtend::error($messagesRepository::returnMsg('修改失败'));
     }
+
+    /**
+     * 信息统计
+     *
+     * @param MessagesRepository $messagesRepository
+     * @return object
+     */
+    public function statistics(MessagesRepository $messagesRepository):object
+    {
+        $limit = (int)config('ccforever.config.chart_limit');
+        $limit = $limit > 7 ? 7 : $limit;
+        $bool = $messagesRepository::statistics($limit);
+        if($bool){
+            return JsonExtend::success($messagesRepository::returnMsg('信息数量列表'), $messagesRepository::returnData([]));
+        }
+        return JsonExtend::error($messagesRepository::returnMsg('信息数量列表'));
+    }
 }
