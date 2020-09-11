@@ -129,6 +129,7 @@ Route::group(['prefix'=> $admin], function() use($admin) { // 后台路由组
         });
         Route::namespace('upload')->group(function () use($admin) { // 上传文件路由组
             Route::post('/uploads/upload', 'UploadsController@upload')->name('uploadsupload'.$admin);// 单文件上传
+
         });
     });
 });
