@@ -1,32 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-    @include('pc.style')
+  @include('index.default.style')
 </head>
-<body>
-@include('pc.header')
-<section class="sidebar-v2__section">
-    <div class="section__head">
-        <div class="navbar sidebar-v2">
-            <div class="container-fluid" id="sidebar-v2__accordion">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed sidebar-v2__button btn" data-toggle="collapse" data-target="#sidebar-v2__list2" aria-expanded="false" data-parent="#sidebar-v2__accordion"> <span class="glyphicon glyphicon-menu-hamburger"></span> </button>
-                    <h1 class="dropdown-toggle sidebar-v2__h1 btn " data-toggle="collapse" data-target="#sidebar-v2__list3" data-parent="#sidebar-v2__accordion"> <button type="button" disabled="disabled"></button> <span>搜索页</span> </h1>
+<body class="archive category category-tuiguang category-53 el-boxed">
+@include('index.default.header')
+<div id="wrap">
+  <div class="container wrap">
+    <div class="main">
+      <div class="sec-panel sec-panel-default">
+        <div class="sec-panel-head">
+          <h1><span>{{ $search }}</span></h1>
+        </div>
+        <ul class="post-loop post-loop-default cols-0 clearfix">
+          @foreach($article as $value)
+            <li class="item">
+              <div class="item-img">
+                <a class="item-img-inner" href="{{ $value['url'] }}" title="{{ $value['name'] }}">
+                  <img class="j-lazy" src="{{ $value['litpic'] }}" width="480" height="300" alt="{{ $value['name'] }}">
+                </a>
+                <a class="item-category" href="{{ $value['url'] }}" title="{{ $value['name'] }}">{{ $value['name'] }}</a>
+              </div>
+              <div class="item-content">
+                <h2 class="item-title">
+                  <a href="{{ $value['url'] }}" title="{{ $value['name'] }}">{{ $value['name'] }}</a>
+                </h2>
+                <div class="item-excerpt">
+                  <p>&nbsp;&nbsp;&nbsp;&nbsp;{{ getStrCnStr($value['description'], 0, 88) }}...</p>
                 </div>
-            </div>
-        </div>
+                <div class="item-meta">
+                  <span class="item-meta-li date">{{ tranTime($value['updatetime']) }}</span>
+                  <span class="item-meta-li views" title="{{ $value['name'] }}">
+                    <i class="fa fa-eye"></i>{{ $value['click'] }}</span>
+                </div>
+              </div>
+            </li>
+          @endforeach
+        </ul>
+      </div>
     </div>
-</section>
-<div class="met_clear"></div>
-<article class="sidebar-v2__article">
-    <div class="met_article">
-        <div class="product-v2">
-            <ul class="product-v2__list list-unstyled"></ul>
-            <div class="met_clear"></div>
-        </div>
-    </div>
-</article>
-<div class="met_clear"></div>
-@include('pc.footer')
+    @include('index.default.right')
+ </div>
+</div>
+@include('index.default.footer')
 </body>
 </html>

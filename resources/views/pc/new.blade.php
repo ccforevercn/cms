@@ -1,79 +1,74 @@
 <!DOCTYPE html>
-<html>
- <head>
-  @include('pc.style')
- </head>
- <body>
- @include('pc.header')
-  <section class="sidebar-v2__section"> 
-   <div class="section__head"> 
-    <div class="navbar sidebar-v2"> 
-     <div class="container-fluid" id="sidebar-v2__accordion"> 
-      <div class="navbar-header   "> 
-       <button type="button" class="navbar-toggle collapsed sidebar-v2__button btn" data-toggle="collapse" data-target="#sidebar-v2__list2" aria-expanded="false" data-parent="#sidebar-v2__accordion"> <span class="glyphicon glyphicon-menu-hamburger"></span> </button> 
-       <h1 class="dropdown-toggle sidebar-v2__h1 btn " data-toggle="collapse" data-target="#sidebar-v2__list3" data-parent="#sidebar-v2__accordion"> <button type="button" disabled="disabled"></button> <span>{{ $columnTop['name'] }} </span> </h1>
-      </div>
-      @if(isset($children) && is_array($children) && count($children))
-       <div class="panel">
-        <div class="collapse navbar-collapse" id="sidebar-v2__list2">
-         <ul class="nav navbar-nav navbar-right" id="collapseTwo">
-          <li class="on"><a href="{{ $column['url'] }}" title="{{ $column['name'] }}">二级栏目:</a></li>
-          @foreach($children as $child)
-           @if($child['unique'] === $column['unique'])
-            <li class="on"><a href="{{ $child['url'] }}" title="{{ $child['name'] }}">{{ $child['name'] }}</a></li>
-           @else
-            <li><a href="{{ $child['url'] }}" title="{{ $child['name'] }}">{{ $child['name'] }}</a></li>
-           @endif
-          @endforeach
-         </ul>
+<html lang="zh-CN">
+<head>
+    @include('pc.style')
+</head>
+<body class="post-template-default single single-post postid-185570 single-format-standard el-boxed">
+@include('pc.header')
+<div id="wrap">
+    <div class="wrap container">
+        <div class="main">
+            <ol class="breadcrumb entry-breadcrumb">
+                <li class="home" property="itemListElement" typeof="ListItem"><i class="fa fa-map-marker"></i><meta property="position" content="1"></li>
+                <li property="itemListElement" typeof="ListItem">@php echo $crumbs; @endphp<meta property="position" content="2"></li>
+            </ol>
+            <article id="post-185570" class="post-185570 post type-post status-publish format-standard hentry category-tuiguang category-yunying tag-871 tag-3713 special-tuiguang">
+                <div class="entry">
+                    <div class="entry-head">
+                        <h1 class="entry-title">{{ $message['name'] }}</h1>
+                        <div class="entry-info">
+                            作者：{{ $message['writer'] }}<a class="nickname"></a>
+                            <span class="dot">•</span>
+                            <span>更新时间：{{ $message['time'] }}</span>
+                            <span class="dot">•</span>
+                            <span>阅读 {{ $message['click'] }}</span>
+                        </div>
+                    </div>
+                    <div class="entry-content clearfix">@php echo htmlspecialchars_decode($message['content']); @endphp</div>
+                    <div class="entry-footer">
+                        @if(count($message['tags']))
+                            <div class="entry-tag">
+                                @foreach($message['tags'] as &$tag)
+                                    <a href='{{ $message['url'] }}' title="{{ $tag }}">{{ $tag }}</a>
+                                @endforeach
+                            </div>
+                        @endif
+                        <div class="entry-page">
+                            @if(count($message['pre']))
+                                <div class="entry-page-prev j-lazy" style="background-image: url('/asset/index/images/lazy.png');">
+                                    <a href="{{ $message['pre']['url'] }}" title="{{ $message['pre']['name'] }}"><span>{{ $message['pre']['name'] }}</span></a>
+                                    <div class="entry-page-info">
+                                        <span class="pull-left">&laquo; 上一篇</span>
+                                    </div>
+                                </div>
+                            @endif
+                            @if(count($message['next']))
+                                <div class="entry-page-next j-lazy" style="background-image: url('/asset/index/images/lazy.png');">
+                                    <a href="{{ $message['next']['url'] }}" title="{{ $message['next']['name'] }}"><span>{{ $message['next']['name'] }}</span></a>
+                                    <div class="entry-page-info">
+                                        <span class="pull-right">下一篇  &raquo;</span>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                        @php
+                            $messages = \App\CcForever\extend\MessagesExtend::messages(3, true, 0, 8, 2, $configs['zy_cms_substation_link']);
+                        @endphp
+                        @if($messages)
+                            <h3 class="entry-related-title">相关推荐</h3>
+                            <ul class="entry-related clearfix">
+                                @foreach($messages as &$message)
+                                    <li><a href="{{ $message['url'] }}" title="{{ $message['name'] }}">{{ $message['name'] }}</a></li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    </div>
+                </div>
+            </article>
         </div>
-       </div>
-      @endif
-     </div> 
-    </div> 
-   </div> 
-  </section> 
-  <div class="met_clear"></div> 
-  <article class="sidebar-v2__article"> 
-   <div class="met_article"> 
-    <section class="met_module2"> 
-     <h1 class="met_title">{{ $message['name'] }}</h1>
-     <div class="met_infos"> 
-      <span class="met_time">{{ $message['time'] }}</span>
-      <span class="met_source"><a href="#" title="#">#</a></span> 
-      <span class="met_hits">已读 <span class="met_Clicks">{{ $message['click'] }}</span></span>
-     </div> 
-     <div class="met_editor">
-      <div>
-       <p>@php echo htmlspecialchars_decode($message['content']); @endphp</p>
-       <div id="metinfo_additional"></div>
-      </div>
-      <div class="met_clear"></div>
-     </div> 
-     <div class="met_tools">
-      <ul class="met_page">
-       @if(count($message['pre']))
-       <li class="met_page_preinfo">
-        <span>上一条</span>
-        <a href="{{ $message['pre']['url'] }}" title="{{ $message['pre']['name'] }}">{{ $message['pre']['name'] }}</a>
-       </li>
-       @else
-        <li class="met_page_next"><span>上一条</span><a href="#">无上一篇</a></li>
-       @endif
-       @if(count($message['next']))
-        <li class="met_page_next">
-         <span>下一条</span>
-         <a href="{{ $message['next']['url'] }}" title="{{ $message['next']['name'] }}">{{ $message['next']['name'] }}</a>
-        </li>
-        @else
-        <li class="met_page_next"><span>下一条</span><a href="#">无下一篇</a></li>
-        @endif
-      </ul>
-     </div> 
-    </section> 
-   </div> 
-  </article> 
-  <div class="met_clear"></div>
- @include('pc.footer')
- </body>
+        @include('pc.right')
+    </div>
+</div>
+@include('pc.footer')
+</body>
 </html>

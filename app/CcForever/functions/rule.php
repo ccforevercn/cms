@@ -222,8 +222,8 @@ if (!function_exists('check_message_order_pre')){
                 break;
             default:
                 $select = 'id';
-                $value = 'DESC';
-                $condition = '<';
+                $value = 'ASC';
+                $condition = '>';
                 break;
         }
         return compact('select', 'value', 'condition');
@@ -296,7 +296,8 @@ if(!function_exists('automatic_skip_wap')){
      */
     function automatic_skip_wap($url): string
     {
-        return "<script>if(window.location.toString().indexOf('pref=padindex') != -1){}else{if(/AppleWebKit.*Mobile/i.test(navigator.userAgent) || (/MIDP|SymbianOS|NOKIA|SAMSUNG|LG|NEC|TCL|Alcatel|BIRD|DBTEL|Dopod|PHILIPS|HAIER|LENOVO|MOT-|Nokia|SonyEricsson|SIE-|Amoi|ZTE/.test(navigator.userAgent))){if(window.location.href.indexOf(\"?mobile\")<0){try{if(/Android|WindowsPhone|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)){var urlLength = ".strlen($url).";var url = location.href.substring(0, urlLength);if(url !== '".$url."'){window.location.href=\"$url\";}}else if(/iPad/i.test(navigator.userAgent)){}else{}}catch(e){}}}}</script>";
+        $wap = $url . '/wap/';
+        return "<script>var wapLength = ".strlen($wap).";var wap = location.href.substring(0, wapLength);if(window.location.toString().indexOf('pref=padindex') != -1){if(wap === '".$wap."'){window.location.href=\"$url\";}}else{if(/AppleWebKit.*Mobile/i.test(navigator.userAgent) || (/MIDP|SymbianOS|NOKIA|SAMSUNG|LG|NEC|TCL|Alcatel|BIRD|DBTEL|Dopod|PHILIPS|HAIER|LENOVO|MOT-|Nokia|SonyEricsson|SIE-|Amoi|ZTE/.test(navigator.userAgent))){if(window.location.href.indexOf(\"?mobile\")<0){try{if(/Android|WindowsPhone|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)){if(wap !== '".$wap."'){window.location.href=\"$wap\";}}else if(/iPad/i.test(navigator.userAgent)){if(wap === '".$wap."'){window.location.href=\"$url\";}}else{if(wap === '".$wap."'){window.location.href=\"$url\";}}}catch(e){if(wap === '".$wap."'){window.location.href=\"$url\";}}}}else{if(wap === '".$wap."'){window.location.href=\"$url\";}}}</script>";
     }
 }
 

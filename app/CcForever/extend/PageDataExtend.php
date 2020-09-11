@@ -67,6 +67,10 @@ class PageDataExtend
     {
         // 公共配置
         $public = self::pagePublic($urlPrefix);
+        $configs = $public['configs']; // 全局配置
+        $navigation = $public['navigation']; // 导航
+        $banners = $public['banners']; // PC端banner
+        $bannersWap = $public['bannersWap']; // WAP端banner
         // 友情链接
         $linksRepository = new LinksRepository();
         $links = $linksRepository::links();
@@ -77,7 +81,7 @@ class PageDataExtend
         $substation = [];
         // 导航编号
         $navigationId = 0;
-        return compact('public', 'links', 'partners', 'substation', 'navigationId');
+        return compact('configs', 'navigation', 'banners', 'bannersWap', 'links', 'partners', 'substation', 'navigationId');
     }
 
     /**
@@ -91,6 +95,10 @@ class PageDataExtend
     {
         // 公共配置
         $public = self::pagePublic($urlPrefix);
+        $configs = $public['configs']; // 全局配置
+        $navigation = $public['navigation']; // 导航
+        $banners = $public['banners']; // PC端banner
+        $bannersWap = $public['bannersWap']; // WAP端banner
         // 当前导航编号
         $navigationId = $id;
         // 信息列表
@@ -158,12 +166,12 @@ class PageDataExtend
                         }
                         // 栏目文章
                         $messages = MessagesExtend::messageList($columnsMessagesOrderAndLoopIds['columnIds'], $columnsMessagesOrderAndLoopIds['order'], $offset, $limit, $messagesType, $urlPrefix);
-                        $result[] = compact('public', 'column', 'page', 'columnTop', 'children', 'crumbs', 'messages', 'navigationId');
+                        $result[] = compact('configs', 'navigation', 'banners', 'bannersWap', 'column', 'page', 'columnTop', 'children', 'crumbs', 'messages', 'navigationId');
                     }
                     return $result;
                 }
             }
-            $result[] = compact('public', 'column', 'columnTop', 'page', 'children', 'crumbs', 'messages', 'navigationId');
+            $result[] = compact('configs', 'navigation', 'banners', 'bannersWap', 'column', 'columnTop', 'page', 'children', 'crumbs', 'messages', 'navigationId');
         }
         return $result;
     }
@@ -181,6 +189,10 @@ class PageDataExtend
         $result = [];
         // 公共配置
         $public = self::pagePublic($urlPrefix);
+        $configs = $public['configs']; // 全局配置
+        $navigation = $public['navigation']; // 导航
+        $banners = $public['banners']; // PC端banner
+        $bannersWap = $public['bannersWap']; // WAP端banner
         // 导航编号
         $navigationId = $id;
         // 栏目信息
@@ -228,7 +240,7 @@ class PageDataExtend
                 $crumbs .= "<a href='{$column['url']}' title='{$column['name']}'>{$column['name']}</a>>";
             }
             $crumbs .= "<a href='{$message['url']}' title='{$message['name']}'>{$message['name']}</a>";
-            $result[] = compact('public', 'column', 'columnTop', 'children', 'crumbs', 'message', 'navigationId');
+            $result[] = compact('configs', 'navigation', 'banners', 'bannersWap', 'column', 'columnTop', 'children', 'crumbs', 'message', 'navigationId');
         }
         return $result;
     }
@@ -243,6 +255,10 @@ class PageDataExtend
     {
         // 公共配置
         $public = self::pagePublic($urlPrefix);
+        $configs = $public['configs']; // 全局配置
+        $navigation = $public['navigation']; // 导航
+        $banners = $public['banners']; // PC端banner
+        $bannersWap = $public['bannersWap']; // WAP端banner
         // 导航编号
         $navigationId = -1;
         // 实例化MessagesRepository
@@ -261,7 +277,7 @@ class PageDataExtend
             $message[$key]['time'] = date('Y-m-d H:i', $item['update_time']);
             $message[$key]['url'] = $urlPrefix.$item['page'].'/'.$item['id'].page_suffix_message();
         }
-        return compact('public', 'message', 'navigationId');
+        return compact('configs', 'navigation', 'banners', 'bannersWap', 'message', 'navigationId');
     }
 
     /**
@@ -284,13 +300,13 @@ class PageDataExtend
         foreach ($configList as &$config){
             $configs[strtolower($labelPrefix.$config['select'])] = $config['value'];
         }
-        // 域名追加分站地址
-        if(array_key_exists($labelPrefix.'website', $configs)){
-            $configs[$labelPrefix.'website'] = $configs[$labelPrefix.'website'].self::$substation_link;
-        }
         // 添加自动跳转wap端
         if((int)config('ccforever.config.wap_type') && array_key_exists($labelPrefix.'pc_top_code', $configs)){
             $configs[$labelPrefix.'pc_top_code'] .= $configs[$labelPrefix.'pc_top_code'].automatic_skip_wap($configs[$labelPrefix.'website']);
+        }
+        // 域名追加分站地址
+        if(array_key_exists($labelPrefix.'website', $configs)){
+            $configs[$labelPrefix.'website'] = $configs[$labelPrefix.'website'].self::$substation_link;
         }
         // 分站名称添加到配置中
         $configs[$labelPrefix.'substation_name'] = self::$substation_name;

@@ -356,7 +356,7 @@ class Messages extends BaseModel implements ModelInterface
             }, self::tags($item->unique));
             $item['content'] = is_null($item['content']) ? '' : $item['content'];
             $item['images'] = is_null($item['images']) ?  [] : explode(',', $item['images']);
-            $item['tag'] = implode(',', $tags);
+            $item['tags'] = $tags;
         })->toArray();
     }
 

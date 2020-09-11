@@ -262,6 +262,7 @@ class CachesExtend
             fclose($file);
             return $resourcesPath.$fileName;
         }catch (\Exception $exception){
+            dd($exception->getMessage(), $exception->getLine());
             return '';
         }
     }

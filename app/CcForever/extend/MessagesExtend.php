@@ -138,6 +138,7 @@ class MessagesExtend
             $result[$key]['keywords'] = $item['keywords'];
             $result[$key]['description'] = $item['description'];
             $result[$key]['time'] = date('Y-m-d H:i', $item['update_time']);
+            $result[$key]['tags'] = $item['tags'];
             $result[$key]['url'] = $urlPrefix.$item['page'].'/'.$item['id'].page_suffix_message();
             // 上一条获取
             $result[$key]['pre'] = $messagesRepository::messageEnter($columnId, $preWhere, $item[$preWhere['select']], $urlPrefix, PageDataExtend::GetSubstationName());

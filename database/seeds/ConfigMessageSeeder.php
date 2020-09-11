@@ -381,6 +381,18 @@ class ConfigMessageSeeder extends Seeder
                 'add_time' => time(),
                 'is_del' => 0
             ],
+            [
+                'id' => 31,
+                'name' => '作者',
+                'description' => '网站作者',
+                'select' => 'author',
+                'type' => 1,
+                'type_value' => '',
+                'value' => '',
+                'category_id' => 1,
+                'add_time' => time(),
+                'is_del' => 0
+            ],
         ]);
     }
 }

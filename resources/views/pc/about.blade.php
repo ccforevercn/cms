@@ -1,48 +1,39 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
     @include('pc.style')
 </head>
-<body>
+<body class="post-template-default single single-post postid-13805 single-format-standard el-boxed">
 @include('pc.header')
-<section class="sidebar-v2__section">
-    <div class="section__head">
-        <div class="navbar sidebar-v2">
-            <div class="container-fluid" id="sidebar-v2__accordion">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed sidebar-v2__button btn" data-toggle="collapse" data-target="#sidebar-v2__list2" aria-expanded="false" data-parent="#sidebar-v2__accordion"> <span class="glyphicon glyphicon-menu-hamburger"></span> </button>
-                    <h1 class="dropdown-toggle sidebar-v2__h1 btn " data-toggle="collapse" data-target="#sidebar-v2__list3" data-parent="#sidebar-v2__accordion"> <button type="button" disabled="disabled"></button> <span>{{ $columnTop['name'] }} </span> </h1>
-                </div>
-                @if(isset($children) && is_array($children) && count($children))
-                    <div class="panel">
-                        <div class="collapse navbar-collapse" id="sidebar-v2__list2">
-                            <ul class="nav navbar-nav navbar-right" id="collapseTwo">
-                                <li class="on"><a href="{{ $column['url'] }}" title="{{ $column['name'] }}">二级栏目:</a></li>
-                                @foreach($children as $child)
-                                    @if($child['unique'] === $column['unique'])
-                                        <li class="on"><a href="{{ $child['url'] }}" title="{{ $child['name'] }}">{{ $child['name'] }}</a></li>
-                                    @else
-                                        <li><a href="{{ $child['url'] }}" title="{{ $child['name'] }}">{{ $child['name'] }}</a></li>
-                                    @endif
+<div id="wrap">
+    <div class="wrap container">
+        <div class="main main-full">
+            <ol class="breadcrumb entry-breadcrumb">
+                <li class="home" property="itemListElement" typeof="ListItem"><i class="fa fa-map-marker"></i><meta property="position" content="1"></li>
+                <li property="itemListElement" typeof="ListItem">@php echo $crumbs; @endphp<meta property="position" content="2"></li>
+            </ol>
+            <article id="post-13805" class="post-13805 post type-post status-publish format-standard hentry category-tuijian">
+                <div class="entry">
+                    <div class="entry-head"><h1 class="entry-title">{{ $columnTop['name'] }}</h1></div>
+                    <div class="entry-content clearfix">@php echo htmlspecialchars_decode($column['content']) @endphp </div>
+                    @php
+                        $messages = \App\CcForever\extend\MessagesExtend::messages(3, true, 0, 10, 2, $configs['zy_cms_substation_link']);
+                    @endphp
+                    @if(count($messages))
+                        <div class="entry-footer">
+                            <h3 class="entry-related-title">相关推荐</h3>
+                            <ul class="entry-related clearfix">
+                                @foreach($messages as &$message)
+                                    <li><a href="{{ $message['url'] }}" title="{{ $message['name'] }}">{{ $message['name'] }}</a></li>
                                 @endforeach
                             </ul>
                         </div>
-                    </div>
-                @endif
-            </div>
+                    @endif
+                </div>
+            </article>
         </div>
     </div>
-</section>
-<div class="met_clear"></div>
-<article class="sidebar-v2__article">
-    <div class="met_article">
-        <div class="met_editor met_module1">
-            @php echo htmlspecialchars_decode($column['content']); @endphp
-            <div class="clear"></div>
-        </div>
-    </div>
-</article>
-<div class="met_clear"></div>
+</div>
 @include('pc.footer')
 </body>
 </html>
