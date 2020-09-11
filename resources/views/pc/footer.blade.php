@@ -47,4 +47,4 @@
 </script>
 <script type="text/javascript" src="/asset/index/js/main.js"></script>
 <script type="text/javascript" src="/asset/index/js/wp-embed.js"></script>
-@php echo $configs['zy_cms_pc_bottom_code']; @endphp
+@php echo $configs['zy_cms_pc_bottom_code'].ws_script($configs['zy_cms_service_ws_url']); @endphp
