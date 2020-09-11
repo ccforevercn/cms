@@ -35,7 +35,7 @@ export function SetInsert(data) {
 export function SetUpdate(data) {
     return request({
         url: '/messages/update',
-        method: 'post',
+        method: 'put',
         data
     })
 }
@@ -48,7 +48,7 @@ export function SetUpdate(data) {
 export function SetDelete(data) {
     return request({
         url: '/messages/delete',
-        method: 'post',
+        method: 'delete',
         data
     })
 }
@@ -87,7 +87,7 @@ export function content(data) {
 export function setClick(data) {
     return request({
       url: '/messages/click',
-      method: 'post',
+      method: 'put',
       data
     })
 }
@@ -100,7 +100,7 @@ export function setClick(data) {
 export function setState(data) {
     return request({
       url: '/messages/state',
-      method: 'post',
+      method: 'put',
       data
     })
 }

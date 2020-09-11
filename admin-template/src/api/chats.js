@@ -49,7 +49,7 @@ export function GetChats(data) {
 export function chatsSee(data) {
     return request({
         url: '/chats/see',
-        method: 'post',
+        method: 'put',
         data
     })
 }

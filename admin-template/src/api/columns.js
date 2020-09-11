@@ -35,7 +35,7 @@ export function SetInsert(data) {
 export function SetUpdate(data) {
     return request({
         url: '/columns/update',
-        method: 'post',
+        method: 'put',
         data
     })
 }
@@ -48,7 +48,7 @@ export function SetUpdate(data) {
 export function SetDelete(data) {
     return request({
         url: '/columns/delete',
-        method: 'post',
+        method: 'delete',
         data
     })
 }

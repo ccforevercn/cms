@@ -35,7 +35,7 @@ export function SetInsert(data) {
 export function SetUpdate(data) {
     return request({
         url: '/admins/update',
-        method: 'post',
+        method: 'put',
         data
     })
 }
@@ -48,7 +48,7 @@ export function SetUpdate(data) {
 export function SetDelete(data) {
   return request({
       url: '/admins/delete',
-      method: 'post',
+      method: 'delete',
       data
   })
 }
@@ -74,7 +74,7 @@ export function GetMessage(data) {
 export function logout(data) {
     return request({
         url: '/logout',
-        method: 'post',
+        method: 'delete',
         data
     })
 }

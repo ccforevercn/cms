@@ -20,7 +20,7 @@ export function GETContent() {
 export function SetUpdate(data) {
     return request({
         url: '/forbidden/word/update',
-        method: 'post',
+        method: 'put',
         data
     })
 }
@@ -31,6 +31,6 @@ export function SetUpdate(data) {
 export function checkContent() {
     return request({
         url: '/forbidden/word/check',
-        method: 'get'
+        method: 'put'
     })
 }

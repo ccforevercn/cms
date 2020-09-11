@@ -20,7 +20,7 @@ export function GETContent() {
 export function SetUpdate(data) {
     return request({
         url: '/robots/update',
-        method: 'post',
+        method: 'put',
         data
     })
 }

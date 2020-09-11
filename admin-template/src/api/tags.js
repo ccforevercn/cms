@@ -36,7 +36,7 @@ export function SetInsert(data) {
 export function SetUpdate(data) {
   return request({
       url: '/tags/update',
-      method: 'post',
+      method: 'put',
       data
   })
 }
@@ -49,7 +49,7 @@ export function SetUpdate(data) {
 export function SetDelete(data) {
   return request({
       url: '/tags/delete',
-      method: 'post',
+      method: 'delete',
       data
   })
 }
