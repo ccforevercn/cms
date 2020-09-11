@@ -379,16 +379,18 @@ class ChatsExtend
                         // 给对应的管理员发送消息
                         $data['customer'] = $admin['info']['username'];
                         $data['see'] = 1;
-                        // 给管理员发送提示
-                        self::formatDataSend($admin['connection'], self::SEND_TYPE_ADMIN_MESSAGE, '用户留言', $data);
+                        // 存入数据库
+                        $chatsRepository = new ChatsRepository();
+                        $bool = $chatsRepository::insert($data);
+                        if($bool){
+                            // 给管理员发送提示
+                            self::formatDataSend($admin['connection'], self::SEND_TYPE_ADMIN_MESSAGE, '用户留言', $data);
+                        }
                         // 删除管理员绑定的参数
                         $userKey = array_keys($admin['user_unique'], $key); // 获取用户的键值
                         unset($admin['user_unique'][$userKey[0]]); // 删除用户键值对应的元素
                     }
                 }
-                // 存入数据库
-                $chatsRepository = new ChatsRepository();
-                $chatsRepository::insert($data);
             }
         }
     }
