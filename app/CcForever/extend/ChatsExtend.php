@@ -343,6 +343,8 @@ class ChatsExtend
                                         $status = (bool)(int)$config['value'];
                                         if($status){
                                             // 发送短信
+                                            $SMSAliBaBaExtend = new SMSAliBaBaExtend();
+                                            $SMSAliBaBaExtend::send($data['content']);
                                         }
                                         break;
                                     default:;

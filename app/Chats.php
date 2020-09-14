@@ -199,6 +199,7 @@ class Chats extends BaseModel implements ModelInterface
         $model = $model->customerGroupBy();
         $model = $model->offset($offset);
         $model = $model->limit($limit);
+        $model = $model->where('customer', '<>', '');
         $list = $model->get();
         $list = is_null($list) ? [] : $list->toArray();
         return $list;
