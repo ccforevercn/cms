@@ -393,6 +393,102 @@ class ConfigMessageSeeder extends Seeder
                 'add_time' => time(),
                 'is_del' => 0
             ],
+            [
+                'id' => 32,
+                'name' => 'accessKeyId',
+                'description' => 'accessKeyId',
+                'select' => 'smsaccesskeyid',
+                'type' => 1,
+                'type_value' => '',
+                'value' => '',
+                'category_id' => 4,
+                'add_time' => time(),
+                'is_del' => 0
+            ],
+            [
+                'id' => 33,
+                'name' => 'accessSecret',
+                'description' => 'accessSecret',
+                'select' => 'smsaccesssecret',
+                'type' => 1,
+                'type_value' => '',
+                'value' => '',
+                'category_id' => 4,
+                'add_time' => time(),
+                'is_del' => 0
+            ],
+            [
+                'id' => 34,
+                'name' => '服务器区域',
+                'description' => '服务器区域',
+                'select' => 'smsregionid',
+                'type' => 1,
+                'type_value' => '',
+                'value' => '',
+                'category_id' => 4,
+                'add_time' => time(),
+                'is_del' => 0
+            ],
+            [
+                'id' => 35,
+                'name' => '模版签名',
+                'description' => '模版签名(发送短信时提示给用户)',
+                'select' => 'smssignname',
+                'type' => 1,
+                'type_value' => '',
+                'value' => '',
+                'category_id' => 4,
+                'add_time' => time(),
+                'is_del' => 0
+            ],
+            [
+                'id' => 36,
+                'name' => '模版编号',
+                'description' => '模版编号(发送短信内容对于的模板编号)',
+                'select' => 'smstemplate',
+                'type' => 1,
+                'type_value' => '',
+                'value' => '',
+                'category_id' => 4,
+                'add_time' => time(),
+                'is_del' => 0
+            ],
+            [
+                'id' => 37,
+                'name' => '短信状态',
+                'description' => '短信状态',
+                'select' => 'smsstatus',
+                'type' => 2,
+                'type_value' => '1:开启|0:关闭',
+                'value' => '0',
+                'category_id' => 4,
+                'add_time' => time(),
+                'is_del' => 0
+            ],
+            [
+                'id' => 38,
+                'name' => '短信收件人',
+                'description' => '短信收件人',
+                'select' => 'smsphone',
+                'type' => 1,
+                'type_value' => '',
+                'value' => '',
+                'category_id' => 4,
+                'add_time' => time(),
+                'is_del' => 0
+            ],
+            [
+                'id' => 39,
+                'name' => '邮件地址',
+                'description' => '接受程序邮件提示的邮件地址',
+                'select' => 'emailaddress',
+                'type' => 1,
+                'type_value' => '',
+                'value' => '',
+                'category_id' => 5,
+                'add_time' => time(),
+                'is_del' => 0
+            ],
         ]);
     }
 }

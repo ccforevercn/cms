@@ -324,6 +324,11 @@ class ChatsExtend
                         }
                         // 给客户提示发送成功
                         self::formatDataSend($connection, self::SEND_TYPE_USER_NOTICE, '发送成功', []);
+                        // 未查看状态
+                        if(!$data['see']){
+                            // 发送邮箱，发送短信
+                        }
+
                     }else{ // 添加数据库失败
                         self::formatDataSend($connection, self::SEND_TYPE_USER_NOTICE, '发送失败', []);
                     }

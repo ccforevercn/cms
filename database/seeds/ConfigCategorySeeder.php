@@ -43,6 +43,20 @@ class ConfigCategorySeeder extends Seeder
                 'add_time' => time(),
                 'is_del' => 0
             ],
+            [
+                'id' => 4,
+                'name' => '短信配置',
+                'description' => '网站短信配置(用户留言后没有查看的信息发送短信)',
+                'add_time' => time(),
+                'is_del' => 0
+            ],
+            [
+                'id' => 5,
+                'name' => '邮件配置',
+                'description' => '网站邮件配置(用户留言后没有查看的信息发送邮件)',
+                'add_time' => time(),
+                'is_del' => 0
+            ],
         ]);
     }
 }
