@@ -8,6 +8,7 @@ namespace App\CcForever\extend;
 
 use App\Repositories\AdminsRepository;
 use App\Repositories\ChatsRepository;
+use App\Repositories\ConfigMessageRepository;
 
 /**
  * 留言
@@ -327,8 +328,19 @@ class ChatsExtend
                         // 未查看状态
                         if(!$data['see']){
                             // 发送邮箱，发送短信
+                            // 实例化ConfigMessageRepository
+                            $configMessageRepository = new ConfigMessageRepository();
+                            // 获取邮件地址配置
+                            $bool = $configMessageRepository::config('emailaddress');
+                            // 默认邮件地址
+                            $receive = config('ccforever.config.mail_to_address');
+                            if($bool){
+                                // 邮件地址获取成功
+                                list($receive) = $configMessageRepository::returnData();
+                            }
+                            // 发送邮件
+                            MailExtend::send('用户消息', '发送内容：' . $data['content'], $receive);
                         }
-
                     }else{ // 添加数据库失败
                         self::formatDataSend($connection, self::SEND_TYPE_USER_NOTICE, '发送失败', []);
                     }

@@ -16,5 +16,6 @@ return [
         'unique_list' => env('CONFIG_UNIQUE_LIST', 'website'),
         'wap_type' => env('CONFIG_WAP_TYPE', '1'),
         'chart_limit' => env('CONFIG_CHART_LIMIT', 5),
+        'mail_to_address' => env('CONFIG_MAIL_TO_ADDRESS', '1253705861@qq.com'),
     ]
 ];
