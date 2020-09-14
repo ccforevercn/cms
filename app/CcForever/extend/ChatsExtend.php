@@ -327,19 +327,27 @@ class ChatsExtend
                         self::formatDataSend($connection, self::SEND_TYPE_USER_NOTICE, '发送成功', []);
                         // 未查看状态
                         if(!$data['see']){
-                            // 发送邮箱，发送短信
                             // 实例化ConfigMessageRepository
                             $configMessageRepository = new ConfigMessageRepository();
-                            // 获取邮件地址配置
-                            $bool = $configMessageRepository::config('emailaddress');
-                            // 默认邮件地址
-                            $receive = config('ccforever.config.mail_to_address');
-                            if($bool){
-                                // 邮件地址获取成功
-                                list($receive) = $configMessageRepository::returnData();
+                            // 获取配置
+                            $configs = $configMessageRepository::batch(['emailaddress', 'smsstatus']);
+                            foreach ($configs as &$config){
+                                switch ($config['select']){
+                                    case 'emailaddress':
+                                        // 获取配置邮件地址
+                                        $receive = $config['value'];
+                                        // 发送邮件
+                                        MailExtend::send('用户消息', '发送内容：' . $data['content'], $receive);
+                                        break;
+                                    case 'smsstatus':
+                                        $status = (bool)(int)$config['value'];
+                                        if($status){
+                                            // 发送短信
+                                        }
+                                        break;
+                                    default:;
+                                }
                             }
-                            // 发送邮件
-                            MailExtend::send('用户消息', '发送内容：' . $data['content'], $receive);
                         }
                     }else{ // 添加数据库失败
                         self::formatDataSend($connection, self::SEND_TYPE_USER_NOTICE, '发送失败', []);
