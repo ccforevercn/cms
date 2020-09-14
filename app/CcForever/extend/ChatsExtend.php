@@ -325,7 +325,7 @@ class ChatsExtend
                         // 给客户提示发送成功
                         self::formatDataSend($connection, self::SEND_TYPE_USER_NOTICE, '发送成功', []);
                     }else{ // 添加数据库失败
-                        self::formatDataSend($connection, self::SEND_TYPE_USER_NOTICE, '发送失败"', []);
+                        self::formatDataSend($connection, self::SEND_TYPE_USER_NOTICE, '发送失败', []);
                     }
                     break;
                 default:
