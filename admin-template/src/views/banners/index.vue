@@ -4,22 +4,22 @@
       <el-form :model="where" @submit.native.prevent>
         <el-col :span="16">
           <el-form-item label="状态">
-            <el-select v-model="where.type" @change="setWhereType" placeholder="请选择状态">
-              <el-option label="全部" value=""></el-option>
-              <el-option label="PC" value="1"></el-option>
-              <el-option label="WAP" value="2"></el-option>
+            <el-select v-model="where.type" placeholder="请选择状态" @change="setWhereType">
+              <el-option label="全部" value="" />
+              <el-option label="PC" value="1" />
+              <el-option label="WAP" value="2" />
             </el-select>
           </el-form-item>
         </el-col>
       </el-form>
       <el-col :span="8" class="insert-button">
-          <el-button-group>
-              <el-button type="primary" plain size="small" @click="create">轮播图添加</el-button>
-              <el-button type="success" plain size="small" @click="fetchData">刷新列表</el-button>
-          </el-button-group>
+        <el-button-group>
+          <el-button type="primary" plain size="small" @click="create">轮播图添加</el-button>
+          <el-button type="success" plain size="small" @click="fetchData">刷新列表</el-button>
+        </el-button-group>
       </el-col>
     </el-row>
-    <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" border fit highlight-current-row >
+    <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" border fit highlight-current-row>
       <template slot="empty">暂无轮播图</template>
       <el-table-column align="center" label="编号" width="95">
         <template slot-scope="scope">{{ scope.row.id }}</template>
@@ -44,10 +44,10 @@
       </el-table-column>
       <el-table-column align="center" label="操作" width="120">
         <template slot-scope="scope">
-            <el-button-group>
-              <el-button type="primary" icon="el-icon-edit" circle @click="editDialog(scope.$index)"></el-button>
-              <el-button type="success" icon="el-icon-delete" circle @click="deleteDialog(scope.$index)"></el-button>
-            </el-button-group>
+          <el-button-group>
+            <el-button type="primary" icon="el-icon-edit" circle @click="editDialog(scope.$index)" />
+            <el-button type="success" icon="el-icon-delete" circle @click="deleteDialog(scope.$index)" />
+          </el-button-group>
         </template>
       </el-table-column>
     </el-table>
@@ -55,30 +55,30 @@
       <el-col :span="24" class="page-class">
         <el-pagination
           background
+          :page-size="where.limit"
+          :pager-count="5"
+          layout="prev, pager, next"
+          :total="count"
           @size-change="pageSizeChange"
           @current-change="pageCurrentChange"
           @prev-click="pagePrevClick"
           @next-click="pageNextClick"
-          :page-size="where.limit"
-          :pager-count="5"
-          layout="prev, pager, next"
-          :total="count">
-        </el-pagination>
+        />
       </el-col>
     </el-row>
-    <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" :before-close="dialogBeforeClosed" width="60%" center >
+    <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" :before-close="dialogBeforeClosed" width="60%" center>
       <el-form class="edit-dialog-form">
         <el-form-item label="名称">
-          <el-input v-model="editInfo.name"></el-input>
+          <el-input v-model="editInfo.name" />
         </el-form-item>
         <el-form-item label="链接">
-          <el-input v-model="editInfo.link"></el-input>
+          <el-input v-model="editInfo.link" />
         </el-form-item>
         <el-form-item label="图片">
-          <upload-image :images="image" :name="imageName" :path="imagePath" @setImagePath="setImagePath"/>
+          <upload-image :images="image" :name="imageName" :path="imagePath" @setImagePath="setImagePath" />
         </el-form-item>
         <el-form-item label="权重">
-          <el-input v-model="editInfo.weight" type="number"></el-input>
+          <el-input v-model="editInfo.weight" type="number" />
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="editInfo.type">
@@ -93,10 +93,11 @@
       </span>
     </el-dialog>
   </div>
-  
+
 </template>
 
 <script>
+// eslint-disable-next-line no-unused-vars
 import { GetList, SetInsert, SetUpdate, SetDelete, GetMessage } from '@/api/banners'
 import { secondToTime } from '@/utils/time'
 import UploadImage from '@/components/UploadImage'
@@ -110,7 +111,7 @@ export default {
       var typeArr = ['未知', 'PC', 'WAP']
       return typeArr[type]
     },
-   typeTypeFilter(type) {
+    typeTypeFilter(type) {
       var typeTypeArr = ['error', 'info', 'success']
       return typeTypeArr[type]
     },
@@ -124,7 +125,7 @@ export default {
       image: '',
       imageName: 'banners',
       imagePath: 'banners',
-      where: { 'page': 1, 'limit': 6, 'type' : '' },
+      where: { 'page': 1, 'limit': 6, 'type': '' },
       list: null,
       count: 0,
       listLoading: true,
@@ -155,20 +156,20 @@ export default {
       // 删除轮播图
       var that = this
       var banners = that.list[index]
-      that.$confirm('您要永久删除【'+ banners.name +'】轮播图吗?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          SetDelete({id: banners.id}).then(res=>{
-            that.$message({ type: 'success', message: res.msg || '删除成功' })
-            that.fetchData()
-          }).catch(err=>{
-            that.$message({ type: 'error', message: err })
-          })
-        }).catch(() => {
-          that.$message({ type: 'info', message: '已取消删除' })
+      that.$confirm('您要永久删除【' + banners.name + '】轮播图吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        SetDelete({ id: banners.id }).then(res => {
+          that.$message({ type: 'success', message: res.msg || '删除成功' })
+          that.fetchData()
+        }).catch(err => {
+          that.$message({ type: 'error', message: err })
         })
+      }).catch(() => {
+        that.$message({ type: 'info', message: '已取消删除' })
+      })
     },
     create() {
       // 添加轮播图
@@ -199,22 +200,22 @@ export default {
     },
     dialogSubmit() {
       var that = this
-      if(that.dialogType === 'update'){
+      if (that.dialogType === 'update') {
         // 修改轮播图 确定
-        SetUpdate(that.editInfo).then(res=>{
+        SetUpdate(that.editInfo).then(res => {
           that.$message({ type: 'success', message: res.msg || '修改成功' })
           that.dialogVisible = false
           that.fetchData()
-        }).catch(err=>{
+        }).catch(err => {
           that.$message({ type: 'error', message: err })
         })
-      }else{
+      } else {
         // 添加轮播图 确定
-        SetInsert(that.editInfo).then(res=>{
+        SetInsert(that.editInfo).then(res => {
           that.$message({ type: 'success', message: res.msg || '添加成功' })
           that.dialogVisible = false
           that.fetchData()
-        }).catch(err=>{
+        }).catch(err => {
           that.$message({ type: 'error', message: err })
         })
       }
@@ -223,9 +224,9 @@ export default {
       // 修改、添加窗口未点击取消和确定按钮关闭回调
       var that = this
       that.$confirm('您要当前窗口吗?关闭后没有保存的数据就会消失,请先保存后再关闭。', '提示', {
-          confirmButtonText: '已保存，继续关闭',
-          cancelButtonText: '未保存，取消关闭',
-          type: 'warning'
+        confirmButtonText: '已保存，继续关闭',
+        cancelButtonText: '未保存，取消关闭',
+        type: 'warning'
       }).then(() => {
         done()
       }).catch(() => {
@@ -237,7 +238,7 @@ export default {
       var that = this
       that.dialogVisible = false
       var message = '取消添加轮播图'
-      if(that.dialogType === 'update'){
+      if (that.dialogType === 'update') {
         message = '取消修改轮播图'
       }
       that.$message({ type: 'warning', message: message })
@@ -270,7 +271,7 @@ export default {
         that.list = response.data.list
         that.count = response.data.count
         that.listLoading = false
-      }).catch(err=>{
+      }).catch(err => {
         that.$message({ type: 'error', message: err })
       })
     }

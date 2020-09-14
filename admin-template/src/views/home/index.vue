@@ -1,14 +1,13 @@
 <template>
   <div class="dashboard-container dashboard">
-    <div class="top">欢迎管理员： {{ admin.real_name}} 当前时间:{{ time }}</div>
-    <div class="echarts" ref="echarts"></div>
+    <div class="top">欢迎管理员： {{ admin.real_name }} 当前时间:{{ time }}</div>
+    <div ref="echarts" class="echarts" />
   </div>
 </template>
 
 <script>
 
 import { mapGetters } from 'vuex'
-import { getLoginStatus, setLoginStatus } from '@/utils/auth'
 import { statistics as GetMessagesStatistics } from '@/api/messages'
 import { statistics as GetChatsStatistics } from '@/api/chats'
 import echarts from 'echarts/lib/echarts'
@@ -29,7 +28,7 @@ export default {
       legendData: [],
       status: false,
       time: 0,
-      timer: 0,
+      timer: 0
     }
   },
   computed: {
@@ -40,7 +39,7 @@ export default {
   mounted() {
     this.getMessageStatistics()
     this.getChatsStatistics()
-    this.time = secondToTime(Math.round(new Date().getTime()/1000))
+    this.time = secondToTime(Math.round(new Date().getTime() / 1000))
     this.setTime()
   },
   destroyed() {
@@ -49,77 +48,78 @@ export default {
   methods: {
     setTime() {
       var that = this
-      that.timer = setInterval(function(){
-          that.time = secondToTime(Math.round(new Date().getTime()/1000))
+      that.timer = setInterval(function() {
+        that.time = secondToTime(Math.round(new Date().getTime() / 1000))
       }, 1000)
     },
     setChart() {
-        var that = this
-        that.titleText = that.titleText.substring(0, that.titleText.length - 1) + '统计'
-        var chart = echarts.init(this.$refs.echarts)
-        chart.setOption({
-            title: { left: 'left', text: that.titleText },
-            tooltip: {
-              show: true,
-              orient: 'horizontal',
-              showTitle: true, 
-              trigger: 'axis',
-              axisPointer: {
-                  type: 'cross',
-                  label: {backgroundColor: '#6a7985'}
-              }
-            },
-            xAxis: { type: 'category', boundaryGap: false,data: that.xAxisData },
-            legend: { data: that.legendData },
-            grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
-            yAxis: [{ type: 'value', boundaryGap: [0, '100%']}],
-            dataZoom: [{ start: 50,type: 'inside'},{type: 'slider',show: true,start: 50}],
-            series: that.series
-        })
+      var that = this
+      that.titleText = that.titleText.substring(0, that.titleText.length - 1) + '统计'
+      var chart = echarts.init(this.$refs.echarts)
+      chart.setOption({
+        title: { left: 'left', text: that.titleText },
+        tooltip: {
+          show: true,
+          orient: 'horizontal',
+          showTitle: true,
+          trigger: 'axis',
+          axisPointer: {
+            type: 'cross',
+            label: { backgroundColor: '#6a7985' }
+          }
+        },
+        xAxis: { type: 'category', boundaryGap: false, data: that.xAxisData },
+        legend: { data: that.legendData },
+        grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+        yAxis: [{ type: 'value', boundaryGap: [0, '100%'] }],
+        dataZoom: [{ start: 50, type: 'inside' }, { type: 'slider', show: true, start: 50 }],
+        series: that.series
+      })
     },
     getChatsStatistics() {
       var that = this
-      GetChatsStatistics().then(res=>{
+      GetChatsStatistics().then(res => {
         that.legendData.push(res.msg)
         that.series.push(that.formatSeries(res.msg, res.data))
-        if(that.status){
+        if (that.status) {
           that.setChart()
-        }else{
+        } else {
           that.status = true
         }
-      }).catch(err=>{
-          that.$message({ type: 'error', message: err || '获取失败' })
+      }).catch(err => {
+        that.$message({ type: 'error', message: err || '获取失败' })
       })
     },
     getMessageStatistics() {
       // 获取信息发布
       var that = this
-      GetMessagesStatistics().then(res=>{
+      GetMessagesStatistics().then(res => {
         that.legendData.push(res.msg)
         that.series.push(that.formatSeries(res.msg, res.data))
-        if(that.status){
+        if (that.status) {
           that.setChart()
-        }else{
+        } else {
           that.status = true
         }
-      }).catch(err=>{
-          that.$message({ type: 'error', message: err || '获取失败' })
+      }).catch(err => {
+        that.$message({ type: 'error', message: err || '获取失败' })
       })
     },
     formatSeries(msg, data) {
       // 格式化series
       var that = this
-      let xAxisDataLength = that.xAxisData.length
+      const xAxisDataLength = that.xAxisData.length
       let series
+      // eslint-disable-next-line prefer-const
       series = {
         'name': msg,
         'type': 'line',
-        'data': [],
+        'data': []
       }
       that.titleText += msg + '和'
-      for(let index in data){
+      for (const index in data) {
         series.data.push(data[index].count)
-        if(xAxisDataLength === 0){
+        if (xAxisDataLength === 0) {
           that.xAxisData.push(data[index].week)
         }
       }

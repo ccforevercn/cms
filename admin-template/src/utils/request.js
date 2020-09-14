@@ -43,13 +43,13 @@ service.interceptors.response.use(
    * You can also judge the status by HTTP Status Code
    */
   response => {
-      const res = response.data
-      if(typeof res === "object" && res.code === 200){
-        return res
-      }else if(typeof res !== "object"){
-        return Promise.reject(String(res))
-      }
-      return Promise.reject(res.msg)
+    const res = response.data
+    if (typeof res === 'object' && res.code === 200) {
+      return res
+    } else if (typeof res !== 'object') {
+      return Promise.reject(String(res))
+    }
+    return Promise.reject(res.msg)
   },
   error => {
     /**

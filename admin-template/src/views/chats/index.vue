@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-row :gutter="24"><el-col class="insert-button"><el-button type="success" plain size="small" @click="fetchData">刷新列表</el-button></el-col></el-row>
-    <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" border fit highlight-current-row >
+    <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" border fit highlight-current-row>
       <template slot="empty">暂无留言</template>
       <el-table-column align="center" label="客服信息">
         <template slot-scope="scope">{{ scope.row.admin_name }}/{{ scope.row.customer }}/{{ scope.row.admin_id }}</template>
@@ -10,26 +10,26 @@
         <template slot-scope="scope"><span>{{ scope.row.user_count }}</span></template>
       </el-table-column>
       <el-table-column align="center" label="操作" width="120">
-        <template slot-scope="scope"><el-button type="primary" icon="el-icon-s-custom" @click="user(scope.$index)"></el-button></template>
+        <template slot-scope="scope"><el-button type="primary" icon="el-icon-s-custom" @click="user(scope.$index)" /></template>
       </el-table-column>
     </el-table>
     <el-row :gutter="24">
       <el-col :span="24" class="page-class">
         <el-pagination
           background
+          :page-size="where.limit"
+          :pager-count="5"
+          layout="prev, pager, next"
+          :total="count"
           @size-change="pageSizeChange"
           @current-change="pageCurrentChange"
           @prev-click="pagePrevClick"
           @next-click="pageNextClick"
-          :page-size="where.limit"
-          :pager-count="5"
-          layout="prev, pager, next"
-          :total="count">
-        </el-pagination>
+        />
       </el-col>
     </el-row>
     <el-dialog :title="userDialog.title" :visible.sync="userDialog.visible" width="90%" center>
-      <el-table :data="userDialog.list" border fit highlight-current-row >
+      <el-table :data="userDialog.list" border fit highlight-current-row>
         <template slot="empty">暂无留言</template>
         <el-table-column align="center" label="用户昵称">
           <template slot-scope="scope">用户{{ scope.row.id }}</template>
@@ -41,28 +41,28 @@
           <template slot-scope="scope"><span>{{ scope.row.time | timeFilter }}</span></template>
         </el-table-column>
         <el-table-column align="center" label="操作" width="120">
-          <template slot-scope="scope"><el-button type="primary" icon="el-icon-s-custom" @click="chat(scope.$index)"></el-button></template>
+          <template slot-scope="scope"><el-button type="primary" icon="el-icon-s-custom" @click="chat(scope.$index)" /></template>
         </el-table-column>
       </el-table>
       <el-row :gutter="24">
         <el-col :span="24" class="page-class">
           <el-pagination
             background
-            @size-change="pageSizeChangeUser"
-            @current-change="pageCurrentChangeUser"
-            @prev-click="pagePrevClickUser"
-            @next-click="pageNextClickUser"
             :page-size="userDialog.where.limit"
             :pager-count="5"
             :current-page="userDialog.where.page"
             layout="prev, pager, next"
-            :total="userDialog.count">
-          </el-pagination>
+            :total="userDialog.count"
+            @size-change="pageSizeChangeUser"
+            @current-change="pageCurrentChangeUser"
+            @prev-click="pagePrevClickUser"
+            @next-click="pageNextClickUser"
+          />
         </el-col>
       </el-row>
     </el-dialog>
     <el-dialog :title="chatDialog.title" :visible.sync="chatDialog.visible" width="80%" center>
-      <el-table :data="chatDialog.list" border fit highlight-current-row >
+      <el-table :data="chatDialog.list" border fit highlight-current-row>
         <template slot="empty">暂无留言</template>
         <el-table-column label="编号">
           <template slot-scope="scope"><span>{{ scope.row.id }}</span></template>
@@ -84,21 +84,21 @@
         <el-col :span="24" class="page-class">
           <el-pagination
             background
-            @size-change="pageSizeChangeChat"
-            @current-change="pageCurrentChangeChat"
-            @prev-click="pagePrevClickChat"
-            @next-click="pageNextClickChat"
             :page-size="chatDialog.where.limit"
             :current-page="chatDialog.where.page"
             :pager-count="5"
             layout="prev, pager, next"
-            :total="chatDialog.count">
-          </el-pagination>
+            :total="chatDialog.count"
+            @size-change="pageSizeChangeChat"
+            @current-change="pageCurrentChangeChat"
+            @prev-click="pagePrevClickChat"
+            @next-click="pageNextClickChat"
+          />
         </el-col>
       </el-row>
     </el-dialog>
   </div>
-  
+
 </template>
 
 <script>
@@ -123,7 +123,7 @@ export default {
         list: null,
         count: 0,
         user: null,
-        where: { 'customer' : '', 'page' : 1, 'limit' : 6 }
+        where: { 'customer': '', 'page': 1, 'limit': 6 }
       },
       chatDialog: {
         title: '留言客服和用户对话列表',
@@ -131,7 +131,7 @@ export default {
         list: null,
         count: 0,
         chat: null,
-        where: { 'customer' : '', 'user' : '', 'page' : 1, 'limit' : 6 }
+        where: { 'customer': '', 'user': '', 'page': 1, 'limit': 6 }
       }
     }
   },
@@ -140,23 +140,23 @@ export default {
   },
   methods: {
     chat(index) {
-       // 查看留言客服和用户对话列表
-      let chat = this.userDialog.list[index]
+      // 查看留言客服和用户对话列表
+      const chat = this.userDialog.list[index]
       this.chatDialog.chat = chat
       this.chatDialog.where.user = chat.user
       this.chatDialog.where.customer = this.userDialog.user.customer
       this.chatDialog.where.page = 1
-      this.chatDialog.title = this.userDialog.user.admin_name + "客服和" + chat.user + "用户的聊天记录"
+      this.chatDialog.title = this.userDialog.user.admin_name + '客服和' + chat.user + '用户的聊天记录'
       this.chatDialog.visible = true
       this.getChats()
     },
     getChats() {
-       // 获取留言客服和用户对话列表
+      // 获取留言客服和用户对话列表
       var that = this
-      GetChats(that.chatDialog.where).then(res=>{
+      GetChats(that.chatDialog.where).then(res => {
         that.chatDialog.list = res.data.list
         that.chatDialog.count = res.data.count
-      }).catch(err=>{
+      }).catch(err => {
         that.$message({ type: 'error', message: err || '获取失败' })
       })
     },
@@ -181,21 +181,21 @@ export default {
     },
     user(index) {
       // 查看留言用户列表
-      let user = this.list[index]
+      const user = this.list[index]
       this.userDialog.user = user
       this.userDialog.where.customer = user.customer
       this.userDialog.where.page = 1
-      this.userDialog.title = user.admin_name + "的用户聊天记录"
+      this.userDialog.title = user.admin_name + '的用户聊天记录'
       this.userDialog.visible = true
       this.getUsers()
     },
     getUsers() {
       // 获取留言用户列表
       var that = this
-      GetUsers(that.userDialog.where).then(res=>{
+      GetUsers(that.userDialog.where).then(res => {
         that.userDialog.list = res.data.list
         that.userDialog.count = res.data.count
-      }).catch(err=>{
+      }).catch(err => {
         that.$message({ type: 'error', message: err || '获取失败' })
       })
     },
@@ -245,7 +245,7 @@ export default {
         that.list = response.data.list
         that.count = response.data.count
         that.listLoading = false
-      }).catch(err=>{
+      }).catch(err => {
         that.$message({ type: 'error', message: err || '获取失败' })
       })
     }

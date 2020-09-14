@@ -2,16 +2,16 @@
   <div class="app-container">
     <el-row :gutter="24">
       <el-col class="insert-button">
-          <el-button-group>
-              <el-button type="primary" plain size="small" @click="create">配置信息添加</el-button>
-              <el-button type="success" plain size="small" @click="fetchData">刷新列表</el-button>
-          </el-button-group>
+        <el-button-group>
+          <el-button type="primary" plain size="small" @click="create">配置信息添加</el-button>
+          <el-button type="success" plain size="small" @click="fetchData">刷新列表</el-button>
+        </el-button-group>
       </el-col>
     </el-row>
     <el-menu :default-active="where.category_id" mode="horizontal" @select="whereCategoryId">
-      <template v-for="item in category"><el-menu-item  :key="item.id" :index="'' + item.id + ''" v-text="item.name"></el-menu-item></template>
+      <template v-for="item in category"><el-menu-item :key="item.id" :index="'' + item.id + ''" v-text="item.name" /></template>
     </el-menu>
-    <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" border fit highlight-current-row >
+    <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" border fit highlight-current-row>
       <template slot="empty">暂无配置信息</template>
       <el-table-column label="唯一值">
         <template slot-scope="scope"><span class="cursor"><el-tag type="success" effect="plain" @click="cp(labelPrefix + scope.row.select)">{{ labelPrefix + scope.row.select }}&nbsp;&nbsp;&nbsp;复制</el-tag></span></template>
@@ -30,10 +30,10 @@
       </el-table-column>
       <el-table-column align="center" label="操作" width="120">
         <template slot-scope="scope">
-            <el-button-group>
-              <el-button type="primary" icon="el-icon-edit" circle @click="editDialog(scope.$index)"></el-button>
-              <el-button type="success" icon="el-icon-delete" circle @click="deleteDialog(scope.$index)"></el-button>
-            </el-button-group>
+          <el-button-group>
+            <el-button type="primary" icon="el-icon-edit" circle @click="editDialog(scope.$index)" />
+            <el-button type="success" icon="el-icon-delete" circle @click="deleteDialog(scope.$index)" />
+          </el-button-group>
         </template>
       </el-table-column>
     </el-table>
@@ -41,32 +41,32 @@
       <el-col :span="24" class="page-class">
         <el-pagination
           background
+          :page-size="where.limit"
+          :pager-count="5"
+          layout="prev, pager, next"
+          :total="count"
           @size-change="pageSizeChange"
           @current-change="pageCurrentChange"
           @prev-click="pagePrevClick"
           @next-click="pageNextClick"
-          :page-size="where.limit"
-          :pager-count="5"
-          layout="prev, pager, next"
-          :total="count">
-        </el-pagination>
+        />
       </el-col>
     </el-row>
-    <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" :before-close="dialogBeforeClosed" width="60%" center >
+    <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" :before-close="dialogBeforeClosed" width="60%" center>
       <el-form class="edit-dialog-form">
         <el-form-item label="配置名称">
-          <el-input v-model="editInfo.name"></el-input>
+          <el-input v-model="editInfo.name" />
         </el-form-item>
         <el-form-item label="配置描述">
-          <el-input v-model="editInfo.description"></el-input>
+          <el-input v-model="editInfo.description" />
         </el-form-item>
         <el-form-item label="唯 一 值">
-          <el-input v-model="editInfo.select" :readonly="editInfo.selectReadonly"></el-input>
+          <el-input v-model="editInfo.select" :readonly="editInfo.selectReadonly" />
         </el-form-item>
         <el-form-item label="配置分类">
-            <el-select v-model="editInfo.category_id" placeholder="配置分类" :disabled="editInfo.categoryIdDisabled">
-              <el-option v-for="item in category" :label="item.name" :value="item.id" :key="item.id"></el-option>
-            </el-select>
+          <el-select v-model="editInfo.category_id" placeholder="配置分类" :disabled="editInfo.categoryIdDisabled">
+            <el-option v-for="item in category" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
         </el-form-item>
         <el-form-item label="配置类型">
           <el-radio-group v-model="editInfo.type" :disabled="editInfo.typeDisabled" @change="setEditInfoTypeValueStatus">
@@ -77,19 +77,19 @@
             <el-radio label="5">多行文本框</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="类 型 值" v-show="editInfoValueRadioStatus || editInfoValueCheckBoxStatus">
-          <el-input v-model="editInfo.type_value" :readonly="editInfo.typeValueReadonly" placeholder="配置类型值格式：field:value|field:value..."  @change="setEditInfoRadisOrCheckBoxValue"></el-input>
+        <el-form-item v-show="editInfoValueRadioStatus || editInfoValueCheckBoxStatus" label="类 型 值">
+          <el-input v-model="editInfo.type_value" :readonly="editInfo.typeValueReadonly" placeholder="配置类型值格式：field:value|field:value..." @change="setEditInfoRadisOrCheckBoxValue" />
         </el-form-item>
         <el-form-item label="配 置 值">
-          <el-radio-group v-model="editInfo.value" v-show="editInfoValueRadioStatus">
-            <el-radio :label="item[0]" v-for="item in radioOrCheckBoxValue" :key="item[0]">{{ item[1] }}</el-radio>
+          <el-radio-group v-show="editInfoValueRadioStatus" v-model="editInfo.value">
+            <el-radio v-for="item in radioOrCheckBoxValue" :key="item[0]" :label="item[0]">{{ item[1] }}</el-radio>
           </el-radio-group>
-          <el-checkbox-group v-model="checkBoxValue" v-show="editInfoValueCheckBoxStatus">
-            <el-checkbox :label="item[0]" v-for="item in radioOrCheckBoxValue" :key="item[0]">{{ item[1] }}</el-checkbox>
+          <el-checkbox-group v-show="editInfoValueCheckBoxStatus" v-model="checkBoxValue">
+            <el-checkbox v-for="item in radioOrCheckBoxValue" :key="item[0]" :label="item[0]">{{ item[1] }}</el-checkbox>
           </el-checkbox-group>
-          <el-input v-show="editInfoValueInputStatus" v-model="editInfo.value"></el-input>
-          <el-input type="textarea" v-show="editInfoValueTextareaStatus" v-model="editInfo.value"></el-input>
-          <upload-image v-show="editInfoValueImageStatus" :images="image" :name="imageName" :path="imagePath" @setImagePath="setImagePath"/>
+          <el-input v-show="editInfoValueInputStatus" v-model="editInfo.value" />
+          <el-input v-show="editInfoValueTextareaStatus" v-model="editInfo.value" type="textarea" />
+          <upload-image v-show="editInfoValueImageStatus" :images="image" :name="imageName" :path="imagePath" @setImagePath="setImagePath" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -100,6 +100,7 @@
   </div>
 </template>
 <script>
+// eslint-disable-next-line no-unused-vars
 import { GetList, SetInsert, SetUpdate, SetDelete, GetMessage, GetConfig } from '@/api/configmessage'
 import { GetConfigCategory } from '@/api/configcategory'
 import UploadImage from '@/components/UploadImage'
@@ -112,32 +113,32 @@ export default {
   filters: {
     formatValueFilter(value, values, type, that) {
       let newValue = value
-      if(type === 2){
+      if (type === 2) {
         // 单选按钮值处理
-        if(value.length > 0){
+        if (value.length > 0) {
           newValue = that.formatConfigRadioOrCheckBoxvalue(values, value)
         }
-      }else if(type === 3){
+      } else if (type === 3) {
         // 多选按钮值处理
-        if(value.length > 0){
+        if (value.length > 0) {
           let valueArr = []
           newValue = ''
           valueArr = value.split('|')
-          for(let index in valueArr){
+          for (const index in valueArr) {
             newValue += that.formatConfigRadioOrCheckBoxvalue(values, valueArr[index]) + ','
           }
-          newValue = newValue.substring(0,newValue.length - 1)
+          newValue = newValue.substring(0, newValue.length - 1)
         }
       }
       return newValue
     },
     typeFilter(type) {
-      if(type > 5) type = 0
+      if (type > 5) type = 0
       var typeArr = ['未知类型', '文本框', '单选按钮', '多选按钮', '文件上传', '多行文本框']
       return typeArr[type]
     },
     typeColorFilter(type) {
-      if(type > 5) type = 0
+      if (type > 5) type = 0
       var typeColorArr = ['danger', 'primary', 'success', 'info', 'warning', '']
       return typeColorArr[type]
     }
@@ -157,18 +158,18 @@ export default {
       dialogTitle: '修改',
       dialogVisible: false,
       dialogType: 'insert',
-      editInfo: { 
-        'id': 0, 
-        'name': '', 
-        'description': '', 
-        'select': '', 
-        'selectReadonly': false, 
-        'category_id': '', 
-        'categoryIdDisabled' : false,
-        'type': '', 
-        'typeDisabled': false, 
-        'type_value': '', 
-        'typeValueReadonly': false, 
+      editInfo: {
+        'id': 0,
+        'name': '',
+        'description': '',
+        'select': '',
+        'selectReadonly': false,
+        'category_id': '',
+        'categoryIdDisabled': false,
+        'type': '',
+        'typeDisabled': false,
+        'type_value': '',
+        'typeValueReadonly': false,
         'value': ''
       },
       checkBoxValue: [], /* 多选按钮值 */
@@ -177,7 +178,7 @@ export default {
       editInfoValueCheckBoxStatus: false, /* 配置类型为多选按钮 */
       editInfoValueInputStatus: false, /*  配置类型为文本框 */
       editInfoValueTextareaStatus: false, /*  配置类型为多行文本框 */
-      editInfoValueImageStatus: false,/*  配置类型为文件上传 */
+      editInfoValueImageStatus: false, /*  配置类型为文件上传 */
       category: []
     }
   },
@@ -191,9 +192,9 @@ export default {
     getConfigLabelPrefix() {
       // 获取唯一值前缀
       var that = this
-      GetConfig({select: 'label_prefix'}).then(res=>{
+      GetConfig({ select: 'label_prefix' }).then(res => {
         that.labelPrefix = res.data.data
-      }).catch(err=>{
+      }).catch(err => {
         that.$message({ type: 'error', message: err })
       })
     },
@@ -214,8 +215,8 @@ export default {
     },
     setEditInfoTypeValueStatus() {
       // 配置类型回调，根据配置类型是否展示配置类型值和配置值
-      let that = this
-      let type = Number(this.editInfo.type)
+      const that = this
+      const type = Number(this.editInfo.type)
       switch (type) {
         case 2:
           that.editInfoValueRadioStatus = true
@@ -245,7 +246,7 @@ export default {
           that.editInfoValueTextareaStatus = true
           that.editInfoValueImageStatus = false
           break
-        case 1: 
+        case 1:
         default:
           that.editInfoValueRadioStatus = false
           that.editInfoValueCheckBoxStatus = false
@@ -255,73 +256,73 @@ export default {
       }
       that.editInfo.value = ''
       that.editInfo.type_value = ''
-      that.checkBoxValue = 
+      that.checkBoxValue =
       that.radioOrCheckBoxValue = []
     },
     whereCategoryId(index, indexPath) {
-        // 配置类型筛选
-        var that = this
-        that.where.category_id =index
-        that.where.page =1
-        that.fetchData()
+      // 配置类型筛选
+      var that = this
+      that.where.category_id = index
+      that.where.page = 1
+      that.fetchData()
     },
     getConfigCategory() {
-        // 配置类型
-        var that = this
-        GetConfigCategory().then(res=>{
-            that.category = res.data
-            if(that.category.length > 0){
-                that.where.category_id = that.category[0].id.toString()
-                that.fetchData()
-            }else{
-                that.listLoading = false
-            }
-        }).catch(err=>{
-            that.$message({ type: 'error', message: err })
-            that.listLoading = false
-        })
+      // 配置类型
+      var that = this
+      GetConfigCategory().then(res => {
+        that.category = res.data
+        if (that.category.length > 0) {
+          that.where.category_id = that.category[0].id.toString()
+          that.fetchData()
+        } else {
+          that.listLoading = false
+        }
+      }).catch(err => {
+        that.$message({ type: 'error', message: err })
+        that.listLoading = false
+      })
     },
     deleteDialog(index) {
       // 删除配置分类
       var that = this
       var message = that.list[index]
-      that.$confirm('您要永久删除【'+ message.name +'】配置吗?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          SetDelete({id: message.id}).then(res=>{
-            that.$message({ type: 'success', message: res.msg || '删除成功' })
-            that.fetchData()
-          }).catch(err=>{
-            that.$message({ type: 'error', message: err })
-          })
-        }).catch(() => {
-          that.$message({ type: 'info', message: '已取消删除' })
+      that.$confirm('您要永久删除【' + message.name + '】配置吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        SetDelete({ id: message.id }).then(res => {
+          that.$message({ type: 'success', message: res.msg || '删除成功' })
+          that.fetchData()
+        }).catch(err => {
+          that.$message({ type: 'error', message: err })
         })
+      }).catch(() => {
+        that.$message({ type: 'info', message: '已取消删除' })
+      })
     },
     resetEditInfo() {
-       // 重置修改信息
-        this.editInfo.id = 0
-        this.editInfo.name = ''
-        this.editInfo.description = ''
-        this.editInfo.select = ''
-        this.editInfo.selectReadonly = false
-        this.editInfo.category_id = ''
-        this.editInfo.categoryIdDisabled = false
-        this.editInfo.type = '1'
-        this.editInfo.typeDisabled = false
-        this.editInfo.type_value = ''
-        this.editInfo.typeValueReadonly = false
-        this.editInfo.value = ''
-        this.image = ''
-        this.editInfoValueInputStatus = true
-        this.editInfoValueTextareaStatus = false
-        this.editInfoValueImageStatus = false
-        this.editInfoValueRadioStatus = false
-        this.editInfoValueCheckBoxStatus = false
-        this.radioOrCheckBoxValue = []
-        this.checkBoxValue = []
+      // 重置修改信息
+      this.editInfo.id = 0
+      this.editInfo.name = ''
+      this.editInfo.description = ''
+      this.editInfo.select = ''
+      this.editInfo.selectReadonly = false
+      this.editInfo.category_id = ''
+      this.editInfo.categoryIdDisabled = false
+      this.editInfo.type = '1'
+      this.editInfo.typeDisabled = false
+      this.editInfo.type_value = ''
+      this.editInfo.typeValueReadonly = false
+      this.editInfo.value = ''
+      this.image = ''
+      this.editInfoValueInputStatus = true
+      this.editInfoValueTextareaStatus = false
+      this.editInfoValueImageStatus = false
+      this.editInfoValueRadioStatus = false
+      this.editInfoValueCheckBoxStatus = false
+      this.radioOrCheckBoxValue = []
+      this.checkBoxValue = []
     },
     create() {
       // 添加配置分类
@@ -332,28 +333,28 @@ export default {
     },
     formatConfigRadioOrCheckBoxvalue(values, select) {
       // 格式化单选按钮和多选按钮值
-      let format = []
-      let formatValue= []
-        if(values.length > 0){
-          values = values.split('|')
-            if(values.length >= 2){
-              for(let index in values){
-                    formatValue = values[index].split(':')
-                    console.log(select.length)
-                    if(select.length > 0){
-                      if(select === formatValue[0]){
-                        return formatValue[1]
-                      }
-                    }else{
-                      if(formatValue.length !== 2){
-                        return format
-                      }
-                      format.push(formatValue)
-                    }
+      const format = []
+      let formatValue = []
+      if (values.length > 0) {
+        values = values.split('|')
+        if (values.length >= 2) {
+          for (const index in values) {
+            formatValue = values[index].split(':')
+            console.log(select.length)
+            if (select.length > 0) {
+              if (select === formatValue[0]) {
+                return formatValue[1]
               }
+            } else {
+              if (formatValue.length !== 2) {
+                return format
+              }
+              format.push(formatValue)
             }
+          }
         }
-        return format
+      }
+      return format
     },
     editDialog(index) {
       // 修改配置
@@ -381,25 +382,25 @@ export default {
     },
     dialogSubmit() {
       var that = this
-      if(Number(that.editInfo.type) === 3){
+      if (Number(that.editInfo.type) === 3) {
         that.editInfo.value = that.checkBoxValue.join('|')
       }
-      if(that.dialogType === 'update'){
+      if (that.dialogType === 'update') {
         // 修改配置确定
-        SetUpdate(that.editInfo).then(res=>{
+        SetUpdate(that.editInfo).then(res => {
           that.$message({ type: 'success', message: res.msg || '修改成功' })
           that.dialogVisible = false
           that.fetchData()
-        }).catch(err=>{
+        }).catch(err => {
           that.$message({ type: 'error', message: err })
         })
-      }else{
+      } else {
         // 添加配置确定
-        SetInsert(that.editInfo).then(res=>{
+        SetInsert(that.editInfo).then(res => {
           that.$message({ type: 'success', message: res.msg || '添加成功' })
           that.dialogVisible = false
           that.fetchData()
-        }).catch(err=>{
+        }).catch(err => {
           that.$message({ type: 'error', message: err })
         })
       }
@@ -408,9 +409,9 @@ export default {
       // 修改、添加窗口未点击取消和确定按钮关闭回调
       var that = this
       that.$confirm('您要当前窗口吗?关闭后没有保存的数据就会消失,请先保存后再关闭。', '提示', {
-          confirmButtonText: '已保存，继续关闭',
-          cancelButtonText: '未保存，取消关闭',
-          type: 'warning'
+        confirmButtonText: '已保存，继续关闭',
+        cancelButtonText: '未保存，取消关闭',
+        type: 'warning'
       }).then(() => {
         done()
       }).catch(() => {
@@ -422,7 +423,7 @@ export default {
       var that = this
       that.dialogVisible = false
       var message = '取消添加配置'
-      if(that.dialogType === 'update'){
+      if (that.dialogType === 'update') {
         message = '取消修改配置'
       }
       that.$message({ type: 'warning', message: message })
@@ -451,17 +452,17 @@ export default {
       // 获取配置列表
       var that = this
       that.listLoading = true
-      if(that.category.length > 0){
-          GetList(that.where).then(response => {
-            that.list = response.data.list
-            that.count = response.data.count
-            that.listLoading = false
-          }).catch(err=>{
-            that.$message({ type: 'error', message: err })
-          })
-      }else{
+      if (that.category.length > 0) {
+        GetList(that.where).then(response => {
+          that.list = response.data.list
+          that.count = response.data.count
           that.listLoading = false
-          that.$message({ type: 'error', message: '请先添加配置分类' })
+        }).catch(err => {
+          that.$message({ type: 'error', message: err })
+        })
+      } else {
+        that.listLoading = false
+        that.$message({ type: 'error', message: '请先添加配置分类' })
       }
     }
   }
@@ -469,7 +470,7 @@ export default {
 </script>
 <style lang="scss" scoped>
   .cursor{
-    cursor: pointer; 
+    cursor: pointer;
   }
   .page-class{
     text-align: center;

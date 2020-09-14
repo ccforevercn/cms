@@ -33,11 +33,11 @@ router.beforeEach(async(to, from, next) => {
         try {
           // get user info
           const adminInfo = await store.dispatch('user/getInfo')
-           // 获取异步加载的路由  添加
+          // 获取异步加载的路由  添加
           const accessRoutes = await store.dispatch('permission/generateRoutes', adminInfo)
           //  添加到路由中  添加
           router.addRoutes(accessRoutes)
-          
+
           next()
         } catch (error) {
           // remove token and go to login page to re-login

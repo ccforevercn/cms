@@ -2,7 +2,7 @@
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
       <div class="title-container">
-        <h3 class="title" v-text="loginName"></h3>
+        <h3 class="title" v-text="loginName" />
       </div>
       <el-form-item prop="username">
         <span class="svg-container">
@@ -43,17 +43,17 @@
           <i class="el-icon-s-comment" />
         </span>
         <el-input
-                class="captcha"
-                ref="captcha"
-                v-model="loginForm.captcha"
-                placeholder="请输入验证码"
-                name="captcha"
-                type="text"
-                tabindex="3"
-                auto-complete="on"
-                @keyup.enter.native="handleLogin" 
+          ref="captcha"
+          v-model="loginForm.captcha"
+          class="captcha"
+          placeholder="请输入验证码"
+          name="captcha"
+          type="text"
+          tabindex="3"
+          auto-complete="on"
+          @keyup.enter.native="handleLogin"
         />
-        <el-image class="captcha-image" :src="captchaBase64" @click.native.prevent="getCaptcha"></el-image>
+        <el-image class="captcha-image" :src="captchaBase64" @click.native.prevent="getCaptcha" />
       </el-form-item>
       <el-button :loading="loading" type="primary" class="login-form-login-submit" @click.native.prevent="handleLogin">登陆</el-button>
     </el-form>
@@ -67,11 +67,11 @@ export default {
   name: 'Login',
   data() {
     const validateUsername = (rule, value, callback) => {
-        if (value.length > 16 || value.length < 6) {
-            callback(new Error('账号不能小于6位，不能大于16位'))
-        } else {
-            callback()
-        }
+      if (value.length > 16 || value.length < 6) {
+        callback(new Error('账号不能小于6位，不能大于16位'))
+      } else {
+        callback()
+      }
     }
     const validatePassword = (rule, value, callback) => {
       if (value.length > 18 || value.length < 8) {
@@ -92,7 +92,7 @@ export default {
         username: 'ccforever',
         password: '68888886',
         captcha: '',
-        key: '',
+        key: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -103,7 +103,7 @@ export default {
       loading: false,
       passwordType: 'password',
       redirect: undefined,
-      loginName: '登陆',
+      loginName: '登陆'
     }
   },
   watch: {
@@ -114,17 +114,17 @@ export default {
       immediate: true
     }
   },
-  mounted(){
-      // 获取验证码
-      this.getCaptcha();
+  mounted() {
+    // 获取验证码
+    this.getCaptcha()
   },
   methods: {
-    getCaptcha(){
-        var that = this;
-        captcha().then(res=>{
-            that.loginForm.key = res.data.key
-            that.captchaBase64 = res.data.url
-        });
+    getCaptcha() {
+      var that = this
+      captcha().then(res => {
+        that.loginForm.key = res.data.key
+        that.captchaBase64 = res.data.url
+      })
     },
     showPwd() {
       if (this.passwordType === 'password') {
@@ -248,7 +248,6 @@ $bg_form_bottom:#6666FF;
   background: -o-linear-gradient(top, $bg_top 0%, $bg_bottom 100%);
   background: -ms-linear-gradient(top, $bg_top 0%, $bg_bottom 100%);
   background: linear-gradient(to bottom, $bg_top 0%, $bg_bottom 100%);
-
 
   overflow: hidden;
 

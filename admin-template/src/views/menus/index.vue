@@ -2,31 +2,31 @@
   <div class="app-container">
     <el-row :gutter="24">
       <el-form :model="where" @submit.native.prevent>
-        <el-col :span="8" v-if="menus.length > 0">
+        <el-col v-if="menus.length > 0" :span="8">
           <el-form-item label="菜单父级">
-            <el-select v-model="where.parent_id" @change="setWhereParentId" filterable placeholder="请选择父级菜单">
-              <el-option v-for="item in menus" :label="item.name" :value="item.id" :key="item.id"></el-option>
+            <el-select v-model="where.parent_id" filterable placeholder="请选择父级菜单" @change="setWhereParentId">
+              <el-option v-for="item in menus" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="菜单类型">
-            <el-select v-model="where.menu" @change="setWhereMenu" placeholder="请选择菜单类型">
-              <el-option label="全部菜单" value="0"></el-option>
-              <el-option label="路由菜单" value="1"></el-option>
-              <el-option label="页面菜单" value="2"></el-option>
+            <el-select v-model="where.menu" placeholder="请选择菜单类型" @change="setWhereMenu">
+              <el-option label="全部菜单" value="0" />
+              <el-option label="路由菜单" value="1" />
+              <el-option label="页面菜单" value="2" />
             </el-select>
           </el-form-item>
         </el-col>
       </el-form>
       <el-col :span="8" class="insert-button">
-          <el-button-group>
-              <el-button type="primary" plain size="small" @click="create">菜单添加</el-button>
-              <el-button type="success" plain size="small" @click="fetchData">刷新列表</el-button>
-          </el-button-group>
+        <el-button-group>
+          <el-button type="primary" plain size="small" @click="create">菜单添加</el-button>
+          <el-button type="success" plain size="small" @click="fetchData">刷新列表</el-button>
+        </el-button-group>
       </el-col>
     </el-row>
-    <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" border fit highlight-current-row >
+    <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" border fit highlight-current-row>
       <template slot="empty">暂无菜单</template>
       <el-table-column align="center" label="编号" width="95">
         <template slot-scope="scope">{{ scope.row.id }}</template>
@@ -54,10 +54,10 @@
       </el-table-column>
       <el-table-column align="center" label="操作" width="120">
         <template slot-scope="scope">
-            <el-button-group>
-              <el-button type="primary" icon="el-icon-edit" circle @click="editDialog(scope.$index)"></el-button>
-              <el-button type="success" icon="el-icon-delete" circle @click="deleteDialog(scope.$index)"></el-button>
-            </el-button-group>
+          <el-button-group>
+            <el-button type="primary" icon="el-icon-edit" circle @click="editDialog(scope.$index)" />
+            <el-button type="success" icon="el-icon-delete" circle @click="deleteDialog(scope.$index)" />
+          </el-button-group>
         </template>
       </el-table-column>
     </el-table>
@@ -65,38 +65,38 @@
       <el-col :span="24" class="page-class">
         <el-pagination
           background
+          :page-size="where.limit"
+          :pager-count="5"
+          layout="prev, pager, next"
+          :total="count"
           @size-change="pageSizeChange"
           @current-change="pageCurrentChange"
           @prev-click="pagePrevClick"
           @next-click="pageNextClick"
-          :page-size="where.limit"
-          :pager-count="5"
-          layout="prev, pager, next"
-          :total="count">
-        </el-pagination>
+        />
       </el-col>
     </el-row>
     <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" :before-close="dialogBeforeClosed" width="60%" center>
       <el-form class="edit-dialog-form">
         <el-form-item label="菜单名称">
-          <el-input v-model="editInfo.name"></el-input>
+          <el-input v-model="editInfo.name" />
         </el-form-item>
         <el-form-item label="路由地址">
-          <el-input v-model="editInfo.routes"></el-input>
+          <el-input v-model="editInfo.routes" />
         </el-form-item>
         <el-form-item label="页面链接">
-          <el-input v-model="editInfo.page"></el-input>
+          <el-input v-model="editInfo.page" />
         </el-form-item>
         <el-form-item label="父级菜单">
-            <el-select v-model="editInfo.parent_id" placeholder="父级菜单" filterable>
-              <el-option v-for="item in menus" :label="item.name" :value="item.id" :key="item.id"></el-option>
-            </el-select>
+          <el-select v-model="editInfo.parent_id" placeholder="父级菜单" filterable>
+            <el-option v-for="item in menus" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
         </el-form-item>
         <el-form-item label="菜单icon">
-          <el-input v-model="editInfo.icon"></el-input>
+          <el-input v-model="editInfo.icon" />
         </el-form-item>
         <el-form-item label="菜单排序">
-          <el-input v-model="editInfo.sort"></el-input>
+          <el-input v-model="editInfo.sort" />
         </el-form-item>
         <el-form-item label="菜单类型">
           <el-radio-group v-model="editInfo.menu">
@@ -113,17 +113,13 @@
   </div>
 </template>
 <script>
-import { GetList, SetInsert, SetUpdate, SetDelete, GetMessage, GetMenus} from '@/api/menus'
+// eslint-disable-next-line no-unused-vars
+import { GetList, SetInsert, SetUpdate, SetDelete, GetMessage, GetMenus } from '@/api/menus'
 import { setMenusToken } from '@/utils/auth'
 import { secondToTime } from '@/utils/time'
 import { mapGetters } from 'vuex'
 
 export default {
-  computed: {
-    ...mapGetters([
-      'admin'
-    ]),
-  },
   filters: {
     menuFilter(menu) {
       var menuArr = ['路由菜单', '页面菜单']
@@ -142,7 +138,7 @@ export default {
       where: {
         'page': 1,
         'limit': 6,
-        'menu': "0",
+        'menu': '0',
         'parent_id': 0
       },
       list: null,
@@ -160,9 +156,14 @@ export default {
         'parent_id': 0,
         'icon': '',
         'sort': 1,
-        'menu': '0',
+        'menu': '0'
       }
     }
+  },
+  computed: {
+    ...mapGetters([
+      'admin'
+    ])
   },
   created() {
     this.fetchData()
@@ -173,20 +174,20 @@ export default {
       // 删除菜单
       var that = this
       var menu = that.list[index]
-      that.$confirm('您要永久删除【'+ menu.name +'】菜单吗?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          SetDelete({id: menu.id}).then(res=>{
-            that.$message({ type: 'success', message: res.msg || '删除成功' })
-            that.fetchData()
-          }).catch(err=>{
-            that.$message({ type: 'error', message: err })
-          })
-        }).catch(() => {
-          that.$message({ type: 'info', message: '已取消删除' })
+      that.$confirm('您要永久删除【' + menu.name + '】菜单吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        SetDelete({ id: menu.id }).then(res => {
+          that.$message({ type: 'success', message: res.msg || '删除成功' })
+          that.fetchData()
+        }).catch(err => {
+          that.$message({ type: 'error', message: err })
         })
+      }).catch(() => {
+        that.$message({ type: 'info', message: '已取消删除' })
+      })
     },
     create() {
       this.dialogVisible = true
@@ -210,10 +211,10 @@ export default {
     },
     menusList() {
       var that = this
-      GetMenus({id: that.admin.id}).then(res=>{
+      GetMenus({ id: that.admin.id }).then(res => {
         that.menus = res.data
-        that.menus.unshift({id: 0, name: "顶级菜单", parent_id: 0})
-      }).catch(err=>{
+        that.menus.unshift({ id: 0, name: '顶级菜单', parent_id: 0 })
+      }).catch(err => {
         that.$message({ type: 'error', message: err })
       })
     },
@@ -230,30 +231,30 @@ export default {
       that.editInfo.sort = menu.sort
       that.editInfo.menu = menu.menu.toString()
       that.dialogVisible = true
-      that.dialogTitle = '修改【'+menu.name+'】菜单信息'
+      that.dialogTitle = '修改【' + menu.name + '】菜单信息'
       that.dialogType = 'update'
     },
     dialogSubmit() {
       // 修改菜单信息确定
       var that = this
-      if(that.dialogType === 'update'){
-        SetUpdate(that.editInfo).then(res=>{
+      if (that.dialogType === 'update') {
+        SetUpdate(that.editInfo).then(res => {
           that.$message({ type: 'success', message: res.msg || '修改成功' })
           that.dialogVisible = false
           that.fetchData()
           that.menusList()
           setMenusToken('false')
-        }).catch(err=>{
+        }).catch(err => {
           that.$message({ type: 'error', message: err })
         })
-      }else{
-        SetInsert(that.editInfo).then(res=>{
+      } else {
+        SetInsert(that.editInfo).then(res => {
           that.$message({ type: 'success', message: res.msg || '添加成功' })
           that.dialogVisible = false
           that.fetchData()
           that.menusList()
           setMenusToken('false')
-        }).catch(err=>{
+        }).catch(err => {
           that.$message({ type: 'error', message: err })
         })
       }
@@ -262,9 +263,9 @@ export default {
       // 修改、添加窗口未点击取消和确定按钮关闭回调
       var that = this
       that.$confirm('您要当前窗口吗?关闭后没有保存的数据就会消失,请先保存后再关闭。', '提示', {
-          confirmButtonText: '已保存，继续关闭',
-          cancelButtonText: '未保存，取消关闭',
-          type: 'warning'
+        confirmButtonText: '已保存，继续关闭',
+        cancelButtonText: '未保存，取消关闭',
+        type: 'warning'
       }).then(() => {
         done()
       }).catch(() => {
@@ -276,7 +277,7 @@ export default {
       var that = this
       that.dialogVisible = false
       var message = '取消添加菜单'
-      if(that.dialogType === 'update'){
+      if (that.dialogType === 'update') {
         message = '取消修改菜单'
       }
       that.$message({ type: 'warning', message: message })
@@ -321,7 +322,7 @@ export default {
         that.list = response.data.list
         that.count = response.data.count
         that.listLoading = false
-      }).catch(err=>{
+      }).catch(err => {
         that.$message({ type: 'error', message: err })
       })
     }
@@ -330,7 +331,7 @@ export default {
 </script>
 <style lang="scss" scoped>
   .cursor{
-    cursor: pointer; 
+    cursor: pointer;
   }
   .page-class{
     text-align: center;
