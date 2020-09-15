@@ -159,14 +159,18 @@ class CachesExtend
         $search = PageDataExtend::pageSearch($urlPrefix);
         // 验证文件是否存在
         $searchPath = public_path('resources'.DIRECTORY_SEPARATOR.'search'.DIRECTORY_SEPARATOR);
+        if(!is_dir(public_path('resources'.DIRECTORY_SEPARATOR))){
+            mkdir(public_path('resources'.DIRECTORY_SEPARATOR), 0755);
+        }
         if(!is_dir($searchPath)){
             mkdir($searchPath, 0755);
         }
         // 缓存到js文件中
         $message = json_encode($search['message'], JSON_UNESCAPED_UNICODE);
-        $script = "function getQuerySelect(select){var query = window.location.search.substring(1);var selects = query.split(\"&\");for (var i=0;i<selects.length;i++) {var param = selects[i].split(\"=\");if(param[0] == select){return param[1];}}return(false);}function search(){var name= decodeURIComponent(getQuerySelect('search'));var data = [];for(let index in messages){if(messages[index].name.indexOf(name) >= 0){data.push(messages[index])}}console.log(data);return data;}";
+        $script = "var data = [];var html = '';function getQuerySelect(select){var query = window.location.search.substring(1);var selects = query.split(\"&\");for(var i = 0; i < selects.length; i++){var param = selects[i].split(\"=\");if (param[0] === select){return param[1];}}return false;}function search(){var name = decodeURIComponent(getQuerySelect('search'));if(name.length < 1 || name === false){document.getElementById('search').innerHTML = '暂无搜索内容';}else{document.getElementById('search').innerHTML = '搜索【' + decodeURIComponent(getQuerySelect('search')) + '】';for (let index in messages){if(messages[index].name.indexOf(name) >= 0){data.push(messages[index])}}}}";
+        $script .= 'search();for(var index in data){html += \'<li class="item">\';html += \'<div class="item-img">\';html += \'<a class="item-img-inner" href="\'+ data[index].url +\'" title="\'+ data[index].name +\'">\';html += \'<img class="j-lazy" src="\'+ data[index].image +\'" width="480" height="300" alt="\'+ data[index].name +\'">\';html += \'</a>\';html += \'<a class="item-category" href="\'+ data[index].url +\'" title="\'+ data[index].name +\'">\'+ data[index].name +\'</a>\';html += \'</div>\';html += \'<div class="item-content">\';html += \'<h2 class="item-title">\';html += \'<a href="\'+ data[index].url +\'" title="\'+ data[index].name +\'">\'+ data[index].name +\'</a>\';html += \'</h2>\';html += \'<div class="item-excerpt">\';html += \'<p>&nbsp;&nbsp;&nbsp;&nbsp;\'+ data[index].description +\'</p>\';html += \'</div>\';html += \'<div class="item-meta">\';html += \'<span class="item-meta-li date">\'+ data[index].time +\'</span>\';html += \'<span class="item-meta-li views" title="\'+ data[index].name +\'">\';html += \'<i class="fa fa-eye"></i>\'+ data[index].click +\'</span>\';html += \'</div>\';html += \'</div>\';html += \'</li>\';}document.getElementById(\'search-list\').insertAdjacentHTML(\'beforeend\', html);';
         $file = @fopen($searchPath.'search.js', 'w+');
-        fwrite($file, 'var messages = '.$message."\r\n".$script);
+        fwrite($file, 'var messages = '.$message.";".$script);
         fclose($file);
         // 缓存静态文件
         $search['search']['url'] = $urlPrefix.'search'.page_suffix_message();

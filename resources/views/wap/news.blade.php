@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  @include('pc.style')
+  @include('wap.style')
 </head>
 <body class="archive category category-tuiguang category-53 el-boxed">
-@include('pc.header')
+@include('wap.header')
 <div id="wrap">
   <div class="container wrap">
     <div class="main">
@@ -35,9 +35,9 @@
         </div>
       </div>
     </div>
-    @include('pc.right')
+    @include('wap.right')
  </div>
 </div>
-@include('pc.footer')
+@include('wap.footer')
 </body>
 </html>

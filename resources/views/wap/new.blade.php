@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    @include('pc.style')
+    @include('wap.style')
 </head>
 <body class="post-template-default single single-post postid-185570 single-format-standard el-boxed">
-@include('pc.header')
+@include('wap.header')
 <div id="wrap">
     <div class="wrap container">
         <div class="main">
@@ -66,9 +66,9 @@
                 </div>
             </article>
         </div>
-        @include('pc.right')
+        @include('wap.right')
     </div>
 </div>
-@include('pc.footer')
+@include('wap.footer')
 </body>
 </html>

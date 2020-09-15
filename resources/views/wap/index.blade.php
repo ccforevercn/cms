@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    @include('pc.style')
+    @include('wap.style')
 </head>
 <body class="home blog el-boxed">
-@include('pc.header')
+@include('wap.header')
 <div id="wrap">
     <div class="wrap container">
         <div class="main">
@@ -110,7 +110,7 @@
                 @endforeach
             </div>
         </div>
-        @include('pc.right')
+        @include('wap.right')
     </div>
     @if(count($links))
         <div class="container hidden-xs j-partner">
@@ -129,6 +129,6 @@
         </div>
     @endif
 </div>
-@include('pc.footer')
+@include('wap.footer')
 </body>
 </html>

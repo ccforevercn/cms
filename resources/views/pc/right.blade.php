@@ -16,7 +16,7 @@ $messagesHot = \App\CcForever\extend\MessagesExtend::messages(3, true, 0, 8, 2, 
                 @foreach($messagesHot as &$message)
                     <li class="item">
                         <div class="item-img">
-                            <a class="item-img-inner" href="{{ $message['name'] }}" title="{{ $message['name'] }}">
+                            <a class="item-img-inner" href="{{ $message['url'] }}" title="{{ $message['name'] }}">
                                 <img class="j-lazy" src="{{ $message['image'] }}" width="480" height="300" alt="{{ $message['name'] }}">
                             </a>
                         </div>
@@ -39,7 +39,7 @@ $messagesHot = \App\CcForever\extend\MessagesExtend::messages(3, true, 0, 8, 2, 
                 @foreach($messagesIndex as &$message)
                     <li class="item">
                         <div class="item-img">
-                            <a class="item-img-inner" href="{{ $message['name'] }}" title="{{ $message['name'] }}">
+                            <a class="item-img-inner" href="{{ $message['url'] }}" title="{{ $message['name'] }}">
                                 <img class="j-lazy" src="{{ $message['image'] }}" width="480" height="300" alt="{{ $message['name'] }}">
                             </a>
                         </div>
