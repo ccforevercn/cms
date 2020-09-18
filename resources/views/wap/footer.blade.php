@@ -1,50 +1,49 @@
-<footer class="footer">
-    <div class="container">
-        <div class="clearfix">
-            <div class="footer-col footer-col-copy">
-                <ul class="footer-nav hidden-xs">
-                    @foreach($navigation as &$nav)
-                        @if($loop->first)
-                            <li id="menu-item-109589" class="menu-item current-menu-item current_page_item menu-item-109589"><a href="{{ $nav['url'] }}" title="{{ $nav['name'] }}" aria-current="page">{{ $nav['name'] }}</a></li>
-                        @else
-                            <li class="menu-item menu-item-373"><a href="{{ $nav['url'] }}" title="{{ $nav['name'] }}">{{ $nav['name'] }}</a></li>
-                        @endif
-                    @endforeach
-                </ul>
-                <div class="copyright">
-                    <p>@php echo $configs['zy_cms_copyright'].'&nbsp;&nbsp;&nbsp;&nbsp;'.$configs['zy_cms_record_number']; @endphp</p>
-                </div>
-            </div>
-            <div class="footer-col footer-col-sns"><div class="footer-sns"></div></div>
-        </div>
+<ul class="layui-fixbar">
+    <li class="layui-icon qr_code">&#xe63b;<img class="qr_code_pic" src="{{ $configs['zy_cms_service_code'] }}" alt="微信二维码"></li>
+    <li class="layui-icon layui-fixbar-top" id="to_top">&#xe604;</li>
+</ul>
+<div class="layui-footer footer">
+    <div class="main index_main">
+        <p>@php echo $configs['zy_cms_copyright']@endphp</p>
+        <p><a href="/sitemap.xml">网站地图</a></p>
+        <p class="beian">@php echo $configs['zy_cms_record_number']@endphp</p>
     </div>
-</footer>
-<div class="action" style="top:50%;">
-    <div class="a-box contact">
-        <div class="contact-wrap">
-            <h3 class="contact-title">联系我们</h3>
-            <p>在线咨询：
-                <a href="http://wpa.qq.com/msgrd?v=3&uin={{ $configs['zy_cms_service_qq'] }}&site=qq&menu=yes" target="_blank" rel="noopener">
-                    <img class="alignnone" src="asset/index/images/button_111.gif" alt="{{ $configs['zy_cms_title'] }}" width="79" height="25" border="0" />
-                </a>
-            </p>
-            <p>工作日：9:30-18:30，节假日休息</p>
-        </div>
-    </div>
-    <div class="a-box wechat"><div class="wechat-wrap"><img src="{{ $configs['zy_cms_service_code'] }}" alt="{{ $configs['zy_cms_title'] }}"></div></div>
-    <div class="a-box gotop" id="j-top" style="display: none;"></div>
 </div>
-<style>
-    .footer{padding-bottom: 20px;}
-</style>
-<script type='text/javascript'>
-    var _wpcom_js = {
-        "slide_speed": "4000",
-        "video_height": "482",
-        "TCaptcha": {"appid": ""},
-        "errors": { "require": "", "email": "", "pls_enter": "", "password": "", "passcheck": "", "phone": "", "sms_code": "", "captcha_verify": "", "captcha_fail": "", "nonce": "", "req_error": "" }
-    };
+<script type="text/javascript">
+    layui.use(['form','element'], function(){
+        var $ = layui.jquery;
+        //左边导航点击显示
+        $('.left_nav_btn').click(function(){
+            $('.left_nav_mask').show();
+            $('.left_nav').addClass('left_nav_show');
+        });
+        //左边导航点击消失
+        $('.left_nav_mask').click(function(){
+            $('.left_nav').removeClass('left_nav_show');
+            $('.left_nav_mask').hide();
+        });
+
+        //搜索框特效
+        $('.header .head_search .search_input').focus(function(){
+            $('.header .head_search').addClass('focus');
+            $(this).attr('placeholder','输入关键词搜索');
+        });
+        $('.header .head_search .close').click(function(){
+            $('.header .head_search').removeClass('focus');
+            $('.header .head_search .search_input').attr('placeholder','搜索');
+        });
+        //回到顶部
+        $("#to_top").click(function() {
+            $("html,body").animate({scrollTop:0}, 200);
+        });
+        $(document).scroll(function(){
+            var	scroll_top = $(document).scrollTop();
+            if(scroll_top > 500){
+                $("#to_top").show();
+            }else{
+                $("#to_top").hide();
+            }
+        });
+    });
 </script>
-<script type="text/javascript" src="/asset/index/js/main.js"></script>
-<script type="text/javascript" src="/asset/index/js/wp-embed.js"></script>
 @php echo $configs['zy_cms_pc_bottom_code']; @endphp

@@ -1,59 +1,52 @@
-<header class="header">
-    <div class="container clearfix">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="icon-bar icon-bar-1"></span>
-                <span class="icon-bar icon-bar-2"></span>
-                <span class="icon-bar icon-bar-3"></span>
-            </button>
-            <h1 class="logo">
-                <a href="{{ $configs['zy_cms_website'] }}" title="{{ $configs['zy_cms_name'] }}">
-                    <img src="{{ $configs['zy_cms_pc_logo_top'] }}" alt="{{ $configs['zy_cms_name'] }}">
-                </a>
-            </h1>
-        </div>
-        <div class="collapse navbar-collapse">
-            <nav class="navbar-left primary-menu">
-                <ul class="nav navbar-nav wpcom-adv-menu">
-                    @foreach($navigation as &$nav)
-                        @if($nav['id'] == $navigationId)
-                            @if(count($nav['children']))
-                                <li class="menu-item dropdown active">
-                                    <a href="{{ $nav['url'] }}" title="{{ $nav['name'] }}">{{ $nav['name'] }}</a>
-                                    <ul class="dropdown-menu menu-item-wrap menu-item-col-5">
-                                        @foreach($nav['children'] as &$child)
-                                            <li class='menu-item'>
-                                                <a href="{{ $child['url'] }}" title="{{ $child['name'] }}">{{ $child['name'] }}</a>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </li>
-                            @else
-                                <li class="menu-item">
-                                    <a href="{{ $nav['url'] }}" title="{{ $nav['name'] }}">{{ $nav['name'] }}</a>
-                                </li>
-                            @endif
-                        @else
-                            @if(count($nav['children']))
-                                <li class="menu-item dropdown">
-                                    <a href="{{ $nav['url'] }}" title="{{ $nav['name'] }}">{{ $nav['name'] }}</a>
-                                    <ul class="dropdown-menu menu-item-wrap menu-item-col-5">
-                                        @foreach($nav['children'] as &$child)
-                                            <li class='menu-item'>
-                                                <a href="{{ $child['url'] }}" title="{{ $child['name'] }}">{{ $child['name'] }}</a>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </li>
-                            @else
-                                <li class="menu-item">
-                                    <a href="{{ $nav['url'] }}" title="{{ $nav['name'] }}">{{ $nav['name'] }}</a>
-                                </li>
-                            @endif
-                        @endif
-                    @endforeach
-                </ul>
-            </nav>
-        </div>
+<div class="layui-header header trans_3">
+    <div class="main index_main">
+        <a class="logo" href="{{ $configs['zy_cms_website'] }}" title="{{ $configs['zy_cms_name'] }}">
+            <img src="{{ $configs['zy_cms_pc_logo_top'] }}" alt="{{ $configs['zy_cms_name'] }}">
+        </a>
+        <ul class="layui-nav" lay-filter="top_nav">
+            @foreach($navigation as &$nav)
+                <li class="layui-nav-item home"><a href="{{ $nav['url'] }}" title="{{ $nav['name'] }}">{{ $nav['name'] }}</a>
+                    @if(count($nav['children']))
+                        @foreach($nav['children'] as &$child)
+                            <dl class="layui-nav-child">
+                                <dd><a href="{{ $child['url'] }}" title="{{ $child['name'] }}">{{ $child['name'] }}</a></dd>
+                            </dl>
+                        @endforeach
+                    @endif
+                </li>
+            @endforeach
+        </ul>
+        <div class="title">{{ $configs['zy_cms_name'] }}</div>
+        <form action="/search.html" mothod="get" class="head_search trans_3 layui-form">
+            <div class="layui-form-item trans_3">
+                <span class="close trans_3"><i class="layui-icon">&#x1006;</i> </span>
+                <input type="text" name="search" placeholder="搜索" autocomplete="off" class="search_input trans_3">
+                <button class="layui-btn" lay-submit="" style="display: none;"></button>
+            </div>
+        </form>
     </div>
-</header>
+</div>
+<div class="header_back"></div>
+<div class="layui-side layui-bg-black left_nav trans_2">
+    <div class="layui-side-scroll">
+        <ul class="layui-nav layui-nav-tree"  lay-filter="left_nav">
+            @foreach($navigation as &$nav)
+                <li class="layui-nav-item home">
+                    @if(count($nav['children']))
+                        <a href="javascript:void(0);">{{ $nav['name'] }}</a>
+                        @foreach($nav['children'] as &$child)
+                            <dl class="layui-nav-child">
+                                <dd><a href="{{ $child['url'] }}" title="{{ $child['name'] }}">{{ $child['name'] }}</a></dd>
+                            </dl>
+                        @endforeach
+                    @else
+                        <a href="{{ $nav['url'] }}" title="{{ $nav['name'] }}">{{ $nav['name'] }}</a>
+                    @endif
+                </li>
+            @endforeach
+        </ul>
+    </div>
+</div>
+<div class="left_nav_mask"></div>
+<div class="left_nav_btn"><i class="layui-icon">&#xe602;</i></div>
+

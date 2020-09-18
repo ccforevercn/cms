@@ -168,8 +168,39 @@ class CachesExtend
         // 缓存到js文件中
         $message = json_encode($search['message'], JSON_UNESCAPED_UNICODE);
         $script = "var data = [];var html = '';function getQuerySelect(select){var query = window.location.search.substring(1);var selects = query.split(\"&\");for(var i = 0; i < selects.length; i++){var param = selects[i].split(\"=\");if (param[0] === select){return param[1];}}return false;}function search(){var name = decodeURIComponent(getQuerySelect('search'));if(name.length < 1 || name === false){document.getElementById('search').innerHTML = '暂无搜索内容';}else{document.getElementById('search').innerHTML = '搜索【' + decodeURIComponent(getQuerySelect('search')) + '】';for (let index in messages){if(messages[index].name.indexOf(name) >= 0){data.push(messages[index])}}}}";
-        $script .= 'search();for(var index in data){html += \'<li class="item">\';html += \'<div class="item-img">\';html += \'<a class="item-img-inner" href="\'+ data[index].url +\'" title="\'+ data[index].name +\'">\';html += \'<img class="j-lazy" src="\'+ data[index].image +\'" width="480" height="300" alt="\'+ data[index].name +\'">\';html += \'</a>\';html += \'<a class="item-category" href="\'+ data[index].url +\'" title="\'+ data[index].name +\'">\'+ data[index].name +\'</a>\';html += \'</div>\';html += \'<div class="item-content">\';html += \'<h2 class="item-title">\';html += \'<a href="\'+ data[index].url +\'" title="\'+ data[index].name +\'">\'+ data[index].name +\'</a>\';html += \'</h2>\';html += \'<div class="item-excerpt">\';html += \'<p>&nbsp;&nbsp;&nbsp;&nbsp;\'+ data[index].description +\'</p>\';html += \'</div>\';html += \'<div class="item-meta">\';html += \'<span class="item-meta-li date">\'+ data[index].time +\'</span>\';html += \'<span class="item-meta-li views" title="\'+ data[index].name +\'">\';html += \'<i class="fa fa-eye"></i>\'+ data[index].click +\'</span>\';html += \'</div>\';html += \'</div>\';html += \'</li>\';}document.getElementById(\'search-list\').insertAdjacentHTML(\'beforeend\', html);';
-        $file = @fopen($searchPath.'search.js', 'w+');
+        $script .= 'search();
+    for (var index in data) {
+        if(data[index].image.length > 0){
+            html += \'<li>\';
+            html += \' <a href="\' + data[index].url + \'" title="\' + data[index].name + \'" class="pic">\';
+            html += \'<img class="lazy" src="\' + data[index].image + \'" alt="\' + data[index].name + \'">\';
+            html += \'</a>\';
+            html += \'<h2 class="title"><a href="\' + data[index].url + \'" title="\' + data[index].name + \'"><span class="top">热门</span></a></h2>\';
+            html += \'<div class="date_hits">\';
+            html += \'<span>\' + data[index].time + \'</span>\';
+            html += \'<span><a href="javascript:void(0);">\' + data[index].name + \'</a></span>\';
+            html += \'<span class="hits"><i class="layui-icon" title="点击量">&#xe62c;</i> \' + data[index].click + \' ℃</span>\';
+            html += \'</div>\';
+            html += \'<div class="desc">\' + data[index].description + \'</div>\';
+            html += \'</li>\';
+        }else{
+            html += \'<li class="no_pic">\';
+            html += \'<h2 class="title"><a href="\' + data[index].url + \'" title="\' + data[index].name + \'"><span class="top">热门</span></a></h2>\';
+            html += \'<div class="date_hits">\';
+            html += \'<span>\' + data[index].time + \'</span>\';
+            html += \'<span><a href="javascript:void(0);">\' + data[index].name + \'</a></span>\';
+            html += \'<span class="hits"><i class="layui-icon" title="点击量">&#xe62c;</i> \' + data[index].click + \' ℃</span>\';
+            html += \'</div>\';
+            html += \'<div class="desc">\' + data[index].description + \'</div>\';
+            html += \'</li>\';
+        }
+    }
+    document.getElementById(\'search-list\').insertAdjacentHTML(\'beforeend\', html);';
+        $searchFile = 'search.js';
+        if($urlPrefix !== '/'){
+            $searchFile = 'wapsearch.js';
+        }
+        $file = @fopen($searchPath.$searchFile, 'w+');
         fwrite($file, 'var messages = '.$message.";".$script);
         fclose($file);
         // 缓存静态文件
@@ -182,7 +213,7 @@ class CachesExtend
             if(!$file) return $path;
             $searchContent = fread($file, filesize($tpl));
             fclose($file);
-            $searchContent = str_replace("</body>", "<script type='text/javascript' src=\"/resources/search/search.js\"></script>\r\n</body>", $searchContent);
+            $searchContent = str_replace("</body>", "<script type='text/javascript' src=\"/resources/search/".$searchFile."\"></script>\r\n</body>", $searchContent);
             $file = @fopen($tpl, 'w+');
             fwrite($file, $searchContent);
             fclose($file);

@@ -1,73 +1,76 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     @include('pc.style')
 </head>
-<body class="post-template-default single single-post postid-185570 single-format-standard el-boxed">
+<body>
 @include('pc.header')
-<div id="wrap">
-    <div class="wrap container">
-        <div class="main">
-            <ol class="breadcrumb entry-breadcrumb">
-                <li class="home" property="itemListElement" typeof="ListItem"><i class="fa fa-map-marker"></i><meta property="position" content="1"></li>
-                <li property="itemListElement" typeof="ListItem">@php echo $crumbs; @endphp<meta property="position" content="2"></li>
-            </ol>
-            <article id="post-185570" class="post-185570 post type-post status-publish format-standard hentry category-tuiguang category-yunying tag-871 tag-3713 special-tuiguang">
-                <div class="entry">
-                    <div class="entry-head">
-                        <h1 class="entry-title">{{ $message['name'] }}</h1>
-                        <div class="entry-info">
-                            作者：{{ $message['writer'] }}<a class="nickname"></a>
-                            <span class="dot">•</span>
-                            <span>更新时间：{{ $message['time'] }}</span>
-                            <span class="dot">•</span>
-                            <span>阅读 {{ $message['click'] }}</span>
-                        </div>
-                    </div>
-                    <div class="entry-content clearfix">@php echo htmlspecialchars_decode($message['content']); @endphp</div>
-                    <div class="entry-footer">
-                        @if(count($message['tags']))
-                            <div class="entry-tag">
-                                @foreach($message['tags'] as &$tag)
-                                    <a href='{{ $message['url'] }}' title="{{ $tag }}">{{ $tag }}</a>
-                                @endforeach
-                            </div>
-                        @endif
-                        <div class="entry-page">
-                            @if(count($message['pre']))
-                                <div class="entry-page-prev j-lazy" style="background-image: url('/asset/index/images/lazy.png');">
-                                    <a href="{{ $message['pre']['url'] }}" title="{{ $message['pre']['name'] }}"><span>{{ $message['pre']['name'] }}</span></a>
-                                    <div class="entry-page-info">
-                                        <span class="pull-left">&laquo; 上一篇</span>
-                                    </div>
-                                </div>
-                            @endif
-                            @if(count($message['next']))
-                                <div class="entry-page-next j-lazy" style="background-image: url('/asset/index/images/lazy.png');">
-                                    <a href="{{ $message['next']['url'] }}" title="{{ $message['next']['name'] }}"><span>{{ $message['next']['name'] }}</span></a>
-                                    <div class="entry-page-info">
-                                        <span class="pull-right">下一篇  &raquo;</span>
-                                    </div>
-                                </div>
-                            @endif
-                        </div>
-                        @php
-                            $messages = \App\CcForever\extend\MessagesExtend::messages(3, true, 0, 8, 2, $configs['zy_cms_substation_link']);
-                        @endphp
-                        @if($messages)
-                            <h3 class="entry-related-title">相关推荐</h3>
-                            <ul class="entry-related clearfix">
-                                @foreach($messages as &$message)
-                                    <li><a href="{{ $message['url'] }}" title="{{ $message['name'] }}">{{ $message['name'] }}</a></li>
-                                @endforeach
-                            </ul>
-                        @endif
-                    </div>
-                </div>
-            </article>
+<div class="main breadcrumb_nav trans_3"><span class="layui-breadcrumb" lay-separator="—">@php echo $crumbs; @endphp</span></div>
+<div class="main">
+    <div class="page_left">
+        <div class="detail_container trans_3">
+            <h1>{{ $message['name'] }}</h1>
+            <div class="date_hits"><span><i>发布时间：</i>{{ $message['time'] }}</span><span><i>热度：</i> {{ $message['click'] }}℃</span></div>
+            <div class="content">@php echo htmlspecialchars_decode($message['content']); @endphp</div>
+            @if(count($message['tags']))
+                @foreach($message['tags'] as &$tag)
+                    <div class="keywords"><p>{{ $tag }}</p></div>
+                @endforeach
+            @endif
+            <div class="prev_next">
+                @if(count($message['pre']))
+                <div class="prev">上一篇：<a href="{{ $message['pre']['url'] }}" title="{{ $message['pre']['name'] }}">{{ $message['pre']['name'] }}</a></div>
+                @endif
+                    @if(count($message['next']))
+                <div class="next">下一篇：<a href="{{ $message['next']['url'] }}" title="{{ $message['next']['name'] }}">{{ $message['next']['name'] }}</a></div>
+                    @endif
+                <div class="clear"></div>
+            </div>
         </div>
-        @include('pc.right')
     </div>
+    <div class="page_right">
+        <div class="second_categorys_container">
+            <h3>栏目导航</h3>
+            <ol class="seond_category trans_3">
+                @foreach($children as &$child)
+                    @if($column['unique'] === $child['unique'])
+                        <li class="selected">
+                            <a href="{{ $child['url'] }}" class="layui-btn layui-btn-primary trans_1">{{ $child['name'] }}</a>
+                        </li>
+                    @else
+                        <li>
+                            <a href="{{ $child['url'] }}" class="layui-btn layui-btn-primary trans_1">{{ $child['name'] }}</a>
+                        </li>
+                    @endif
+                @endforeach
+            </ol>
+        </div>
+        @php
+            $messages = \App\CcForever\extend\MessagesExtend::messages($column['unique'], false, 0, 8, 3, $configs['zy_cms_substation_link']);
+        @endphp
+        <div class="hot_list">
+            <h3>相关文章</h3>
+            <ol class="page_right_list trans_3">
+                @foreach($messages as &$message)
+                    <li><a href="{{ $message['url'] }}" title="{{ $message['name'] }}">{{ $message['name'] }}</a><span class="hits"> {{ $message['click'] }} ℃ </span></li>
+                @endforeach
+            </ol>
+        </div>
+        <div class="mobile_qrcode_container">
+            <h3>手机扫码访问</h3>
+            <div class="mobile_qrcode wechat_qrcode trans_3">
+                <style type="text/css">
+                    #qrcode{width:100%;height: 100%;}
+                    #qrcode img{width:100%;height: 100%;}
+                </style>
+                <div id="qrcode">
+                    <img alt="Scan me!" src="{{ $configs['zy_cms_service_code'] }}" style="display: block;">
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="clear"></div>
 </div>
 @include('pc.footer')
 </body>

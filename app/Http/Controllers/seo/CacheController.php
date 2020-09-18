@@ -132,6 +132,7 @@ class CacheController extends BaseController
             return JsonExtend::error('缓存失败，没有可缓存的页面');
         }
         $sourcePathPrefix = $sourcePathPrefix.DIRECTORY_SEPARATOR;
+        CachesExtend::substation('', substr($urlPrefix, 1, strlen($urlPrefix)));
         $path = CachesExtend::search($urlPrefix, $sourcePathPrefix);
         if(count($path)){
             return JsonExtend::success('缓存成功', $path);

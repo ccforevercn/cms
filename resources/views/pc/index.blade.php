@@ -1,133 +1,135 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     @include('pc.style')
 </head>
-<body class="home blog el-boxed">
+<body>
 @include('pc.header')
-<div id="wrap">
-    <div class="wrap container">
-        <div class="main">
-            <div class="slider-wrap clearfix">
-                <div class="main-slider wpcom-slider swiper-container pull-left">
-                    <ul class="swiper-wrapper">
-                        @foreach($banners as &$banner)
-                            <li class="swiper-slide">
-                                <a href="{{ $banner['link'] }}" title="{{ $banner['name'] }}"><img src="{{ $banner['image'] }}" alt="{{ $banner['name'] }}"></a>
-                                <h3 class="slide-title"><a href="{{ $banner['link'] }}" title="{{ $banner['name'] }}"></a></h3>
-                            </li>
-                        @endforeach
-                    </ul>
-                    <div class="swiper-pagination"></div>
-                    <div class="swiper-button-prev swiper-button-white"></div>
-                    <div class="swiper-button-next swiper-button-white"></div>
-                </div>
-            </div>
-            <div class="sec-panel topic-recommend">
-                <div class="sec-panel-head">
-                    <h2><span></span><small></small><a href="javascript:;" class="more">全部专题</a></h2>
-                </div>
-                <div class="sec-panel-body">
-                    <ul class="list topic-list">
-                        <li class="topic">
-                            <a class="topic-wrap" href="javascript:;">
-                                <div class="cover-container">
-                                    <img class="j-lazy" src="" title="名称">
-                                </div>
-                                <span>名称</span>
+@if(count($banners))
+<div class="banner">
+<div class="main index_main">
+    @foreach($banners as &$banner)
+        @if($loop->first)
+            <img class="banner_pic" src="{{ $banner['image'] }}" alt="{{ $banner['name'] }}">
+        @endif
+    @endforeach
+</div>
+</div>
+@endif
+<div class="fill_1"></div>
+<div class="main index_main">
+    <ul class="index-learn">
+        <li>
+            <fieldset class="layui-elem-field layui-field-title">
+                <legend>学无止境</legend>
+                <p>学习，探索，研究，从不了解到了解，从无知到掌握，到灵活运用，在不断的学习中加深认识。由浅入深，由表及里。</p>
+            </fieldset>
+        </li>
+        <li>
+            <fieldset class="layui-elem-field layui-field-title">
+                <legend>业精于勤</legend>
+                <p>“业精于勤荒于嬉”，精深的业技靠的是勤学、刻苦努力，靠的是争分夺秒的勤学苦练才会有精深的技术。得在认真，失在随便。</p>
+            </fieldset>
+        </li>
+        <li>
+            <fieldset class="layui-elem-field layui-field-title">
+                <legend>工匠精神</legend>
+                <p>精益求精，注重细节，追求完美和极致，不惜花费时间精力，孜孜不倦，反复改进产品，把99%提高到99.99%。</p>
+            </fieldset>
+        </li>
+    </ul>
+</div>
+@if(count($banners))
+    <div class="main index_main lzcms_banner">
+        @foreach($banners as &$banner)
+            @if($loop->last)
+                <a href="{{ $banner['link'] }}" title="{{ $banner['name'] }}"><img src="{{ $banner['image'] }}" alt="{{ $banner['name'] }}"></a>
+            @endif
+        @endforeach
+    </div>
+@endif
+<div class="main index_main">
+    @php
+        $messages = \App\CcForever\extend\MessagesExtend::messages(3, true, 0, 6, 3, $configs['zy_cms_substation_link']);
+    @endphp
+    <div class="page_left">
+        <ul class="page_left_list">
+            @foreach($messages as &$message)
+                @if(strlen($message['image']))
+                        <li>
+                            <a href="{{ $message['url'] }}" title="{{ $message['name'] }}" class="pic">
+                                <img class="lazy" src="{{ $message['image'] }}" alt="{{ $message['name'] }}">
                             </a>
-                        </li>
-                        <li class="topic">
-                            <a class="topic-wrap" href="javascript:;">
-                                <div class="cover-container">
-                                    <img class="j-lazy" src="" title="名称">
-                                </div>
-                                <span>名称</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="sec-panel main-list">
-                @php
-                    $appointed = \App\CcForever\extend\ColumnsExtend::appointed([3, 4], $configs['zy_cms_substation_link']);
-                    $messages = \App\CcForever\extend\MessagesExtend::messages(4, true, 0, 8, 3, $configs['zy_cms_substation_link']);
-                @endphp
-                <div class="sec-panel-head">
-                    <ul class="list tabs j-newslist">
-                        <li class="tab active"><a data-id="0" href="javascript:;">最新文章</a></li>
-                        @foreach($appointed as &$column)
-                            <li class="tab"><a href="javascript:;">{{ $column['name'] }}</a></li>
-                        @endforeach
-                    </ul>
-                </div>
-                <ul class="post-loop post-loop-default tab-wrap clearfix active">
-                    @foreach($messages as &$message)
-                        <li class="item">
-                            <div class="item-img">
-                                <a class="item-img-inner" href="{{ $message['url'] }}" title="{{ $message['name'] }}">
-                                    <img class="j-lazy" src="{{ $message['image'] }}" width="480" height="300" alt="{{ $message['name'] }}">
-                                </a>
-                                <a class="item-category" href="{{ $message['url'] }}" title="{{ $message['name'] }}">分享</a>
+                            <h2 class="title"><a href="{{ $message['url'] }}" title="{{ $message['name'] }}"><span class="top">推荐</span>{{ $message['name'] }}</a></h2>
+                            <div class="date_hits">
+                                <span>{{ $message['time'] }}</span>
+                                <span><a href="javascript:void(0);">{{ $message['cname'] }}</a></span>
+                                <span class="hits"><i class="layui-icon" title="点击量">&#xe62c;</i> {{ $message['click'] }} ℃</span>
                             </div>
-                            <div class="item-content">
-                                <h2 class="item-title"><a href="{{ $message['url'] }}" title="{{ $message['name'] }}">{{ $message['name'] }}</a></h2>
-                                <div class="item-excerpt"><p>&nbsp;{{ get_str_cn_str($value['description'], 0, 30, true, '...') }}</p></div>
-                                <div class="item-meta">
-                                    <span class="item-meta-li date">{{ $message['time'] }}</span>
-                                    <span class="item-meta-li views" title="{{ $message['name'] }}"><i class="fa fa-eye"></i>{{ $message['click'] }}</span>
-                                </div>
-                            </div>
+                            <div class="desc">{{ get_str_cn_str($message['description'], 0, 66, true, '...') }}</div>
                         </li>
-                    @endforeach
-                </ul>
-                @foreach($appointed as $column)
-                    @php
-                        $messages = \App\CcForever\extend\MessagesExtend::messages($column['unique'], true, 0, 8, 1, $configs['zy_cms_substation_link']);
-                    @endphp
-                @if(count($messages))
-                    <ul class="post-loop post-loop-default tab-wrap clearfix">
-                        @foreach($messages as &$message)
-                            <li class="item">
-                                <div class="item-img">
-                                    <a class="item-img-inner" href="{{ $message['url'] }}" title="{{ $message['name'] }}">
-                                        <img class="j-lazy" src="{{ $message['image'] }}"width="480" height="300" alt="{{ $message['name'] }}">
-                                    </a>
-                                    <a class="item-category" href="{{ $message['url'] }}" title="{{ $message['name'] }}">分享</a>
-                                </div>
-                                <div class="item-content">
-                                    <h2 class="item-title"><a href="{{ $message['url'] }}" title="{{ $message['name'] }}">{{ $message['name'] }}</a></h2>
-                                    <div class="item-excerpt"><p>&nbsp;{{ get_str_cn_str($message['description'], 0, 30, true, '...') }}</p></div>
-                                    <div class="item-meta">
-                                        <span class="item-meta-li date">{{ $message['time'] }}</span>
-                                        <span class="item-meta-li views" title="{{ $message['name'] }}"><i class="fa fa-eye"></i>{{ $message['click'] }}</span>
-                                    </div>
-                                </div>
-                            </li>
-                        @endforeach
-                    </ul>
-                    @endif
+                @else
+                        <li class="no_pic">
+                            <h2 class="title"><a href="{{ $message['url'] }}" title="{{ $message['name'] }}"><span class="top">推荐</span>{{ $message['name'] }}</a></h2>
+                            <div class="date_hits">
+                                <span>{{ $message['time'] }}</span>
+                                <span><a href="javascript:void(0);">{{ $message['cname'] }}</a></span>
+                                <span class="hits"><i class="layui-icon" title="点击量">&#xe62c;</i> {{ $message['click'] }} ℃</span>
+                            </div>
+                            <div class="desc">{{ get_str_cn_str($message['description'], 0, 66, true, '...') }}</div>
+                        </li>
+                @endif
+            @endforeach
+        </ul>
+    </div>
+    <div class="page_right">
+        <div class="about_stationmaster_container">
+            <h3>博主信息</h3>
+            <ol class="page_right_list trans_3">
+                <li>姓名：{{ $configs['zy_cms_service_name'] }}</li>
+                <li>职业：{{ $configs['zy_cms_service_name'] }}</li>
+                <li>座右铭：{{ $configs['zy_cms_service_name'] }}</li>
+                <li>QQ群：{{ $configs['zy_cms_service_name'] }}</li>
+            </ol>
+        </div>
+        @php
+            $messages = \App\CcForever\extend\MessagesExtend::messages(4, true, 0, 6, 1, $configs['zy_cms_substation_link']);
+        @endphp
+        <div class="new_list">
+            <h3>最新文章</h3>
+            <ol class="page_right_list trans_3">
+                @foreach($messages as &$message)
+                    <li>
+                        <a href="{{ $message['url'] }}" title="{{ $message['name'] }}">{{ $message['name'] }}</a>
+                        <span class="hits"> {{ $message['click'] }} ℃ </span>
+                    </li>
+                @endforeach
+            </ol>
+        </div>
+        @php
+            $messages = \App\CcForever\extend\MessagesExtend::messages(4, true, 0, 6, 2, $configs['zy_cms_substation_link']);
+        @endphp
+        <div class="hot_list">
+            <h3>最近热文</h3>
+            <ol class="page_right_list trans_3">
+                @foreach($messages as &$message)
+                    <li>
+                        <a href="{{ $message['url'] }}" title="{{ $message['name'] }}">{{ $message['name'] }}</a>
+                        <span class="hits"> {{ $message['click'] }} ℃ </span>
+                    </li>
+                @endforeach
+            </ol>
+        </div>
+        @if(count($links))
+            <h3>友情连接</h3>
+            <div class="links trans_3">
+                @foreach($links as &$link)
+                    <a href="{{ $link['link'] }}" title="{{ $link['name'] }}" target="_blank">{{ $link['name'] }}</a>
                 @endforeach
             </div>
-        </div>
-        @include('pc.right')
+        @endif
     </div>
-    @if(count($links))
-        <div class="container hidden-xs j-partner">
-            <div class="sec-panel">
-                <div class="sec-panel-head">
-                    <h2><span>友情链接</span></h2>
-                </div>
-                <div class="sec-panel-body">
-                    <div class="list list-links">
-                        @foreach($links as &$link)
-                            <a href="{{ $link['link'] }}" title="{{ $link['name'] }}" target="_blank">{{ $link['name'] }}</a>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endif
+    <div class="clear"></div>
 </div>
 @include('pc.footer')
 </body>
