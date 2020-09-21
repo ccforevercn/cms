@@ -12,7 +12,7 @@
     </div>
     <div class="page_right">
         @php
-            $messages = \App\CcForever\extend\MessagesExtend::messages(3, true, 0, 8, 2, $configs['zy_cms_substation_link']);
+            $messages = \App\CcForever\extend\MessagesExtend::messages(3, true, 0, 8, 2, $configs['cc_cms_substation_link']);
         @endphp
         <div class="recommend_list">
             <h3>推荐文章</h3>
@@ -23,7 +23,7 @@
             </ol>
         </div>
         @php
-            $messages = \App\CcForever\extend\MessagesExtend::messages(3, true, 0, 8, 3, $configs['zy_cms_substation_link']);
+            $messages = \App\CcForever\extend\MessagesExtend::messages(3, true, 0, 8, 3, $configs['cc_cms_substation_link']);
         @endphp
         <div class="hot_list">
             <h3>最近热文</h3>
@@ -41,7 +41,7 @@
                     #qrcode img{width:100%;height: 100%;}
                 </style>
                 <div id="qrcode">
-                    <img alt="Scan me!" src="{{ $configs['zy_cms_service_code'] }}" style="display: block;">
+                    <img alt="Scan me!" src="{{ $configs['cc_cms_service_code'] }}" style="display: block;">
                 </div>
             </div>
         </div>

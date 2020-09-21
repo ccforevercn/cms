@@ -1,7 +1,7 @@
 <div class="layui-header header trans_3">
     <div class="main index_main">
-        <a class="logo" href="{{ $configs['zy_cms_website'] }}" title="{{ $configs['zy_cms_name'] }}">
-            <img src="{{ $configs['zy_cms_pc_logo_top'] }}" alt="{{ $configs['zy_cms_name'] }}">
+        <a class="logo" href="{{ $configs['cc_cms_website'] }}" title="{{ $configs['cc_cms_name'] }}">
+            <img src="{{ $configs['cc_cms_pc_logo_top'] }}" alt="{{ $configs['cc_cms_name'] }}">
         </a>
         <ul class="layui-nav" lay-filter="top_nav">
             @foreach($navigation as &$nav)
@@ -16,7 +16,7 @@
                 </li>
             @endforeach
         </ul>
-        <div class="title">{{ $configs['zy_cms_name'] }}</div>
+        <div class="title">{{ $configs['cc_cms_name'] }}</div>
         <form action="/wap/search.html" mothod="get" class="head_search trans_3 layui-form">
             <div class="layui-form-item trans_3">
                 <span class="close trans_3"><i class="layui-icon">&#x1006;</i> </span>

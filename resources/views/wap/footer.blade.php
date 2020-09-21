@@ -1,12 +1,12 @@
 <ul class="layui-fixbar">
-    <li class="layui-icon qr_code">&#xe63b;<img class="qr_code_pic" src="{{ $configs['zy_cms_service_code'] }}" alt="微信二维码"></li>
+    <li class="layui-icon qr_code">&#xe63b;<img class="qr_code_pic" src="{{ $configs['cc_cms_service_code'] }}" alt="微信二维码"></li>
     <li class="layui-icon layui-fixbar-top" id="to_top">&#xe604;</li>
 </ul>
 <div class="layui-footer footer">
     <div class="main index_main">
-        <p>@php echo $configs['zy_cms_copyright']@endphp</p>
+        <p>@php echo $configs['cc_cms_copyright']@endphp</p>
         <p><a href="/sitemap.xml">网站地图</a></p>
-        <p class="beian">@php echo $configs['zy_cms_record_number']@endphp</p>
+        <p class="beian">@php echo $configs['cc_cms_record_number']@endphp</p>
     </div>
 </div>
 <script type="text/javascript">
@@ -46,4 +46,4 @@
         });
     });
 </script>
-@php echo $configs['zy_cms_pc_bottom_code']; @endphp
+@php echo $configs['cc_cms_pc_bottom_code']; @endphp

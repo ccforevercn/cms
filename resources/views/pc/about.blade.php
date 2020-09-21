@@ -40,7 +40,7 @@
                     #qrcode img{width:100%;height: 100%;}
                 </style>
                 <div id="qrcode">
-                    <img alt="Scan me!" src="{{ $configs['zy_cms_service_code'] }}" style="display: block;">
+                    <img alt="Scan me!" src="{{ $configs['cc_cms_service_code'] }}" style="display: block;">
                 </div>
             </div>
         </div>

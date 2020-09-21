@@ -50,7 +50,7 @@
 @endif
 <div class="main index_main">
     @php
-        $messages = \App\CcForever\extend\MessagesExtend::messages(3, true, 0, 6, 3, $configs['zy_cms_substation_link']);
+        $messages = \App\CcForever\extend\MessagesExtend::messages(3, true, 0, 6, 3, $configs['cc_cms_substation_link']);
     @endphp
     <div class="page_left">
         <ul class="page_left_list">
@@ -86,14 +86,14 @@
         <div class="about_stationmaster_container">
             <h3>博主信息</h3>
             <ol class="page_right_list trans_3">
-                <li>姓名：{{ $configs['zy_cms_service_name'] }}</li>
-                <li>职业：{{ $configs['zy_cms_service_name'] }}</li>
-                <li>座右铭：{{ $configs['zy_cms_service_name'] }}</li>
-                <li>QQ群：{{ $configs['zy_cms_service_name'] }}</li>
+                <li>姓名：{{ $configs['cc_cms_service_name'] }}</li>
+                <li>职业：{{ $configs['cc_cms_service_name'] }}</li>
+                <li>座右铭：{{ $configs['cc_cms_service_name'] }}</li>
+                <li>QQ群：{{ $configs['cc_cms_service_name'] }}</li>
             </ol>
         </div>
         @php
-            $messages = \App\CcForever\extend\MessagesExtend::messages(4, true, 0, 6, 1, $configs['zy_cms_substation_link']);
+            $messages = \App\CcForever\extend\MessagesExtend::messages(4, true, 0, 6, 1, $configs['cc_cms_substation_link']);
         @endphp
         <div class="new_list">
             <h3>最新文章</h3>
@@ -107,7 +107,7 @@
             </ol>
         </div>
         @php
-            $messages = \App\CcForever\extend\MessagesExtend::messages(4, true, 0, 6, 2, $configs['zy_cms_substation_link']);
+            $messages = \App\CcForever\extend\MessagesExtend::messages(4, true, 0, 6, 2, $configs['cc_cms_substation_link']);
         @endphp
         <div class="hot_list">
             <h3>最近热文</h3>
