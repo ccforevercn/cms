@@ -10,7 +10,7 @@
 ###### 添加默认数据
 ##### php artisan db:seed --class=DatabaseSeeder
 
-#### 修改后台模板文件配置
+#### 修改后台模板文件配置(需要装npm)
 同级目录admin-template/.env.development、admin-template/.env.production、admin-template/.env.staging配置
 ###### http://域名 + 后台接口前缀(.env文件内的ADMIN_PREFIX值) + api 
 VUE_APP_BASE_API =
